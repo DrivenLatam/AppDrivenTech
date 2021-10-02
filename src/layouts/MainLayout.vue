@@ -1,18 +1,17 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
-      </q-toolbar>
-    </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        
-      </q-list>
-    </q-drawer>
+    <q-footer bordered class="bg-transparent">
+      <q-toolbar class="bg-transparent flex flex-center">
+        <q-tabs v-model="tab" dense class="text-grey-6 full-width" align="justify" 
+          active-color="primary" indicator-color="transparent"
+        >
+          <q-tab name="home" icon="home" label="Inicio" />
+          <q-tab name="calendar" icon="event_available" label="Calendario" />
+          <q-tab name="movies" icon="movie" label="Movies" />
+        </q-tabs>
+      </q-toolbar>
+    </q-footer>
 
     <q-page-container>
       <router-view />
@@ -27,15 +26,9 @@ import { defineComponent, ref } from 'vue'
 export default defineComponent({
   name: 'MainLayout',
   setup () {
-    const leftDrawerOpen = ref(false)
-
-    const toggleLeftDrawer = () => {
-      leftDrawerOpen.value = !leftDrawerOpen.value;
-    }
-
+    const tab = ref('home');
     return {
-      leftDrawerOpen,
-      toggleLeftDrawer,
+      tab,
     }
   }
 })
