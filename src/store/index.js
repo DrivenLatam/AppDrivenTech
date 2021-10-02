@@ -1,0 +1,67 @@
+import { store } from 'quasar/wrappers';
+import { createStore, useStore } from 'vuex';
+import sessionStore from './session.store';
+import { computed } from 'vue';
+
+export const BASE_URL = "";
+
+// import example from './module-example'
+
+/*
+ * If not building with SSR mode, you can
+ * directly export the Store instantiation;
+ *
+ * The function below can be async too; either use
+ * async/await or return a Promise which resolves
+ * with the Store instance.
+ */
+
+export default store(function (/* { ssrContext } */) {
+  const Store = createStore({
+    modules: {
+      sessionStore,
+    },
+
+    // enable strict mode (adds overhead!)
+    // for dev mode and --debug builds only
+    strict: process.env.DEBUGGING
+  })
+
+  return Store
+})
+
+export const useState = () => {
+  const store = useStore()
+  return Object.fromEntries(
+    Object.keys(store.state).map(
+      key => [key, computed(() => store.state[key])]
+    )
+  )
+}
+
+export const useGetters = () => {
+  const store = useStore()
+  return Object.fromEntries(
+    Object.keys(store.getters).map(
+      getter => [getter, computed(() => store.getters[getter])]
+    )
+  )
+}
+
+export const useMutations = () => {
+  const store = useStore()
+  return Object.fromEntries(
+    Object.keys(store._mutations).map(
+      mutation => [mutation, value => store.commit(mutation, value)]
+    )
+  )
+}
+
+export const useActions = () => {
+  const store = useStore()
+  return Object.fromEntries(
+    Object.keys(store._actions).map(
+      action => [action, value => store.dispatch(action, value)]
+    )
+  )
+}

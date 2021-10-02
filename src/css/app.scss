@@ -1,0 +1,39 @@
+// app global css in SCSS form
+// app global css in SCSS form
+@each $name, $pref in ("margin": "m", "padding": "p") {
+  @for $i from 0 through 100 {
+    .#{$pref}-#{$i},
+    .#{$pref}y-#{$i},
+    .#{$pref}t-#{$i} {
+      #{$name}-top: #{$i}px;
+    }
+    .#{$pref}-#{$i},
+    .#{$pref}y-#{$i},
+    .#{$pref}b-#{$i} {
+      #{$name}-bottom: #{$i}px;
+    }
+    .#{$pref}-#{$i},
+    .#{$pref}x-#{$i},
+    .#{$pref}l-#{$i} {
+      #{$name}-left: #{$i}px;
+    }
+    .#{$pref}-#{$i},
+    .#{$pref}x-#{$i},
+    .#{$pref}r-#{$i} {
+      #{$name}-right: #{$i}px;
+    }
+  }
+}
+
+@for $i from 0 through 100 {
+  .z-#{$i} {
+    z-index: #{$i};
+  }
+  .br-#{$i} {
+    border-radius: #{$i}px;
+  }
+}
+
+.underline {
+  text-decoration: underline;
+}
