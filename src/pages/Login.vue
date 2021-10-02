@@ -1,15 +1,19 @@
 <template>
-    <q-page class="flex justify-center items-center bg-white items-center column">
+    <q-page class="flex justify-center items-center bg-white items-center column px-30">
+
+        <!-- HEADER -->
+
         <LoginImg :scale="0.8"/>
         <div class="bg-primary m-25 flex justify-center items-center assignment">
             <q-icon name="assignment" color="white" size="16px"/>
         </div>
         <div class="text-h5 text-grey-7 mb-25">Autenticación</div>
 
-        <!-- USERNAME OR EMAIL INPUT -->
+        
+        <!-- USERNAME INPUT -->
 
         <q-input v-model="username" dense autofocus :disable="sendingLogin" :ref="el => usernameInput=el"   
-                label="Nombre de usuario" class="full-width mt-32 login-input px-32" 
+                label="Nombre de usuario" class="full-width mt-32 login-input" 
                 @keypress.enter="requestLogin" @focus="focusUsername" @blur="focusUsername(false)">
             <template v-slot:append>
                 <q-icon name="person" :color="isUsernameFocus?'primary':'grey-7'" />
@@ -21,7 +25,7 @@
         <!-- PASSWORD INPUT -->
 
         <q-input v-model="password" dense :ref="el => passwordInput=el" :disable="sendingLogin" 
-                label="Contraseña" class="full-width mt-8 login-input px-32" type="password" 
+                label="Contraseña" class="full-width mt-8 login-input" type="password" 
                 @keypress.enter="requestLogin" @focus="focusPassword" @blur="focusPassword(false)">
             <template v-slot:append>
                 <q-icon name="password" :color="isPasswordFocus?'primary':'grey-7'" />
