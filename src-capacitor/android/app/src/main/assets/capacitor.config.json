@@ -1,0 +1,10 @@
+{
+  "appId": "org.capacitor.quasar.app",
+  "appName": "Driven Tech",
+  "bundledWebRuntime": false,
+  "npmClient": "yarn",
+  "webDir": "www",
+  "server": {
+    "url": "http://172.29.16.1:8080"
+  }
+}
