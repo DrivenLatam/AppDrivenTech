@@ -10,16 +10,16 @@
         <div class="text-h5 text-grey-7 mb-25">Autenticación</div>
 
         
-        <!-- USERNAME INPUT -->
+        <!-- email INPUT -->
 
-        <q-input v-model="username" dense autofocus :disable="sendingLogin" :ref="el => usernameInput=el"   
-                label="Nombre de usuario" class="full-width mt-32 login-input" 
-                @keypress.enter="requestLogin" @focus="focusUsername" @blur="focusUsername(false)">
+        <q-input v-model="email" dense autofocus :disable="sendingLogin" :ref="el => emailInput=el"   
+                label="Email" class="full-width mt-32 login-input" 
+                @keypress.enter="requestLogin" @focus="focusEmail" @blur="focusEmail(false)">
             <template v-slot:append>
-                <q-icon name="person" :color="isUsernameFocus?'primary':'grey-7'" />
+                <q-icon name="alternate_email" :color="isEmailFocus?'primary':'grey-7'" />
             </template>
         </q-input>
-        <div v-if="usernameError" class="p-4 mt-4 br-2 bg-red text-white full-width text-weight-bold">{{usernameError}}</div>
+        <div v-if="emailError" class="p-4 mt-4 br-2 bg-red text-white full-width text-weight-bold">{{emailError}}</div>
         <div v-else class="p-4 mt-4 text-white">.</div>
 
         <!-- PASSWORD INPUT -->
@@ -52,25 +52,27 @@
 import { defineComponent, ref, nextTick, computed, watch, onMounted } from 'vue'
 import { useGetters, useActions } from 'src/store';
 import LoginImg from "../components/draws/LoginImg";
+import {useRouter} from 'vue-router'
 
 export default defineComponent({
     name: 'Login',
     components: {LoginImg},
     setup() {
+        const router =useRouter()
         const { isLogged } = useGetters();
         const { login } = useActions();
         const focusedInput = ref(null);
         //
         // USER NAME
         //
-        const username = ref("");
-        const usernameInput = ref(null);
-        const focusUsername = (state = true) => { 
-            if (state) focusedInput.value = usernameInput.value; 
-            else if (focusedInput.value === usernameInput.value) focusedInput.value = null;
+        const email = ref("");
+        const emailInput = ref(null);
+        const focusEmail = (state = true) => { 
+            if (state) focusedInput.value = emailInput.value; 
+            else if (focusedInput.value === emailInput.value) focusedInput.value = null;
         }
-        const isUsernameFocus = computed(() => focusedInput.value === usernameInput.value)
-        watch(username, () => loginError.value && (loginError.value.username = loginError.value.error = undefined));
+        const isEmailFocus = computed(() => focusedInput.value === emailInput.value)
+        watch(email, () => loginError.value && (loginError.value.email = loginError.value.error = undefined));
         //
         // PASSWORD
         //
@@ -86,12 +88,12 @@ export default defineComponent({
         // ERROR
         //
         const loginError = ref("");
-        const usernameError = computed(() => loginError.value ? loginError.value.username : "")
+        const emailError = computed(() => loginError.value ? loginError.value.email : "")
         const passwordError = computed(() => loginError.value ? loginError.value.password : "")
         const genericError = computed(() => loginError.value ? loginError.value.error : "")
         watch(loginError, () => {
             if (!loginError.value) return;
-            if (loginError.value.username) usernameInput.value.focus();
+            if (loginError.value.email) emailInput.value.focus();
             else if (loginError.value.password) passwordInput.value.focus();
         });
         //
@@ -99,8 +101,8 @@ export default defineComponent({
         //
         const sendingLogin = ref(false);
         const validateLogin = () => {
-            if (!username.value) {
-                loginError.value = { username: "Ingrese su nombre de usuario" };
+            if (!email.value) {
+                loginError.value = { email: "Ingrese su nombre de usuario" };
                 return false;
             }
             if (!password.value) {
@@ -115,14 +117,15 @@ export default defineComponent({
             loginError.value = null;
             
             if (validateLogin()) {
-                const { data, error } = await login({ username, password });
+                const { data, error } = await login({ email:email.value, password:password.value });
                 
                 if (error) {
+                    console.log('error')
                     await nextTick();
                     loginError.value = error;
                 }
                 else if (data) {
-                    // TODO: GO TO NEXT PAGE
+                   router.replace({path:'/'})
                 }
                 else loginError.value = { error: "Error al conectar al servidor, vuelva a intentarlo." };
             }
@@ -140,18 +143,18 @@ export default defineComponent({
 
         return {
             error: loginError,
-            username,
+            email,
             password,
             requestLogin,
             sendingLogin,
             genericError,
-            usernameError,
+            emailError,
             passwordError,
-            usernameInput,
+            emailInput,
             passwordInput,
-            focusUsername,
+            focusEmail,
             focusPassword,
-            isUsernameFocus,
+            isEmailFocus,
             isPasswordFocus,
         }
         

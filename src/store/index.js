@@ -1,9 +1,11 @@
 import { store } from 'quasar/wrappers';
 import { createStore, useStore } from 'vuex';
 import sessionStore from './session.store';
+import ticketsStore from './tickets.store';
+
 import { computed } from 'vue';
 
-export const BASE_URL = "";
+export const BASE_URL = "http://localhost:8000/";
 
 // import example from './module-example'
 
@@ -20,6 +22,7 @@ export default store(function (/* { ssrContext } */) {
   const Store = createStore({
     modules: {
       sessionStore,
+      ticketsStore
     },
 
     // enable strict mode (adds overhead!)

@@ -16,15 +16,18 @@
   <!-- PAGE BODY -->
 
   <q-page class="flex p-18">
-    Index!
+    <ticket-list />
   </q-page>
 </template>
 
 <script>
 import { defineComponent, ref } from 'vue';
-
+import TicketList from 'src/components/tickets/TicketList.vue'
 export default defineComponent({
   name: 'PageIndex',
+  components:{
+    TicketList
+  },
   setup() {
     const search = ref('');
 

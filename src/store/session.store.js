@@ -1,28 +1,32 @@
 import { BASE_URL } from '.';
+import axios from 'axios';
+import { store } from './local.store';
 
 export default {
     state() {
         return {
-            user: null, // store.get('user', null); // Get user from local
+            user: store.get('user', null)
         }
     },
     mutations: {
         setUser(state, data) {
             state.user = data;
-            // store.set('user', data); // TODO: SAVE IN LOCAL
+            store.set('user', data); 
         },
     },
     actions: {
-        async login({ commit }, { username, password }) {
+        async login({ commit }, { email, password }) {
             try {
-                const { data } = await axios.post(BASE_URL + "login/",
-                    { username, password });
-                // TODO: SAVE USER // const user = { ...data.user, token: data.token };
-                const user = { username, email: username + "@gmail.com", token: '1234' };
+                console.log('login')
+                const { data } = await axios.post(BASE_URL + "users/login/",
+                    { email, password });
+                const user = { ...data.user, token: data.access_token };
                 commit('setUser', user);
                 return { data: user };
             }
-            catch (error) { return { error } }
+            catch (error) { 
+                console.log('error',error.response)
+                return { error } }
         },
         logout({ commit }) { commit('setUser', null) },
     },
