@@ -1,13 +1,11 @@
 import axios from "axios"
-
+import { BASE_URL } from "."
+import {store} from "./local.store"
 export default {
     state(){
         return { 
-            tickets:[
-                {'id':1,'subject':'Mantenimiento','status':'Abierto'},
-                {'id':2,'subject':'Limpieza','status':'Abierto'},
-                {'id':3,'subject':'Instalacion de Camara','status':'Abierto'}
-            ],
+            tickets:[],
+            loadingTicket:true
         }
     },
     mutations:{
@@ -16,15 +14,36 @@ export default {
         },
         setTickets(state,tickets){
             state.tickets=tickets
+        },
+        setLoadingTicket(state,value){
+            state.loadingTicket=value
         }
     },
     actions:{
-        getTicketsFromServer({commit,getters}){
+        async getTicketsFromServer({commit,getters}){
+                const {username,country}=store.get("user")
+                const params={username,country}
+                try {
+                    const {data} = await axios.get(BASE_URL+"tickets",{params:{username,country}})
+                    commit('setTickets',data)
+                    return {data}
+                } catch (error) {
+                    console.log('error',error.response)
+                    return {error}
+                }
         }
     },
     getters:{
         tickets(state,getters){
             return state.tickets
+        },
+        getTicketById(state,getters){
+            return (id)=>{
+                return state.tickets.find((ticket)=>ticket.id===id)
+            }
+        },
+        loadingTicket(state,getters){
+            return state.loadingTicket
         }
     }
 }

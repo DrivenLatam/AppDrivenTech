@@ -14,7 +14,10 @@ const routes = [
       { path: 'resetPassword/:email?', component: () => import('pages/ResetPassword.vue') },
     ]
   },
-
+  {
+    path:'/ticket/:id',
+    component: ()=> import('pages/TicketDetail.vue')
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
