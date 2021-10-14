@@ -14,7 +14,10 @@ const routes = [
       { path: '', component: () => import('pages/Login.vue') }
     ]
   },
-
+  {
+    path:'/ticket/:id',
+    component: ()=> import('pages/TicketDetail.vue')
+  },
   // Always leave this as last one,
   // but you can also remove it
   {
