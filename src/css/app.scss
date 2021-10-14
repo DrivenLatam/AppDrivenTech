@@ -32,8 +32,15 @@
   .br-#{$i} {
     border-radius: #{$i}px;
   }
+  .fs-#{$i} {
+    font-size: #{$i}px;
+  }
 }
 
 .underline {
   text-decoration: underline;
+}
+
+.grow-1 {
+  flex-grow: 1;
 }

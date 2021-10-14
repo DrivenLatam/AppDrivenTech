@@ -45,6 +45,12 @@
             <div v-if="!sendingLogin">Iniciar sesión</div>
             <q-spinner v-else color="white" size="1em" />
         </q-btn>
+
+        <!-- RESET PASSWORD -->
+
+        <q-btn flat no-caps class="mt-16 underline text-primary px-64 py-4" @click="gotoResetPassword">
+            <div>¿Olvidaste tu contraseña?</div>
+        </q-btn>
     </q-page>
 </template>
 
@@ -58,7 +64,7 @@ export default defineComponent({
     name: 'Login',
     components: {LoginImg},
     setup() {
-        const router =useRouter()
+        const router = useRouter()
         const { isLogged } = useGetters();
         const { login } = useActions();
         const focusedInput = ref(null);
@@ -81,6 +87,9 @@ export default defineComponent({
         const focusPassword = (state = true) => { 
             if (state) focusedInput.value = passwordInput.value; 
             else if (focusedInput.value === passwordInput.value) focusedInput.value = null;
+        }
+        const gotoResetPassword = () => {
+            router.push({ path: `/login/resetPassword/${email.value}` });
         }
         const isPasswordFocus = computed(() => focusedInput.value === passwordInput.value)
         watch(password, () => loginError.value && (loginError.value.password = loginError.value.error = undefined));
@@ -156,6 +165,7 @@ export default defineComponent({
             focusPassword,
             isEmailFocus,
             isPasswordFocus,
+            gotoResetPassword,
         }
         
     },

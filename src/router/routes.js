@@ -6,12 +6,12 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/Index.vue') }
     ]
-  },
-  {
+  }, {
     path: '/login',
     component: () => import('layouts/LoginLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Login.vue') }
+      { path: '', component: () => import('pages/Login.vue') },
+      { path: 'resetPassword/:email?', component: () => import('pages/ResetPassword.vue') },
     ]
   },
 
