@@ -18,10 +18,10 @@
                     <q-list class="mt-25">
                             <q-item class="item-detail">
                                 <q-item-section avatar top>
-                                <q-avatar icon="description" color="primary" text-color="white" />
+                                <q-avatar icon="description" color="dark" text-color="white" />
                                 </q-item-section>
                                 <q-item-section>
-                                <q-item-label class="text-subtitle1" lines="1">Descripcion</q-item-label>
+                                <q-item-label class="text-subtitle1" lines="1">Descripción</q-item-label>
                                 <q-item-label class="text-grey-8 text-caption" >{{ticket.subject}}</q-item-label>
                                 </q-item-section>
                                 <q-item-section side>
@@ -30,7 +30,7 @@
                             
                             <q-item class="item-detail" >
                                 <q-item-section avatar top>
-                                <q-avatar icon="priority_high" color="primary" text-color="white" />
+                                <q-avatar icon="priority_high" color="dark"  text-color="white" />
                                 </q-item-section>
                                 <q-item-section>
                                 <q-item-label class="text-subtitle1"  lines="1">Prioridad</q-item-label>
@@ -43,10 +43,10 @@
 
                             <q-item class="item-detail">
                                 <q-item-section avatar top>
-                                <q-avatar icon="phone" color="primary" text-color="white" />
+                                <q-avatar icon="phone" color="dark" text-color="white" />
                                 </q-item-section>
                                 <q-item-section>
-                                <q-item-label class="text-subtitle1"   lines="1">Numero de Contacto</q-item-label>
+                                <q-item-label class="text-subtitle1"   lines="1">Número de Contacto</q-item-label>
                                 <q-item-label class="text-grey-8 text-caption">{{ticket.mobile_contact ? ticket.mobile_contact : "Sin Informacion"}}</q-item-label>
                                 </q-item-section>
                                 <q-item-section side>
@@ -55,7 +55,7 @@
                             
                             <q-item class="item-detail">
                                 <q-item-section avatar top>
-                                <q-avatar icon="schedule" color="primary" text-color="white" />
+                                <q-avatar icon="schedule" color="dark" text-color="white" />
                                 </q-item-section>
                                 <q-item-section>
                                 <q-item-label class="text-subtitle1" lines="1">Fecha de Vencimiento</q-item-label>
@@ -68,7 +68,7 @@
 
                             <q-item class="item-detail">
                                 <q-item-section avatar top>
-                                <q-avatar icon="label" color="primary" text-color="white" />
+                                <q-avatar icon="label" color="dark" text-color="white" />
                                 </q-item-section>
                                 <q-item-section>
                                 <q-item-label class="text-subtitle1"   lines="1">Estado del Ticket</q-item-label>

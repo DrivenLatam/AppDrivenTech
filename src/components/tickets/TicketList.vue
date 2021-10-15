@@ -1,18 +1,20 @@
-<template>
+<template>     
     <q-spinner
         v-if="loading"
         color="primary "
         size="3em"
         class="full-width"
     />
+
     <q-pull-to-refresh v-else @refresh="onrefresh">
         <!-- LIST HEADER -->
-        <div class="row items-center mb-16 px-8 justify-between text-grey-8">
+        <div class="row items-center mb-16 px-8 justify-between text-grey-8 ">
         <!-- FILTER INFO -->
-            <div class="px-8">
+            <div class="px-8 ">
                 {{tickets.length}} {{tickets.length === 1 ? 'ticket' : 'tickets'}}
                 {{!search ? '' : tickets.length === 1 ? 'filtrado' : 'filtrados'}}
             </div>
+            
             <!-- FILTER OPTIONS -->
             <div>
                 <q-btn flat round dense icon="filter_alt">
@@ -52,7 +54,7 @@
 
 <script>
 import { defineComponent, ref, toRefs, computed } from 'vue';
-import {useGetters,useActions} from 'src/store'
+import {useGetters,useActions,useMutations} from 'src/store'
 
 import TicketItem from './TicketItem.vue'
 
@@ -63,6 +65,7 @@ export default defineComponent({
     setup(props) {
         const { search } = toRefs(props);
         const { loadingTicket } = useGetters()
+        const {setLoadingTicket}=useMutations()
         const { getTicketsFromServer } = useActions()
         const { tickets } = useGetters()
         const statusFilter = ref('');
@@ -104,3 +107,9 @@ export default defineComponent({
     },
 })
 </script>
+
+<style scoped>
+.fixed{
+    position: fixed;
+}
+</style>

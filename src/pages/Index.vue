@@ -1,6 +1,7 @@
 <template>
   <!-- PAGE HEADER -->
-  <q-header class="bg-transparent text-grey-8 px-16 pt-16">
+  
+    <q-header class="bg-white text-grey-8 px-16 pt-16">
     <q-toolbar>
       <q-input v-model="search" outlined rounded class="full-width" placeholder="Buscar tickets">
         <template v-slot:prepend>
@@ -13,6 +14,8 @@
       </q-input>
     </q-toolbar>
   </q-header>
+  
+  
 
   <!-- TICKET LIST -->
 
