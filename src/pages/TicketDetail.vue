@@ -15,14 +15,75 @@
 
             <q-page-container>
                 <q-page>
-                    <div>Detalle Ticket {{ticket}}</div>
+                    <q-list class="mt-25">
+                            <q-item class="item-detail">
+                                <q-item-section avatar top>
+                                <q-avatar icon="description" color="primary" text-color="white" />
+                                </q-item-section>
+                                <q-item-section>
+                                <q-item-label class="text-subtitle1" lines="1">Descripcion</q-item-label>
+                                <q-item-label class="text-grey-8 text-caption" >{{ticket.subject}}</q-item-label>
+                                </q-item-section>
+                                <q-item-section side>
+                                </q-item-section>
+                            </q-item>
+                            
+                            <q-item class="item-detail" >
+                                <q-item-section avatar top>
+                                <q-avatar icon="priority_high" color="primary" text-color="white" />
+                                </q-item-section>
+                                <q-item-section>
+                                <q-item-label class="text-subtitle1"  lines="1">Prioridad</q-item-label>
+                                <q-item-label class="text-grey-8 text-caption">{{ticket.priority}}</q-item-label>
+                                </q-item-section>
+                                <q-item-section side>
+                                </q-item-section>
+                            </q-item>
+                            
+
+                            <q-item class="item-detail">
+                                <q-item-section avatar top>
+                                <q-avatar icon="phone" color="primary" text-color="white" />
+                                </q-item-section>
+                                <q-item-section>
+                                <q-item-label class="text-subtitle1"   lines="1">Numero de Contacto</q-item-label>
+                                <q-item-label class="text-grey-8 text-caption">{{ticket.mobile_contact ? ticket.mobile_contact : "Sin Informacion"}}</q-item-label>
+                                </q-item-section>
+                                <q-item-section side>
+                                </q-item-section>
+                            </q-item>  
+                            
+                            <q-item class="item-detail">
+                                <q-item-section avatar top>
+                                <q-avatar icon="schedule" color="primary" text-color="white" />
+                                </q-item-section>
+                                <q-item-section>
+                                <q-item-label class="text-subtitle1" lines="1">Fecha de Vencimiento</q-item-label>
+                                <q-item-label class="text-grey-8 text-caption">{{formattedDate}}</q-item-label>
+                                </q-item-section>
+                                <q-item-section side>
+                                </q-item-section>
+                            </q-item>
+                            
+
+                            <q-item class="item-detail">
+                                <q-item-section avatar top>
+                                <q-avatar icon="label" color="primary" text-color="white" />
+                                </q-item-section>
+                                <q-item-section>
+                                <q-item-label class="text-subtitle1"   lines="1">Estado del Ticket</q-item-label>
+                                <q-item-label class="text-grey-8 text-caption">{{ticket.status}}</q-item-label>
+                                </q-item-section>
+                                <q-item-section side>
+                                </q-item-section>
+                            </q-item>   
+                            
+                    </q-list>
                 </q-page>
             </q-page-container>
             
         </q-layout>
     </q-dialog>
-    
- 
 </template>
 <script>
 
@@ -47,8 +108,20 @@ export default defineComponent({
             },200)
 
         }
-
-        return{ticketId,ticket,goBack,dialog}
+        const formattedDate=computed(()=>{
+            const date=new Date(ticket.value.dueDate)
+            return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')} `
+        })
+        return{ticketId,ticket,goBack,dialog,formattedDate}
     },
 })
 </script>
+<style scoped>
+.item-detail{
+    margin-top: 5   px;
+}
+.title-detail{
+    margin:5px;
+    padding-bottom: 0px;
+}
+</style>

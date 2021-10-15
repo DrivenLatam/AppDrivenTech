@@ -19,7 +19,7 @@
 
 <script>
 import { defineComponent,ref } from 'vue'
-import {useGetters,useActions} from 'src/store'
+import {useGetters,useActions,useMutations} from 'src/store'
 
 import TicketItem from './TicketItem.vue'
 
@@ -30,11 +30,20 @@ export default defineComponent({
     },
     setup() {
         const {loadingTicket}=useGetters()
+        const {setLoadingTicket}=useMutations()
         const {getTicketsFromServer}=useActions()
         const loadTickets=async()=>{
                 const {data,error}=await getTicketsFromServer()
                 console.log('tickets',data)
         }
+        const loadTicketsOnStart= async ()=>{
+            if(loadingTicket.value){
+                await loadTickets()
+                setLoadingTicket(false)
+            }
+        }
+        loadTicketsOnStart()
+        
         const onrefresh= async(done)=>{
                 await loadTickets()
                 done()

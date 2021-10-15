@@ -13,7 +13,7 @@ export default defineComponent({
     const { isLogged } = useGetters()
     const { getTicketsFromServer } = useActions()
     const { setLoadingTicket } = useMutations()
-    const verifyLogin= () => {
+    const verifyLogin= async() => {
       // Si no está logeado, redirige al login
       if (!isLogged.value) router.replace({path:'/login'})
       // Si está logeado, obtiene los tickets del servidor
