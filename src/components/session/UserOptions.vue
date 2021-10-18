@@ -7,6 +7,11 @@
                     <q-item-section>Refrescar tickets</q-item-section>
                 </q-item>
                 <q-separator />
+                <q-item clickable v-ripple @click="goToChangePasswordPage">
+                    <q-item-section avatar><q-icon name="manage_accounts" /></q-item-section>
+                    <q-item-section>Cambiar Contraseña</q-item-section>
+                </q-item>
+                <q-separator />
                 <q-item clickable v-ripple @click="logout">
                     <q-item-section avatar><q-icon name="logout" /></q-item-section>
                     <q-item-section>Cerrar sesión</q-item-section>
@@ -36,9 +41,13 @@ export default defineComponent({
             await getTicketsFromServer()
         }
 
+        const goToChangePasswordPage=()=>{
+            router.push({path:'/change/password'})
+        }
         return {
             logout,
-            refresh
+            refresh,
+            goToChangePasswordPage
         }
     },
 })
