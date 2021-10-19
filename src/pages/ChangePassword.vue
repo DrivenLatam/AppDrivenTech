@@ -65,6 +65,24 @@
                         <div v-else >Enviando solicitud  <q-spinner color="white" size="1em" /></div>
                         
                     </q-btn>
+
+
+                     <!-- CONFIRMATION Message-->
+                    <q-dialog  v-model="successMessage" persistent transition-show="scale" transition-hide="scale">
+                        <q-card class="bg-primary text-white" style="width: 300px">
+                            <q-card-section>
+                                <div class="text-h6">Finalizado</div>
+                            </q-card-section>
+
+                            <q-card-section class="q-pt-none">
+                                Su contraseña a sido cambiado exitosamente, inicie sesion nuevamente para continuar
+                            </q-card-section>
+
+                            <q-card-actions align="right" class="bg-white text-dark">
+                                <q-btn @click="logOut" flat label="Iniciar sesion" v-close-popup />
+                            </q-card-actions>
+                        </q-card>
+                    </q-dialog>
                 </q-page>
             </q-page-container>
         </q-layout>
@@ -73,20 +91,24 @@
 <script>
 import { defineComponent,ref,computed,watch } from 'vue'
 import {useRouter} from 'vue-router'
+import {useActions} from "src/store"
+import {store} from 'src/store/local.store'
 
 export default defineComponent({
     setup() {
-
+        /* Globals */
         const focusedInput=ref(null)
         const isSendingRequest=ref(false)
         const router=useRouter()
+        const {changePasswordServer}= useActions()
+        const successMessage=ref(false)
+        
         /* Current Password */
         const currentPassword=ref("")
         const currentPasswordInput=ref(null)
         const currentPasswordError=ref("")
 
         const focusCurrentPasword=(state=true)=>{
-            console.log('LLAMANDO')
             if (state) focusedInput.value = currentPasswordInput.value; 
             else if (focusedInput.value === currentPasswordInput.value) focusedInput.value = null;
         }
@@ -122,6 +144,7 @@ export default defineComponent({
 
         /* CHANGE PASSWORD */
         const validateField=()=>{
+                console.log(newPassword.value)
                 if(!currentPassword.value){
                     currentPasswordError.value="La contraseña actual no puede quedar vacia"
                     currentPasswordInput.value.focus()
@@ -130,11 +153,17 @@ export default defineComponent({
                     newPasswordError.value="La nueva contraseña no puede quedar vacia"
                     newPasswordInput.value.focus()
                     return false
-                }else if(!confirNewPassword.value){
+                }else if(newPassword.value.length<5){
+                    newPasswordError.value="La contraseña debe tener al menos 5 caracteres"
+                    newPasswordInput.value.focus()
+                    return false
+                }
+                else if(!confirNewPassword.value){
                     confirNewPasswordError.value="La confirmacion de contraseña no puede quedar vacia"
                     confirNewPasswordInput.value.focus()
                     return false
-                }else if(newPassword.value!==confirNewPassword.value){
+                }
+                else if(newPassword.value!==confirNewPassword.value){
                     confirNewPasswordError.value="La constraseña no coincide"
                     confirNewPasswordInput.value.focus()
                     return false
@@ -144,17 +173,35 @@ export default defineComponent({
                     return false
                 }
             return true
-        }      
-        const changePassword=()=>{
+        }     
+        
+        //Hacer un request al servidor para cambiar la contraseña
+        const changePassword= async()=>{
              if(validateField()){
                  isSendingRequest.value=true
-                 setTimeout(()=>{
-                     isSendingRequest.value=false
-                 },1000)
-                 console.log("Todo Ok")
+                 const {data,error,field}= await changePasswordServer({
+                                current_password:currentPassword.value,
+                                new_password:newPassword.value,
+                                confir_new_password:confirNewPassword.value})
+                 console.log(data)
+                 isSendingRequest.value=false
+                 if(data){
+                    successMessage.value=true
+                 }
+                 else if(error){
+                    if(field=="current_password"){
+                        currentPasswordError.value=error[0]
+                        currentPasswordInput.value.focus()
+                    }
+                 }
              }
         };
-
+        
+        const logOut=()=>{
+             // TODO: ELIMIAR DATOS DEL LOCAL STORAGE, DEL STORE, Y REDIRIGIR A LA PÁGINA DE LOGIN
+            store.set("user",null)
+            router.replace({path:'/login'})
+        }
         const goBack=()=>{
             router.go(-1)
         };
@@ -177,10 +224,12 @@ export default defineComponent({
             focusConfirNewPassword,
             isConfirNewPasswordFocus,
 
+            successMessage,
             isSendingRequest,
             changePassword,
             goBack,
-            focusCurrentPasword
+            focusCurrentPasword,
+            logOut
         }
     },
 })

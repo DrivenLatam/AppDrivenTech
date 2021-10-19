@@ -1,6 +1,7 @@
 import { BASE_URL } from '.';
 import axios from 'axios';
 import { store } from './local.store';
+import {handleMessageError} from '.'
 
 export default {
     state() {
@@ -28,7 +29,20 @@ export default {
                 console.log('error',error.response)
                 return { error } }
         },
+
         logout({ commit }) { commit('setUser', null) },
+
+        async changePasswordServer({commit},{current_password,new_password,confir_new_password}){
+            try {
+                console.log("ChangePassword")
+                const {email}=store.get("user")
+                const {data}= await axios.put(BASE_URL+"users/password/",{email,current_password,new_password,confir_new_password})
+                return {data}
+            } catch (_error) {
+                const {error,field}=handleMessageError(_error)
+                return {error,field}
+            }
+        }
     },
     getters: {
         user(state) { return state.user },

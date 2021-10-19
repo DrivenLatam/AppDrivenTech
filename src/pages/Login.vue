@@ -131,7 +131,7 @@ export default defineComponent({
                 if (error) {
                     console.log('error')
                     await nextTick();
-                    loginError.value = error;
+                    loginError.value={error} ;
                 }
                 else if (data) {
                    router.replace({path:'/'})

@@ -5,8 +5,24 @@ import ticketsStore from './tickets.store';
 
 import { computed } from 'vue';
 
-export const BASE_URL = "http://f28a-186-2-207-58.ngrok.io/";
+export const BASE_URL = "http://localhost:8000/";
 
+export const handleMessageError=(error)=>{
+  if (error.response) {
+    // Request made and server responded
+    console.log(error.response.data);
+    return { error:error.response.data.error, field:error.response.data.field[0] }
+    //console.log(error.response.status);
+    //console.log(error.response.headers);
+  } else if (error.request) {
+    // The request was made but no response was received
+    //console.log(error.request);
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    //console.log('Error', error.message);
+  }
+
+}
 // import example from './module-example'
 
 /*
