@@ -11,7 +11,7 @@ export const handleMessageError=(error)=>{
   if (error.response) {
     // Request made and server responded
     console.log(error.response.data);
-    return { error:error.response.data.error, field:error.response.data.field[0] }
+    return { error:error.response.data.error[0], field:error.response.data.field[0] }
     //console.log(error.response.status);
     //console.log(error.response.headers);
   } else if (error.request) {

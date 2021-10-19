@@ -190,7 +190,7 @@ export default defineComponent({
                  }
                  else if(error){
                     if(field=="current_password"){
-                        currentPasswordError.value=error[0]
+                        currentPasswordError.value=error
                         currentPasswordInput.value.focus()
                     }
                  }

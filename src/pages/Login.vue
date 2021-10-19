@@ -14,34 +14,37 @@
 
         <q-input v-model="email" dense autofocus :disable="sendingLogin" :ref="el => emailInput=el"   
                 label="Email" class="full-width mt-32 login-input" 
-                @keypress.enter="requestLogin" @focus="focusEmail" @blur="focusEmail(false)">
+                @keypress.enter="requestLogin" @focus="focusEmail" @blur="focusEmail(false)"
+                :error="!!emailError"
+                :error-message="emailError"
+                >
             <template v-slot:append>
-                <q-icon name="alternate_email" :color="isEmailFocus?'primary':'grey-7'" />
+                <q-icon v-if="!emailError" name="alternate_email" :color="isEmailFocus?'primary':'grey-7'" />
             </template>
         </q-input>
-        <div v-if="emailError" class="p-4 mt-4 br-2 bg-red text-white full-width text-weight-bold">{{emailError}}</div>
-        <div v-else class="p-4 mt-4 text-white">.</div>
-
+ 
         <!-- PASSWORD INPUT -->
 
         <q-input v-model="password" dense :ref="el => passwordInput=el" :disable="sendingLogin" 
                 label="Contraseña" class="full-width mt-8 login-input" type="password" 
-                @keypress.enter="requestLogin" @focus="focusPassword" @blur="focusPassword(false)">
+                @keypress.enter="requestLogin" @focus="focusPassword" @blur="focusPassword(false)"
+                :error="!!passwordError"
+                :error-message="passwordError"
+                >
             <template v-slot:append>
-                <q-icon name="password" :color="isPasswordFocus?'primary':'grey-7'" />
+                <q-icon  v-if="!passwordError" name="password" :color="isPasswordFocus?'primary':'grey-7'" />
             </template>
         </q-input>
-        <div v-if="passwordError" class="p-4 mt-4 br-2 bg-red text-white full-width text-weight-bold">{{passwordError}}</div>
-        <div v-else class="p-4 mt-4 text-white">.</div>
+       
 
         <!-- SERVER ERROR MESSAGE -->
 
-        <div v-if="genericError" class="p-4 mt-8 br-2 bg-red text-white full-width text-weight-bold">{{genericError}}</div>
+        <div  v-if="genericError" class="q-pa-sm  border-radius-inherit mt-8 br-2 bg-red text-white text-h6 full-width ">{{genericError}}</div>
         <div v-else class="p-4 mt-8 text-white">.</div>
 
         <!-- SEND LOGIN BUTTON -->
 
-        <q-btn class="mt-8 bg-primary text-white px-64 py-4" @click="requestLogin">
+        <q-btn class="mt- bg-primary text-white  px-64 py-4" @click="requestLogin">
             <div v-if="!sendingLogin">Iniciar sesión</div>
             <q-spinner v-else color="white" size="1em" />
         </q-btn>
@@ -93,6 +96,7 @@ export default defineComponent({
         }
         const isPasswordFocus = computed(() => focusedInput.value === passwordInput.value)
         watch(password, () => loginError.value && (loginError.value.password = loginError.value.error = undefined));
+        
         //
         // ERROR
         //
@@ -126,12 +130,13 @@ export default defineComponent({
             loginError.value = null;
             
             if (validateLogin()) {
-                const { data, error } = await login({ email:email.value, password:password.value });
+                const { data, error,field } = await login({ email:email.value, password:password.value });
                 
                 if (error) {
+                    if(field=="global") loginError.value={error:error}
                     console.log('error')
-                    await nextTick();
-                    loginError.value={error} ;
+                    //await nextTick();
+                     
                 }
                 else if (data) {
                    router.replace({path:'/'})

@@ -25,9 +25,10 @@ export default {
                 commit('setUser', user);
                 return { data: user };
             }
-            catch (error) { 
-                console.log('error',error.response)
-                return { error } }
+            catch (_error) { 
+                const {error,field}=handleMessageError(_error)
+                return {error,field}
+            }
         },
 
         logout({ commit }) { commit('setUser', null) },
