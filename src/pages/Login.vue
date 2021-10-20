@@ -18,21 +18,28 @@
                 :error="!!emailError"
                 :error-message="emailError"
                 >
-            <template v-slot:append>
-                <q-icon v-if="!emailError" name="alternate_email" :color="isEmailFocus?'primary':'grey-7'" />
+            <template v-slot:prepend>
+                <q-icon  name="email" :color="emailColorIcon" />
             </template>
         </q-input>
  
         <!-- PASSWORD INPUT -->
 
         <q-input v-model="password" dense :ref="el => passwordInput=el" :disable="sendingLogin" 
-                label="Contraseña" class="full-width mt-8 login-input" type="password" 
+                label="Contraseña" class="full-width mt-8 login-input" :type=" hidePassword ? 'password' : 'text' " 
                 @keypress.enter="requestLogin" @focus="focusPassword" @blur="focusPassword(false)"
                 :error="!!passwordError"
-                :error-message="passwordError"
+                :error-message="passwordError" 
                 >
+            <template v-slot:prepend>
+                <q-icon   name="lock" :color="passwordColorIcon" />
+            </template>
             <template v-slot:append>
-                <q-icon  v-if="!passwordError" name="password" :color="isPasswordFocus?'primary':'grey-7'" />
+                <q-icon
+                    :name=" hidePassword ? 'visibility_off' : 'visibility'"
+                    class="cursor-pointer"
+                    @click="hidePassword=!hidePassword"
+                />
             </template>
         </q-input>
        
@@ -71,6 +78,8 @@ export default defineComponent({
         const { isLogged } = useGetters();
         const { login } = useActions();
         const focusedInput = ref(null);
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        const hidePassword=ref(true)
         //
         // USER NAME
         //
@@ -81,7 +90,9 @@ export default defineComponent({
             else if (focusedInput.value === emailInput.value) focusedInput.value = null;
         }
         const isEmailFocus = computed(() => focusedInput.value === emailInput.value)
-        watch(email, () => loginError.value && (loginError.value.email = loginError.value.error = undefined));
+        const emailColorIcon= computed(()=>emailError.value ? 'negative' : isEmailFocus.value ? 'primary' :'grey-7' )
+        
+        watch(email, () => loginError.value && (loginError.value.email = undefined));
         //
         // PASSWORD
         //
@@ -95,7 +106,9 @@ export default defineComponent({
             router.push({ path: `/login/resetPassword/${email.value}` });
         }
         const isPasswordFocus = computed(() => focusedInput.value === passwordInput.value)
-        watch(password, () => loginError.value && (loginError.value.password = loginError.value.error = undefined));
+        const passwordColorIcon= computed(()=> passwordError.value ? 'negative' : isPasswordFocus.value ? 'primary' :'grey-7' )
+        
+        watch(password, () => loginError.value && (loginError.value.password = undefined));
         
         //
         // ERROR
@@ -114,14 +127,21 @@ export default defineComponent({
         //
         const sendingLogin = ref(false);
         const validateLogin = () => {
+            
             if (!email.value) {
                 loginError.value = { email: "Ingrese su nombre de usuario" };
                 return false;
-            }
-            if (!password.value) {
+            }else if ( email.value.length<5 || !emailPattern.test(email.value )){
+                loginError.value = { email: "Ingrese un email valido" };
+                return false;
+            }else if (!password.value) {
                 loginError.value = { password: "Ingrese su contraseña" };
                 return false;
+            }else if (password.value.length<5){
+                loginError.value = { password: "La longitud de la cadena debe ser mayor que 5" };
+                return false;
             }
+            
             return true;
         }
         const requestLogin = async () => {
@@ -133,7 +153,7 @@ export default defineComponent({
                 const { data, error,field } = await login({ email:email.value, password:password.value });
                 
                 if (error) {
-                    if(field=="global") loginError.value={error:error}
+                    if(field=="global") loginError.value={email:error,password:error}
                     console.log('error')
                     //await nextTick();
                      
@@ -171,6 +191,9 @@ export default defineComponent({
             isEmailFocus,
             isPasswordFocus,
             gotoResetPassword,
+            hidePassword,
+            emailColorIcon,
+            passwordColorIcon
         }
         
     },

@@ -12,18 +12,27 @@
                     <p class="text-h6 text-weight-bold q-ml-lg q-mt-lg">Cambiar Contraseña</p>
                     <div class="current-password-container q-mx-lg shadow-3">
                         <q-input v-model="currentPassword" dense 
+                            autofocus
                             label="Contraseña actual" 
                             @focus="focusCurrentPasword"
                             @blur="focusCurrentPasword(false)" 
                             :ref="el=>currentPasswordInput=el"
                             :error="!!currentPasswordError" 
                             :error-message="currentPasswordError"
+                            :type=" hideCurrentPassword ? 'password' : 'text' "
                         >
-                            <template v-slot:append>
-                                <q-icon name="password" 
-                                 :color=" isCurrentPasswordFocus?'primary':'grey-7' "
-                                  v-if="!currentPasswordError"
+                            <template v-slot:prepend>
+                                <q-icon name="lock"
+                                 :color=" currentPasswordColorIcon "
+                                  
                                 />
+                            </template>
+                            <template v-slot:append>
+                                <q-icon
+                                    :name=" hideCurrentPassword ? 'visibility_off' : 'visibility' "
+                                    @click=" hideCurrentPassword=!hideCurrentPassword"
+                                />
+                                
                             </template>
                         </q-input>
                     </div>
@@ -35,11 +44,18 @@
                                 :ref="el=>newPasswordInput=el"
                                 :error="!!newPasswordError"
                                 :error-message="newPasswordError"
+                                :type=" hideNewPassword?'password':'text' "
                             >
+                                <template v-slot:prepend>
+                                    <q-icon name="lock"
+                                        :color=" newPasswordColorIcon"
+                                        
+                                    />
+                                </template>
                                 <template v-slot:append>
-                                    <q-icon name="password" 
-                                    :color="isNewPasswordFocus? 'primary' : 'grey-7' "
-                                     v-if= "!newPasswordError"
+                                     <q-icon 
+                                        :name=" hideNewPassword ? 'visibility_off' : 'visibility' "
+                                        @click="hideNewPassword = !hideNewPassword"
                                     />
                                 </template>
                             </q-input>
@@ -50,12 +66,18 @@
                                 :ref="el=>confirNewPasswordInput=el"
                                 :error="!!confirNewPasswordError"
                                 :error-message="confirNewPasswordError"
+                                :type=" hideConfirNewPassword ? 'password' : 'text' "
                               >
-                                <template v-slot:append>
-                                    <q-icon name="password"
-                                        :color="isConfirNewPasswordFocus?'primary' :'grey-7' "
-                                        v-if="!confirNewPasswordError"
+                                <template v-slot:prepend>
+                                    <q-icon name="lock"
+                                        :color="confirNewPasswordColorIcon"
                                      />
+                                </template>
+                                <template v-slot:append>
+                                    <q-icon 
+                                        :name=" hideConfirNewPassword ? 'visibility_off' : 'visibility' "
+                                        @click="hideConfirNewPassword = !hideConfirNewPassword"
+                                    />
                                 </template>
                             </q-input>
                     </div>
@@ -107,25 +129,27 @@ export default defineComponent({
         const currentPassword=ref("")
         const currentPasswordInput=ref(null)
         const currentPasswordError=ref("")
-
+        const hideCurrentPassword=ref(true)
         const focusCurrentPasword=(state=true)=>{
             if (state) focusedInput.value = currentPasswordInput.value; 
             else if (focusedInput.value === currentPasswordInput.value) focusedInput.value = null;
         }
         const isCurrentPasswordFocus= computed(()=> focusedInput.value === currentPasswordInput.value )
-
-        watch(currentPassword,_=>currentPasswordError.value="")
+        const currentPasswordColorIcon=computed( ()=> currentPasswordError.value ? 'negative' : isCurrentPasswordFocus.value ? 'primary':'grey-7' )
+        watch(currentPassword, _=>currentPasswordError.value="")
         
         /* NEW PASSWORD */
         const newPassword=ref("")
         const newPasswordInput=ref(null)
         const newPasswordError=ref("")
+        const hideNewPassword=ref(true)
 
         const focusNewPassword=(state=true)=>{
             if (state) focusedInput.value = newPasswordInput.value; 
             else if (focusedInput.value === newPasswordInput.value) focusedInput.value = null;
         }
         const isNewPasswordFocus= computed(()=> focusedInput.value === newPasswordInput.value )
+        const newPasswordColorIcon=computed( ()=> newPasswordError.value ? 'negative' : isNewPasswordFocus.value ? 'primary':'grey-7' )
 
         watch(newPassword,_=>newPasswordError.value="")
 
@@ -133,12 +157,14 @@ export default defineComponent({
         const confirNewPassword=ref("")
         const confirNewPasswordInput=ref(null)
         const confirNewPasswordError=ref("")
+        const hideConfirNewPassword=ref(true)
 
         const focusConfirNewPassword=(state=true)=>{
             if(state) focusedInput.value=confirNewPasswordInput.value
             else if(focusedInput.value === confirNewPasswordInput.value) focusedInput.value=null
         }
         const isConfirNewPasswordFocus=computed(()=>focusedInput.value===confirNewPasswordInput.value)
+        const confirNewPasswordColorIcon=computed( ()=> confirNewPasswordError.value ? 'negative' : isConfirNewPasswordFocus.value ? 'primary':'grey-7' )
 
         watch(confirNewPassword,_=>confirNewPasswordError.value="")
 
@@ -210,19 +236,25 @@ export default defineComponent({
             currentPasswordInput,
             isCurrentPasswordFocus,
             currentPasswordError,
-            focusCurrentPasword,
+            focusCurrentPasword,   
+            hideCurrentPassword,
+            currentPasswordColorIcon,
 
             newPassword,
             newPasswordInput,
             newPasswordError,
             isNewPasswordFocus,
             focusNewPassword,
+            hideNewPassword,
+            newPasswordColorIcon,
 
             confirNewPassword,
             confirNewPasswordInput,
             confirNewPasswordError,
             focusConfirNewPassword,
             isConfirNewPasswordFocus,
+            hideConfirNewPassword,
+            confirNewPasswordColorIcon,
 
             successMessage,
             isSendingRequest,
