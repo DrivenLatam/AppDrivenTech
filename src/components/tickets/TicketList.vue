@@ -43,14 +43,14 @@
             </div>
         </div>
         <!-- LIST BODY -->
-        
-        <q-list class="full-width">
-            <div v-for="ticket of tickets" :key="ticket.id">
-                <ticket-item :ticket="ticket"/>
-                <q-separator spaced inset />   
-            </div>
-        </q-list>
-        
+        <q-scroll-area style="height: calc(100vh - 220px); max-width: 100%;">
+            <q-list class="full-width">
+                <div v-for="ticket of tickets" :key="ticket.id">
+                    <ticket-item :ticket="ticket"/>
+                    <q-separator spaced inset />   
+                </div>
+            </q-list>
+        </q-scroll-area>
         
     </q-pull-to-refresh>
 </template>
