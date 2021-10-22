@@ -5,7 +5,7 @@ import ticketsStore from './tickets.store';
 
 import { computed } from 'vue';
 
-export const BASE_URL = "http://localhost:8000/";
+export const BASE_URL = "https://jesusroman.live/";
 
 export const handleMessageError=(error)=>{
   if (error.response) {
