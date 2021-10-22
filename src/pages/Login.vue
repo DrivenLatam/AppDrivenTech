@@ -153,7 +153,7 @@ export default defineComponent({
                 const { data, error,field } = await login({ email:email.value, password:password.value });
                 
                 if (error) {
-                    if(field=="global") loginError.value={email:error,password:error}
+                    if(field=="global") loginError.value={email:error[0],password:error[0]}
                     console.log('error')
                     //await nextTick();
                      

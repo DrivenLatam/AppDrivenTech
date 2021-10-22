@@ -9,8 +9,9 @@
 
             <q-page-container>
                 <q-page class="flex  bg-white  column ">
-                    <p class="text-h6 text-weight-bold q-ml-lg q-mt-lg">Cambiar Contraseña</p>
-                    <div class="current-password-container q-mx-lg shadow-3">
+                    <div class="current-password-container q-mt-lg  ">
+                        <p class="text-h5">Contraseña actual</p>
+                        <p class="text-grey-8 q-mb-md">Ingrese la contraseña actual </p>
                         <q-input v-model="currentPassword" dense 
                             autofocus
                             label="Contraseña actual" 
@@ -36,7 +37,9 @@
                             </template>
                         </q-input>
                     </div>
-                    <div class="new-password-container q-ma-lg shadow-3 ">
+                    <div class="new-password-container mt-20">
+                            <p class="text-h5">Nueva contraseña</p>
+                            <p class="text-grey-8 q-mb-md">Ingrese una nueva contraseña para tu cuenta</p>
                             <q-input v-model="newPassword" dense  class="q-mb-md" 
                                 label="Nueva contraseña"
                                 @focus="focusNewPassword"
@@ -81,9 +84,9 @@
                                 </template>
                             </q-input>
                     </div>
-                    <q-btn class="self-center mt-20 px-64 py-5  q-mx-lg" no-caps color="primary" 
+                    <q-btn class="self-center mt-20 px-84 py-8  q-mx-lg text-subtitle2" no-caps color="primary" 
                      @click="changePassword">
-                        <div v-if="!isSendingRequest"> Cambiar contraseña</div>
+                        <div v-if="!isSendingRequest" > Cambiar contraseña</div>
                         <div v-else >Enviando solicitud  <q-spinner color="white" size="1em" /></div>
                         
                     </q-btn>
@@ -92,20 +95,18 @@
                      <!-- CONFIRMATION Message-->
                     <q-dialog  v-model="successMessage" persistent transition-show="scale" transition-hide="scale">
                         <q-card class="bg-primary text-white" style="width: 300px">
-                            <q-card-section>
-                                <div class="text-h6">Finalizado</div>
+                            
+
+                            <q-card-section class="bg-white text-grey-9 q-py-lg">
+                                Su contraseña ha sido cambiada exitosamente, inicie sesión nuevamente para continuar
                             </q-card-section>
 
-                            <q-card-section class="q-pt-none">
-                                Su contraseña a sido cambiado exitosamente, inicie sesion nuevamente para continuar
-                            </q-card-section>
-
-                            <q-card-actions align="right" class="bg-white text-dark">
-                                <q-btn @click="logOut" flat label="Iniciar sesion" v-close-popup />
+                            <q-card-actions align="right" class="bg-white text-primary">
+                                <q-btn @click="logOut" flat label="Iniciar sesion"  v-close-popup />
                             </q-card-actions>
                         </q-card>
                     </q-dialog>
-                </q-page>
+                 </q-page>
             </q-page-container>
         </q-layout>
 </template>
@@ -216,7 +217,7 @@ export default defineComponent({
                  }
                  else if(error){
                     if(field=="current_password"){
-                        currentPasswordError.value=error
+                        currentPasswordError.value=error[0]
                         currentPasswordInput.value.focus()
                     }
                  }
@@ -271,8 +272,7 @@ export default defineComponent({
 
 <style>
 .current-password-container,.new-password-container{
-    background-color: #fcfcfc;
-    padding: 20px ;
+    padding: 0px 20px ;
     border-radius: 5px;
 }
 </style>

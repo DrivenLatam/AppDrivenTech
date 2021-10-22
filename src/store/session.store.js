@@ -7,7 +7,8 @@ export default {
     state() {
         return {
             user: store.get('user', null),
-            resetPasswordEmail:store.get('resetPasswordEmail',"")
+            resetPasswordEmail:store.get('resetPasswordEmail',""),
+            resetVerificationCode:store.get('resetVerificationCode',"")
         }
     },
     mutations: {
@@ -15,9 +16,11 @@ export default {
             state.user = data;
             store.set('user', data); 
         },
-        setResetPasswordEmail(state,email){
+        setResetPasswordEmail(state,{email,verificationCode}){
+            console.log(email,verificationCode)
             state.resetPasswordEmail=email
             store.set('resetPasswordEmail',email)
+            store.set('resetVerificationCode',verificationCode)
         }
     },
     actions: {
@@ -53,13 +56,13 @@ export default {
         async generatePasswordCode({commit},email){
             try{
                 const {data}= await axios.get(BASE_URL+'users/password/generateCode/',{params:{email}})
-                console.log('data',data)
-                commit('setResetPasswordEmail',email)
+                console.log('data',data.verification_code)
+                commit('setResetPasswordEmail',{email:email,verificationCode:data.verification_code})
                 return {data}
-            }catch(error){
-                //const {error,field}=handleMessageError(_error)
+            }catch(_error){
+                const {error,field}=handleMessageError(_error)
                 console.log('error',error)
-                return {error}
+                return {error,field}
             }
         },
 
@@ -69,10 +72,9 @@ export default {
                 const {data}= await axios.get(BASE_URL+'users/password/verificateCode/',{params:{email,code}})
                 console.log('data',data)
                 return {data}
-            }catch(error){
-                //const {error,field}=handleMessageError(_error)
-                console.log('error',error.response)
-                return {error}
+            }catch(_error){
+                const {error,field}=handleMessageError(_error)
+                return {error,field}
             }
         },
 
@@ -82,10 +84,9 @@ export default {
                 const {data}= await axios.put(BASE_URL+"users/password/reset/",{email,new_password,confir_new_password})
                 commit('setResetPasswordEmail',"")
                 return {data}
-            } catch (error) {
-                //const {error,field}=handleMessageError(_error)
-                console.log(error.response)
-                return {error}
+            } catch (_error) {
+                const {error,field}=handleMessageError(_error)
+                return {error,field}
             }
         },
     },
@@ -94,6 +95,7 @@ export default {
         isLogged(state) { return !!state.user },
         token(state) { return state.user.token },
         resetPasswordEmail(state){return state.resetPasswordEmail},
+        resetVerificationCode(state){return state.resetVerificationCode},
         authHeader(state) {
             const { token } = state.user;
             return {

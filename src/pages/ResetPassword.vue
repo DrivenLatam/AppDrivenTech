@@ -67,8 +67,41 @@
             <div class="px-30 mt-16 column">
                 <div class="text-h5 text-grey-9">Nueva contraseña</div>
                 <div class="mt-8 text-grey-8 mb-32">Ingresa una nueva contraseña para tu cuenta.</div>
-                <q-input autofocus v-model="newPassword" label="Nueva contraseña" />
-                <q-input v-model="newPasswordConfirmation" class="mt-16" label="Confirmar nueva contraseña" />
+                <q-input autofocus :ref=" e=>newPasswordInput=e " v-model="newPassword" 
+                    @focus="newPasswordFocus"
+                    @blur="newPasswordFocus(false)"
+                    :type="hideNewPasswordInput ? 'password' : 'text' "
+                    label="Nueva contraseña" :error="!!newPasswordError" :error-message="newPasswordError" >
+                    <template v-slot:prepend>
+                        <q-icon name="lock"
+                            :color=" newPasswordColorIcon"
+                        />
+                    </template>
+                    <template  v-slot:append>
+                        <q-icon  :name=" hideNewPasswordInput ? 'visibility_off' : 'visibility' "
+                                 @click=" hideNewPasswordInput= !hideNewPasswordInput"
+                        />
+                    </template>
+                </q-input>
+                <q-input v-model="newPasswordConfirmation" class="mt-16" label="Confirmar nueva contraseña"
+                         :ref=" el=>newPasswordConfirmationInput=el "
+                         @focus="focusNewPasswordConfirmation"
+                         @blur="focusNewPasswordConfirmation(false)"
+                         :type=" hideNewPasswordConfirmationInput ? 'password' : 'text' "
+                         :error="!!newPasswordConfirmationError"
+                         :error-message="newPasswordConfirmationError"
+                 >
+                    <template v-slot:prepend>
+                        <q-icon name="lock"
+                                :color="confirNewPasswordIconColor"
+                        />
+                    </template>
+                    <template  v-slot:append>
+                        <q-icon  :name=" hideNewPasswordConfirmationInput ? 'visibility_off' : 'visibility' "
+                            @click=" hideNewPasswordConfirmationInput= !hideNewPasswordConfirmationInput"
+                        />
+                    </template>
+                </q-input>
                 <q-btn no-caps class="mt-16" :color="isValidNewPassword ? 'primary' : 'grey-8'" @click="sendResetPassword">
                     <div v-if="!sending" class="row">
                         <div class="mr-10">Guardar nueva contraseña</div>
@@ -86,8 +119,8 @@
             <q-card class="bg-primary text-white" style="width: 300px">
                 
 
-                <q-card-section class="bg-white text-grey-9">
-                    Su contraseña ha sido cambiada exitosamente, inicie sesion nuevamente para continuar
+                <q-card-section class="bg-white text-grey-9 q-py-lg">
+                    Su contraseña ha sido cambiada exitosamente, inicie sesión nuevamente para continuar
                 </q-card-section>
 
                 <q-card-actions align="right" class="bg-white text-primary">
@@ -95,12 +128,22 @@
                 </q-card-actions>
             </q-card>
         </q-dialog>
-        
+        <!--SHOW CODE VERIFICATION -->
+        <q-dialog :model-value="dialogCodeVerification" position="bottom">
+            <q-card style="width: 350px">
+                <q-card-section class="row items-center no-wrap">
+                    <div>
+                        <div class="text-weight-bold text-subtitle1">Codigo de Verificacion</div>
+                        <div class=" text-h6 text-grey-8">{{verificationCodeDialog}}</div>
+                    </div>
+                </q-card-section>
+            </q-card>
+        </q-dialog>
     </q-page>
 </template>
 
 <script>
-import { defineComponent, ref,watch } from 'vue';
+import { defineComponent, ref,watch,computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {useActions,useGetters,useMutations} from 'src/store'
 const _awaiter = async (time = 1500) => {
@@ -118,6 +161,7 @@ export default defineComponent({
         const router = useRouter();
         const sending = ref(false);
         const successMessage=ref(false)
+        const focusedInput=ref(null)
         const goToLogin=()=>{
             router.replace({path:'/login'})
         }
@@ -141,12 +185,14 @@ export default defineComponent({
                 return
             }
             sending.value = true;
-            const {data,error}=await generatePasswordCode(email.value)
+            const {data,error,field}=await generatePasswordCode(email.value)
             sending.value = false;
-            if(error){
+            if(error && field){
                 emailSended.value = false;
-                emailError.value="El email no existe"
+                emailError.value=error
             }else{
+                verificationCodeDialog.value=data.verification_code
+                console.log('verig',verificationCode.value)
                 emailSended.value = true;
             }
             
@@ -154,26 +200,34 @@ export default defineComponent({
         //
         // VERIFICATION CODE
         //
-        const verificationCode = ref('1234');
+        const {resetVerificationCode}=useGetters()
+        const verificationCode = ref('');
+        const verificationCodeDialog=ref(resetVerificationCode.value || '');  //eliminar despues
         const codeVerificated = ref(false);
         const {validatePasswordCode} = useActions()
         const verificationCodeError=ref('')
         const {setResetPasswordEmail}= useMutations()
-
+        const dialogCodeVerification=computed(()=>  {
+            return (!codeVerificated.value && emailSended.value) ? true : false
+        })
+        
+        console.log('r',resetVerificationCode.value)
         watch(verificationCode,()=>verificationCodeError.value="")
-        const sendVerficationCode = async () => {
+       
+       const sendVerficationCode = async () => {
             sending.value = true;
-            const {data,error}= await validatePasswordCode({email:email.value,code:verificationCode.value})
-            if(error){
-                verificationCodeError.value="Codigo de verificacion Invalido"
+            const {data,error,field}= await validatePasswordCode({email:email.value,code:verificationCode.value})
+            if(error && field){
+                verificationCodeError.value=error
             }else{
                 codeVerificated.value = true;
+                
             }
             sending.value = false;
         };
 
         const changeResetEmail=()=>{
-                setResetPasswordEmail("")
+                setResetPasswordEmail({email:"",verificationCode:""})
                 emailSended.value=false
                 email.value=""
         }
@@ -181,20 +235,59 @@ export default defineComponent({
         // NEW PASSWORD
         //
         const newPassword = ref('');
-        const newPasswordConfirmation = ref('');
         const {resetPassword}=useActions()
+        const newPasswordInput=ref(null)
+        const newPasswordError=ref("")
+        const hideNewPasswordInput= ref(true)
+        const newPasswordFocus=(state=true)=>{
+            if(state) focusedInput.value=newPasswordInput.value
+            else if(newPasswordInput.value==focusedInput.value) focusedInput.value=null  
+        }
+        const isNewPasswordFocus=computed(()=>newPasswordInput.value==focusedInput.value)
+        const newPasswordColorIcon= computed(()=> newPasswordError.value ? 'negative' : isNewPasswordFocus.value ? 'primary': 'grey-7' )
+        watch(newPassword,_=>newPasswordError.value="")
+        //
+        //CONFIR NEW PASSWORD
+        //
+        const newPasswordConfirmation = ref('');
+        const newPasswordConfirmationInput=ref(null)
+        const newPasswordConfirmationError=ref("")
+        const hideNewPasswordConfirmationInput=ref(true)
+        const focusNewPasswordConfirmation=(state=true)=>{
+            if(state)focusedInput.value=newPasswordConfirmationInput.value
+            else if(focusedInput.value==newPasswordConfirmationInput.value) focusedInput.value=null
+        }
+        const isNewPasswordConfirmationFocus=computed(()=> focusedInput.value==newPasswordConfirmationInput.value)
+        const confirNewPasswordIconColor= computed(()=> newPasswordConfirmationError.value ? 'negative' : isNewPasswordConfirmationFocus.value ? 'primary': 'grey-7' )
+        watch(newPasswordConfirmation,_=>newPasswordConfirmationError.value="")
+
         const isValidNewPassword = () => {
-            return newPassword.value.length > 8 && newPassword.value === newPasswordConfirmation.value;
+            if(newPassword.value.length < 5){
+                newPasswordError.value= "La longitud de la contraseña debe ser mayor a 5"
+                return  false
+            }
+            if(newPassword.value != newPasswordConfirmation.value){
+                newPasswordConfirmationError.value="Las contraseñas no coinciden"
+                return false
+            }
+            return true
         };
+
         const sendResetPassword = async () => {
             const email=resetPasswordEmail.value
-            sending.value = true;
-            const {data,error}= await resetPassword({email:email,new_password:newPassword.value,confir_new_password:newPasswordConfirmation.value})
-            if(!error){
-                console.log('No hay error')
-                sending.value = false;
-                successMessage.value=true
+            if(!isValidNewPassword()){
+                return
             }
+            sending.value = true;
+            const {data,error,field}= await resetPassword({email:email,new_password:newPassword.value,confir_new_password:newPasswordConfirmation.value})
+            sending.value = false;
+            if(error && field){
+                console.log(error)
+                newPasswordError.value=error[0]
+                return
+            }
+            successMessage.value=true
+            
             
         };
 
@@ -214,7 +307,20 @@ export default defineComponent({
             verificationCodeError,
             changeResetEmail,
             successMessage,
-            goToLogin
+            goToLogin,
+            newPasswordInput,
+            newPasswordFocus,
+            newPasswordColorIcon,
+            newPasswordError,
+            hideNewPasswordInput,
+            newPasswordConfirmationInput,
+            focusNewPasswordConfirmation,
+            confirNewPasswordIconColor,
+            hideNewPasswordConfirmationInput,
+            newPasswordConfirmationError,
+            dialogCodeVerification,
+            resetVerificationCode,
+            verificationCodeDialog
         }
     },
 })
