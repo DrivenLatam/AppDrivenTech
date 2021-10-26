@@ -1,58 +1,57 @@
 <template>     
-    <q-spinner
-        v-if="loading"
-        color="primary "
-        size="3em"
-        class="full-width"
-    />
-
-    <q-pull-to-refresh v-else @refresh="onrefresh">
-        <!-- LIST HEADER -->
-        <div class="row items-center mb-16 px-8 justify-between text-grey-8 ">
-        <!-- FILTER INFO -->
-            <div class="px-8 ">
-                {{tickets.length}} {{tickets.length === 1 ? 'ticket' : 'tickets'}}
-                {{!search ? '' : tickets.length === 1 ? 'filtrado' : 'filtrados'}}
-            </div>
-            
-            <!-- FILTER OPTIONS -->
-            <div>
-                <q-btn flat round dense icon="filter_alt">
-                    <q-menu>
-                        <q-list>
-                            <q-item-label header>Mostrar</q-item-label>
-                            <q-item clickable v-ripple @click="statusFilter=''">
-                                <q-item-section avatar><q-icon :name="statusFilter===''?'check':''" /></q-item-section>
-                                <q-item-section>Todos</q-item-section>
-                            </q-item>
-                            <q-item clickable v-ripple @click="statusFilter='Abierto'">
-                                <q-item-section avatar><q-icon :name="statusFilter==='Abierto'?'check':''" /></q-item-section>
-                                <q-item-section>Abiertos</q-item-section>
-                            </q-item>
-                            <q-item clickable v-ripple  @click="statusFilter='Cerrado'">
-                                <q-item-section avatar><q-icon :name="statusFilter==='Cerrado'?'check':''" /></q-item-section>
-                                <q-item-section>Cerrados</q-item-section>
-                            </q-item>
-                            <q-item clickable v-ripple  @click="statusFilter='Pendiente'">
-                                <q-item-section avatar><q-icon :name="statusFilter==='Pendiente'?'check':''" /></q-item-section>
-                                <q-item-section>Pendientes</q-item-section>
-                            </q-item>
-                        </q-list>
-                    </q-menu>
-                </q-btn>
-            </div>
-        </div>
-        <!-- LIST BODY -->
-        <q-scroll-area style="height: calc(100vh - 220px); max-width: 100%;">
-            <q-list class="full-width">
-                <div v-for="ticket of tickets" :key="ticket.id">
-                    <ticket-item :ticket="ticket"/>
-                    <q-separator spaced inset />   
+    
+    <div > 
+        <q-pull-to-refresh   @refresh="onrefresh" >
+            <!-- LIST HEADER -->
+            <div class="row items-center mb-16 px-8 justify-between text-grey-8 ">
+            <!-- FILTER INFO -->
+                <div class="px-8 ">
+                    {{tickets.length}} {{tickets.length === 1 ? 'ticket' : 'tickets'}}
+                    {{!search ? '' : tickets.length === 1 ? 'filtrado' : 'filtrados'}}
                 </div>
-            </q-list>
-        </q-scroll-area>
+                
+                <!-- FILTER OPTIONS -->
+                <div>
+                    <q-btn flat round dense icon="filter_alt">
+                        <q-menu>
+                            <q-list>
+                                <q-item-label header>Mostrar</q-item-label>
+                                <q-item clickable v-ripple @click="statusFilter=''">
+                                    <q-item-section avatar><q-icon :name="statusFilter===''?'check':''" /></q-item-section>
+                                    <q-item-section>Todos</q-item-section>
+                                </q-item>
+                                <q-item clickable v-ripple @click="statusFilter='Abierto'">
+                                    <q-item-section avatar><q-icon :name="statusFilter==='Abierto'?'check':''" /></q-item-section>
+                                    <q-item-section>Abiertos</q-item-section>
+                                </q-item>
+                                <q-item clickable v-ripple  @click="statusFilter='Cerrado'">
+                                    <q-item-section avatar><q-icon :name="statusFilter==='Cerrado'?'check':''" /></q-item-section>
+                                    <q-item-section>Cerrados</q-item-section>
+                                </q-item>
+                                <q-item clickable v-ripple  @click="statusFilter='Pendiente'">
+                                    <q-item-section avatar><q-icon :name="statusFilter==='Pendiente'?'check':''" /></q-item-section>
+                                    <q-item-section>Pendientes</q-item-section>
+                                </q-item>
+                            </q-list>
+                        </q-menu>
+                    </q-btn>
+                </div>
+            </div>
+        </q-pull-to-refresh>
+            <!-- LIST BODY -->
+            <!-- -->
+            <q-scroll-area @scroll=" infoScroll " style="height: calc(100vh - 220px); max-width: 100%;">
+                <div class="full-width">
+                        <div v-for="ticket of tickets" :key="ticket.id">
+                            <ticket-item :ticket="ticket"/>
+                            <q-separator spaced inset />   
+                        </div>
+                </div>
+            </q-scroll-area>
+
+            
         
-    </q-pull-to-refresh>
+    </div>
 </template>
 
 <script>
@@ -71,6 +70,7 @@ export default defineComponent({
         const {setLoadingTicket}=useMutations()
         const { getTicketsFromServer } = useActions()
         const { tickets } = useGetters()
+        const refresh=ref(false)
         const statusFilter = ref('');
 
         const loadTickets=async()=>{
@@ -99,13 +99,21 @@ export default defineComponent({
 
             return _statusFilter;
         })
+
+        const infoScroll=(info)=>{
+                const {verticalPercentage}=info
+                console.log(verticalPercentage)
+                refresh.value = verticalPercentage==0 ? false : true
+        }
         
         return {
             tickets: filterTickets,
             loading: loadingTicket,
             onrefresh,
             search,
-            statusFilter
+            statusFilter,
+            infoScroll,
+            refresh
         }
     },
 })

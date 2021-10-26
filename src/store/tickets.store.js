@@ -1,6 +1,7 @@
 import axios from "axios"
 import { BASE_URL } from "."
 import {store} from "./local.store"
+import { handleMessageError } from "."
 export default {
     state(){
         return { 
@@ -28,7 +29,7 @@ export default {
                     commit('setTickets',data)
                     return {data}
                 } catch (error) {
-                    console.log('error',error.response)
+                    handleMessageError(error)
                     return {error}
                 }
         }
