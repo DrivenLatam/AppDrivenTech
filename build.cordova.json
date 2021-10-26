@@ -1,0 +1,18 @@
+{
+    "android": {
+        "debug": {
+            "keystore": "../quasar-debug-key.jks",
+            "storePassword": "dlab2022",
+            "alias": "quasar-debug",
+            "password" : "dlab2022",
+            "keystoreType": "jks"
+        },
+        "release": {
+            "keystore": "../quasar-release-key.jks",
+            "storePassword": "dlab2022",
+            "alias": "quasar-release",
+            "password" : "dlab2022",
+            "keystoreType": "jks"
+        }
+    }
+}
