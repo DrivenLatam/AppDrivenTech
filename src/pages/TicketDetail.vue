@@ -15,70 +15,67 @@
 
             <q-page-container>
                 <q-page>
-                    <q-list class="mt-25">
-                            <q-item class="item-detail">
-                                <q-item-section avatar top>
-                                <q-avatar icon="description" color="dark" text-color="white" />
-                                </q-item-section>
-                                <q-item-section>
-                                <q-item-label class="text-subtitle1" lines="1">Descripción</q-item-label>
-                                <q-item-label class="text-grey-8 text-caption" >{{ticket.subject}}</q-item-label>
-                                </q-item-section>
-                                <q-item-section side>
-                                </q-item-section>
-                            </q-item>
-                            
-                            <q-item class="item-detail" >
-                                <q-item-section avatar top>
-                                <q-avatar icon="priority_high" color="dark"  text-color="white" />
-                                </q-item-section>
-                                <q-item-section>
-                                <q-item-label class="text-subtitle1"  lines="1">Prioridad</q-item-label>
-                                <q-item-label class="text-grey-8 text-caption">{{ticket.priority}}</q-item-label>
-                                </q-item-section>
-                                <q-item-section side>
-                                </q-item-section>
-                            </q-item>
-                            
-
-                            <q-item class="item-detail">
-                                <q-item-section avatar top>
-                                <q-avatar icon="phone" color="dark" text-color="white" />
-                                </q-item-section>
-                                <q-item-section>
-                                <q-item-label class="text-subtitle1"   lines="1">Número de Contacto</q-item-label>
-                                <q-item-label class="text-grey-8 text-caption">{{ticket.mobile_contact ? ticket.mobile_contact : "Sin Informacion"}}</q-item-label>
-                                </q-item-section>
-                                <q-item-section side>
-                                </q-item-section>
-                            </q-item>  
-                            
-                            <q-item class="item-detail">
-                                <q-item-section avatar top>
-                                <q-avatar icon="schedule" color="dark" text-color="white" />
-                                </q-item-section>
-                                <q-item-section>
-                                <q-item-label class="text-subtitle1" lines="1">Fecha de Vencimiento</q-item-label>
-                                <q-item-label class="text-grey-8 text-caption">{{formattedDate}}</q-item-label>
-                                </q-item-section>
-                                <q-item-section side>
-                                </q-item-section>
-                            </q-item>
-                            
-
-                            <q-item class="item-detail">
-                                <q-item-section avatar top>
-                                <q-avatar icon="label" color="dark" text-color="white" />
-                                </q-item-section>
-                                <q-item-section>
-                                <q-item-label class="text-subtitle1"   lines="1">Estado del Ticket</q-item-label>
-                                <q-item-label class="text-grey-8 text-caption">{{ticket.status}}</q-item-label>
-                                </q-item-section>
-                                <q-item-section side>
-                                </q-item-section>
-                            </q-item>   
-                            
-                    </q-list>
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-auto">
+                                <p class="fs-18 text-bold q-my-sm q-py">#{{ticket.ticket_number}}</p>
+                                <p class=" text-weight-light  fs-16 q-my-sm">{{ticket.subject}}</p>
+                                <p class="text-weight-medium fs-15 q-my-sm">Estado: <span :class="ticketStatusColor" class="text-weight-light fs-15"> {{ticket.status}}</span></p>
+                                <p class="text-weight-medium fs-15 q-my-sm">Prioridad: <span  class="text-weight-light fs-15"> {{ticket.priority}}</span></p>
+                            </div>
+                            <div class="col">
+                                    <q-img  max-width="100px" height="100px" :src="imgDriven" fit="scale-down" />
+                            </div>
+                        </div>
+                        <q-separator class="q-mt-md" color="primary" />
+                        <div class="q-mt-md">   
+                            <p class="text-weight-medium fs-15 q-my-sm">Descripcion:</p>
+                            <p class="text-weight-light fs-15 ">{{ticket.description}}</p>
+                        </div>
+                        <q-separator class="q-mt-md" color="primary" />
+                        <div class="pb-30">
+                            <div class="row q-col-gutter-x-sm q-mt-sm">
+                                <div class="col-auto text-weight-medium  fs-15">
+                                        Cliente
+                                </div>
+                                <div class="col text-weight-light  fs-15">
+                                        <label class="float-right">{{ticket.contact.name}}</label>
+                                </div>
+                            </div>
+                            <div class="row q-col-gutter-x-sm q-mt-sm">
+                                <div class="col-auto text-weight-medium  fs-15">
+                                        Nombre del Producto
+                                </div>
+                                <div class="col text-weight-light  fs-15">
+                                        <label class="float-right">{{ticket.product_name}}</label>
+                                </div>
+                            </div>
+                            <div class="row q-col-gutter-x-sm q-mt-sm">
+                                <div class="col-auto text-weight-medium  fs-15">
+                                        Vencimiento
+                                </div>
+                                <div class="col text-weight-light  fs-15">
+                                        <label class="float-right">{{formattedDate}}</label>
+                                </div>
+                            </div>
+                            <div class="row q-col-gutter-x-sm q-mt-sm">
+                                <div class="col-auto text-weight-medium  fs-15">
+                                        Contacto
+                                </div>
+                                <div class="col text-weight-light  fs-15">
+                                        <label :class="hasMobileContact ? 'link' : '' " class="float-right"   >{{ticket.contact.mobile}}</label>
+                                </div>
+                            </div>
+                            <div class="row q-col-gutter-x-sm q-mt-sm">
+                                <div class="col-auto text-weight-medium  fs-15">
+                                        Ubicacion
+                                </div>
+                                <div class="col text-weight-light  fs-15">
+                                        <label :class=" hasUrlDirection ? 'link' : '' " class="float-right">{{hasUrlDirection ? 'Abrir en Maps' : 'Sin Informacion' }}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </q-page>
             </q-page-container>
             
@@ -98,9 +95,15 @@ export default defineComponent({
         const dialog= ref(true)
         const ticketId=ref(route.params.id)
         const {getTicketById}=useGetters()
+        const imgDriven=ref("imgs/drivenImg.png")
+        //Ticket
         const ticket=computed(()=>{
             return getTicketById.value(ticketId.value)
         })
+        //Ticket atributes
+        const ticketStatusColor=computed(()=> ticket.value.status=='Abierto' ? 'text-positive' : ticket.value.status=='Cerrado' ? 'text-dark' : 'text-warning' )
+        const hasMobileContact=computed(()=>(ticket.value.contact.mobile!='Sin Informacion') ? true : false )
+        const hasUrlDirection=computed(()=>(ticket.value.cf.cf_direccion_url!='Sin Informacion') ? true : false )
         const goBack=()=>{
             dialog.value=false
             setTimeout(()=>{
@@ -108,20 +111,37 @@ export default defineComponent({
             },200)
 
         }
+        document.addEventListener('backbutton',()=>{
+            console.log('Test')
+            goBack()
+        })
         const formattedDate=computed(()=>{
-            const date=new Date(ticket.value.dueDate)
+            const date=new Date(ticket.value.cf.cf_fecha_hora)
             return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')} `
         })
-        return{ticketId,ticket,goBack,dialog,formattedDate}
+        return{
+            ticketId,
+            ticket,
+            goBack,
+            dialog,
+            formattedDate,
+            imgDriven,
+            ticketStatusColor,
+            hasMobileContact,
+            hasUrlDirection
+            }
     },
 })
 </script>
-<style scoped>
-.item-detail{
-    margin-top: 5   px;
+<style lang="scss" scoped>
+.container{
+    margin:5px 20px 0px;
 }
-.title-detail{
-    margin:5px;
-    padding-bottom: 0px;
+p{
+    margin: 5px 0px;
+}
+.link{
+    text-decoration: underline;
+    color: $blue;
 }
 </style>
