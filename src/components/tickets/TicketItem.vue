@@ -20,8 +20,9 @@ export default defineComponent({
         const {ticket}=toRefs(props)
         const router=useRouter()
 
+
         const formattedDueDate=computed(()=>{
-            const date=new Date(ticket.value.dueDate)
+            const date=new Date(ticket.value.cf.cf_fecha_hora)
             return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')} `
         })
         const onClickTicket=()=>{

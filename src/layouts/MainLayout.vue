@@ -1,5 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
+    <!-- 
     <q-footer bordered class="bg-white">
       <q-toolbar class="bg-transparent flex flex-center">
         <q-tabs v-model="tab" dense class="text-grey-6 full-width" align="justify" 
@@ -11,7 +12,7 @@
         </q-tabs>
       </q-toolbar>
     </q-footer>
-
+    -->
     <q-page-container>
       <router-view />
     </q-page-container>

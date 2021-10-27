@@ -1,7 +1,7 @@
 <template>     
     
     <div > 
-        <q-pull-to-refresh   @refresh="onrefresh" >
+        
             <!-- LIST HEADER -->
             <div class="row items-center mb-16 px-8 justify-between text-grey-8 ">
             <!-- FILTER INFO -->
@@ -37,19 +37,23 @@
                     </q-btn>
                 </div>
             </div>
-        </q-pull-to-refresh>
+     
+       
             <!-- LIST BODY -->
             <!-- -->
-            <q-scroll-area @scroll=" infoScroll " style="height: calc(100vh - 220px); max-width: 100%;">
-                <div class="full-width">
+           
+            <q-scroll-area  style="height: calc(100vh - 160px); max-width: 100%;">
+                <q-pull-to-refresh   @refresh="onrefresh" > 
+                <div class="full-width pb-60">
                         <div v-for="ticket of tickets" :key="ticket.id">
                             <ticket-item :ticket="ticket"/>
                             <q-separator spaced inset />   
                         </div>
                 </div>
+                </q-pull-to-refresh>
             </q-scroll-area>
 
-            
+
         
     </div>
 </template>
@@ -72,9 +76,15 @@ export default defineComponent({
         const { tickets } = useGetters()
         const refresh=ref(false)
         const statusFilter = ref('');
+        const ticketError=ref("dasd")
 
         const loadTickets=async()=>{
             const {data,error} = await getTicketsFromServer()
+            if(error){
+                ticketError.value=JSON.stringify(error)
+            }else{
+                ticketError.value="No hay error"
+            }
         }
         const loadTicketsOnStart= async ()=>{
             if(loadingTicket.value){
@@ -113,7 +123,8 @@ export default defineComponent({
             search,
             statusFilter,
             infoScroll,
-            refresh
+            refresh,
+            ticketError
         }
     },
 })

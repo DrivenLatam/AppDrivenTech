@@ -10,7 +10,12 @@ const routes = [
         children: [        
           {
             path:'/ticket/:id',
+            name:'ticketDetail',
             component: ()=> import('pages/TicketDetail.vue')
+          },
+          {
+            path:'/add',
+            component: ()=> import('pages/AddTicket.vue')
           },
         ]
       }
