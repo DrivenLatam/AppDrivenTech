@@ -8,8 +8,8 @@
   "scripts": {
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
-    "cordova:dev": "quasar dev -m cordova -T android -- --buildConfig=\"../build.cordova.json\"",
-    "cordova:build": "quasar build -m cordova -T android -- --buildConfig=\"../build.cordova.json\""
+    "capa:dev": "quasar dev -m cordova -T android -- --buildConfig=\"../build.capacitor.json\"",
+    "capa:build": "quasar build -m cordova -T android -- --buildConfig=\"../build.capacitor.json\""
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",
