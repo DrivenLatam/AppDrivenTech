@@ -17,6 +17,10 @@ const routes = [
             path:'/add',
             component: ()=> import('pages/AddTicket.vue')
           },
+          {
+            path:'/edit/:id',
+            component: ()=> import('pages/EditTicket.vue')
+          },
         ]
       }
     ]

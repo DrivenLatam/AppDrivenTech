@@ -80,7 +80,12 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="flex justify-center mt-20">
+                            <q-btn @click="goToEditTicket" class="py-5 px-50" color="primary" label="Editar" />
+                        </div>
+                        
                     </div>
+                    
                 </q-page>
             </q-page-container>
             
@@ -92,8 +97,11 @@
 import { defineComponent,ref,computed } from 'vue'
 import {useRoute,useRouter} from 'vue-router'
 import {useGetters} from 'src/store'
-
+import Edit from 'src/components/tickets/Edit.vue'
 export default defineComponent({
+    components:{
+        Edit
+     },
     setup() {
         const route=useRoute()
         const router=useRouter()
@@ -109,12 +117,16 @@ export default defineComponent({
         const ticketStatusColor=computed(()=> ticket.value.status=='Abierto' ? 'text-positive' : ticket.value.status=='Cerrado' ? 'text-dark' : 'text-warning' )
         const hasMobileContact=computed(()=>(ticket.value.contact.mobile!='Sin Informacion') ? true : false )
         const hasUrlDirection=computed(()=>(ticket.value.cf.cf_direccion_url!='Sin Informacion') ? true : false )
-        const goBack=()=>{
+       
+       const goBack=()=>{
             dialog.value=false
             setTimeout(()=>{
                 router.go(-1)
             },200)
 
+        }
+        const goToEditTicket=()=>{
+            router.push({path:`/edit/${ticketId.value}`})
         }
         document.addEventListener('backbutton',()=>{
             console.log('Test')
@@ -133,7 +145,8 @@ export default defineComponent({
             imgDriven,
             ticketStatusColor,
             hasMobileContact,
-            hasUrlDirection
+            hasUrlDirection,
+            goToEditTicket
             }
     },
 })
