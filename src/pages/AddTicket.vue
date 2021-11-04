@@ -8,13 +8,17 @@
     >
         <q-layout view="hHh lpR fFf" class="bg-white">
             <q-header elevated class="bg-white text-black">
-            <q-toolbar>
-                <q-btn icon="arrow_back" flat round @click="goBack" />
-            </q-toolbar>
+                <q-toolbar>
+                    <q-btn icon="arrow_back" flat round @click="goBack" />
+                    <q-toolbar-title class="fs-30 text-weight-regular">Driven</q-toolbar-title> 
+                    <q-avatar size="40px" >
+                            <img src="imgs/drivenImg.png"/>
+                    </q-avatar>
+                    
+                </q-toolbar>
             </q-header>
-
             <q-page-container>
-                <q-page class="mt-30 mx-20">
+                <q-page class="mt-30 mx-20 pb-20">
                     <p class="text-h5 text-grey-8-9">Crea un nuevo Ticket</p>
                     <p class="text-grey-8-8 q-mb-md">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios </p>
                     <div class="mb-20">

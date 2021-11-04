@@ -41,9 +41,11 @@
        
             <!-- LIST BODY -->
             <!-- -->
-           
+          
             <q-scroll-area  style="height: calc(100vh - 160px); max-width: 100%;">
+                 
                 <q-pull-to-refresh   @refresh="onrefresh" > 
+                    
                 <div class="full-width pb-60">
                         <div v-for="ticket of tickets" :key="ticket.id">
                             <ticket-item :ticket="ticket"/>
@@ -76,15 +78,18 @@ export default defineComponent({
         const { tickets } = useGetters()
         const refresh=ref(false)
         const statusFilter = ref('');
-        const ticketError=ref("dasd")
+        const ticketError=ref("E")
 
         const loadTickets=async()=>{
             const {data,error} = await getTicketsFromServer()
             if(error){
-                ticketError.value=JSON.stringify(error)
+
+                ticketError.value=JSON.stringify(error.message)
+                
             }else{
                 ticketError.value="No hay error"
             }
+           
         }
         const loadTicketsOnStart= async ()=>{
             if(loadingTicket.value){

@@ -25,7 +25,7 @@ export default {
                 const {username,country}=store.get("user")
                 const params={username,country}
                 try {
-                    const {data} = await axios.get(BASE_URL+"tickets",{params:{username,country}})
+                    const {data} = await axios.get(BASE_URL+"tickets/",{params:{username,country}})
                     commit('setTickets',data)
                     return {data}
                 } catch (error) {

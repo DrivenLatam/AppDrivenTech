@@ -5,7 +5,8 @@ import ticketsStore from './tickets.store';
 
 import { computed } from 'vue';
 
-export const BASE_URL = "http://localhost:8000/";
+//export const BASE_URL = "http://localhost:8000/";
+export const BASE_URL = "https://jesusroman.live/";
 
 export const handleMessageError=(error)=>{
   if (error.response) {
@@ -17,7 +18,7 @@ export const handleMessageError=(error)=>{
   } else if (error.request) {
     //
     // The request was made but no response was received
-    console.log(error.request);
+    console.log('Request:',error.request);
   } else {
     // Something happened in setting up the request that triggered an Error
     console.log('Error', error.message);

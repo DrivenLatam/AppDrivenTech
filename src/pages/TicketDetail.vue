@@ -9,8 +9,13 @@
         <q-layout view="hHh lpR fFf" class="bg-white">
             <q-header elevated class="bg-white text-black">
             <q-toolbar>
-                <q-btn icon="arrow_back" flat round @click="goBack" />
-            </q-toolbar>
+                    <q-btn icon="arrow_back" flat round @click="goBack" />
+                    <q-toolbar-title class="fs-30 text-weight-regular">Driven</q-toolbar-title> 
+                    <q-avatar size="40px" >
+                            <img src="imgs/drivenImg.png"/>
+                    </q-avatar>
+                    
+                </q-toolbar>
             </q-header>
 
             <q-page-container>
