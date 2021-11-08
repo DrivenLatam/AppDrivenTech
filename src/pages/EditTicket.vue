@@ -19,6 +19,7 @@
 
             <q-page-container>
                 <q-page>
+
                     <div class="container">
                         <div class="row">
                             <p class="text-h5 text-grey-8-9">Editar el Ticket</p>
@@ -34,17 +35,14 @@
                             v-model="obeservation"
                         >
                         </q-input>
-                        <div class="flex justify-center my-40">
-                            <q-btn 
-                                rounded
-                                size="lg"
-                                icon="add_a_photo"
-                                color="primary"
-                            />
-                        </div>
-                        <div class="row justify-evenly  mt-20">
-                             <div ><q-btn  @click="saveTicket" class="py-5 px-30" color="primary" label="Guardar" /></div>
-                             <div ><q-btn @click="finalizationAlert=true" class="py-5 px-30" color="primary" label="Finalizar" /></div>
+                        
+                          <div v-if="listImg.length>0" class="q-pa-md mt-10">
+                            <p class="text-grey-8-8">Images adjuntadas:</p>
+                            <q-scroll-area style="height: 230px; max-width: 300px;">
+                                <div class="row no-wrap">
+                                    <img  v-for="(img,item) in listImg" :key="item" class="mr-10" width="300" fit="contain" :src="img">
+                                </div>
+                            </q-scroll-area>
                         </div>
                     </div>
 
@@ -82,6 +80,21 @@
                             </q-card-actions>
                         </q-card>
                     </q-dialog>
+
+                    <q-page-sticky  position="bottom-right" :offset="fabPos">
+                                <q-fab
+                                    icon="expand_less"
+                                    direction="up"
+                                    color="primary"
+                                    :disable="draggingFab"
+                                    v-touch-pan.prevent.mouse="moveFab"
+                                >
+                                    <q-fab-action @click="finalizationAlert=true" color="primary" icon="done" label="Finalizar" :disable="draggingFab" />
+                                    <q-fab-action @click="saveTicket" color="primary" icon="save" label="Guardar" :disable="draggingFab" />
+                                    <q-fab-action  @click="takePicture" color="primary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
+
+                                </q-fab>
+                    </q-page-sticky>
                 </q-page>
             </q-page-container>
             
@@ -93,21 +106,33 @@
 import { defineComponent,ref,computed } from 'vue'
 import {useRoute,useRouter} from 'vue-router'
 import {useGetters} from 'src/store'
+import { Camera, CameraResultType } from '@capacitor/camera'
 
 export default defineComponent({
     setup() {
         const route=useRoute()
         const router=useRouter()
-        const dialog= ref(true)
-        const ticketId=ref(route.params.id)
-        const {getTicketById}=useGetters()
+        //Fab
+        const fabPos = ref([35, 18 ])
+        const draggingFab = ref(false)
+        const moveFab= (ev)=>{
+                draggingFab.value = ev.isFirst !== true && ev.isFinal !== true
+                fabPos.value = [
+                fabPos.value[ 0 ] - ev.delta.x,
+                fabPos.value[ 1 ] - ev.delta.y
+                ]
+        }
+        //dialog
         const saveDialog=ref(false)
-        const finalizationAlert=ref(false)
+        const dialog= ref(true)
+        
 
-        /*Observatio */
+        /* Observation */
         const obeservation=ref('')
 
-        //Ticket
+        /* Ticket */
+        const ticketId=ref(route.params.id)
+        const {getTicketById}=useGetters()
         const ticket=computed(()=>{
             return getTicketById.value(ticketId.value)
         })
@@ -121,7 +146,9 @@ export default defineComponent({
                 router.replace({path:'/'})
             },200)
         }
+        const finalizationAlert=ref(false)
 
+        //Go Back
         const goBack=()=>{
             dialog.value=false
             setTimeout(()=>{
@@ -133,6 +160,27 @@ export default defineComponent({
         document.addEventListener('backbutton',()=>{
             goBack()
         })
+
+        //Images And Camera
+        const listImg=ref([])
+        const imageSrc = ref('')
+        const takePicture = async () => {
+        
+            const image = await Camera.getPhoto({
+                quality: 90,
+                allowEditing: true,
+                resultType: CameraResultType.Uri
+            });
+
+            // image.webPath will contain a path that can be set as an image src.
+            // You can access the original file using image.path, which can be
+            // passed to the Filesystem API to read the raw data of the image,
+            // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
+            imageSrc.value = image.webPath
+            listImg.value.push(image.webPath)
+        };
+        
+        
         const formattedDate=computed(()=>{
             const date=new Date(ticket.value.cf.cf_fecha_hora)
             return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')} `
@@ -147,7 +195,13 @@ export default defineComponent({
             saveDialog,
             saveTicket,
             finalizationAlert,
-            closeTicket
+            closeTicket,
+            fabPos,
+            draggingFab,
+            moveFab,
+            takePicture,
+            imageSrc,
+            listImg
             }
     },
 })

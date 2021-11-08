@@ -5,8 +5,9 @@
   "author": "luismezaf <dmc.luisalfredo@gmail.com>",
   "private": true,
   "dependencies": {
-    "@capacitor/android": "2.5.0",
-    "@capacitor/cli": "^2.0.0",
-    "@capacitor/core": "^2.0.0"
+    "@capacitor/android": "^3.3.1",
+    "@capacitor/camera": "^1.2.0",
+    "@capacitor/cli": "^3.3.1",
+    "@capacitor/core": "^3.3.1"
   }
 }
