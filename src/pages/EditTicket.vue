@@ -1,6 +1,6 @@
 <template>
     <q-dialog
-            v-model="dialog"
+            v-model="dialogContainer"
             persistent
             maximized
             
@@ -18,13 +18,11 @@
             </q-header>
 
             <q-page-container>
-                <q-page>
-
+                <q-page class="mt-20 pb-100">
                     <div class="container">
-                        <div class="row">
+                        <div class="col">
                             <p class="text-h5 text-grey-8-9">Editar el Ticket</p>
-                            <p class="text-grey-8-8 q-mb-md">En esta seccion podra agregar observacion y fotos a un ticket, presione el boton Finalizar cuando desea terminar con el trabajo</p>
-                            
+                            <p class="text-grey-8-8 q-mb-md">En esta seccion podra agregar observacion y fotos a un ticket, presione el boton Finalizar cuando desea terminar con el trabajo</p> 
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
                          <q-input   
@@ -36,47 +34,46 @@
                         >
                         </q-input>
                         
-                          <div v-if="listImg.length>0" class="q-pa-md mt-10">
-                            <p class="text-grey-8-8">Images adjuntadas:</p>
-                            <q-scroll-area style="height: 230px; max-width: 300px;">
-                                <div class="row no-wrap">
-                                    <img  v-for="(img,item) in listImg" :key="item" class="mr-10" width="300" fit="contain" :src="img">
-                                </div>
-                            </q-scroll-area>
+                        <div v-if="listImg.length>0" class="mt-25">
+                            <p class="text-grey-9 fs-20">Images adjuntadas: </p>
+                            
+                            <q-carousel
+                                v-model="slide"
+                                transition-prev="jump-right"
+                                transition-next="jump-left"
+                                swipeable
+                                animated
+                                control-color="primary"
+                                navigation
+                                control-type="regular"
+                                arrows
+                                height="300px"
+                                class="text-white shadow-1 rounded-borders"
+                            >
+                                <q-carousel-slide v-for="(img,index) in listImg" :key="index" :img-src="img" :name="index" class="column no-wrap flex-center">
+                                              <q-icon @click="removeImgDialog(index)" class="absolute all-pointer-events remove-icon" size="lg" name="remove" color="white">
+                                                <q-tooltip>
+                                                        Eliminar
+                                               </q-tooltip>
+                                            </q-icon>
+                                 </q-carousel-slide>
+                            </q-carousel>
                         </div>
                     </div>
-
-
-                    <!--Dialog para confirmar cuando se guarda un ticket -->
-                    <q-dialog  v-model="saveDialog" persistent transition-show="scale" transition-hide="scale">
-                        <q-card class="bg-primary text-white" style="width: 300px">  
-                            <q-card-section class="bg-primary text-white fs-20 py-20">
-                                Guardado exitosamente
-                            </q-card-section>
-                            <q-card-section class="bg-white text-grey-9 q-py-lg">
-                                El ticket se guardo exitosamente, podra volver a editarlo mas adelante si lo desea
-                            </q-card-section>
-
-                            <q-card-actions align="right" class="bg-white text-primary">
-                                <q-btn @click="goBack" flat label="Ok"  v-close-popup />
-                            </q-card-actions>
-                        </q-card>
-                    </q-dialog>
-
-                    <!--Dialog para confirmar si se quiere finalizar un ticket -->
-                    <q-dialog v-model="finalizationAlert">
+                     <!--Dialog para confirmar si se quiere finalizar un ticket -->
+                    <q-dialog v-model="showDialog">
                         <q-card>
                             <q-card-section class="bg-primary text-white fs-20 py-20">
-                                Confirmar finalizacion
+                                {{titleDialog}}
                             </q-card-section>
 
                             <q-card-section class="bg-white text-grey-9 q-py-lg">
-                                Una vez que finalices el ticket, ya no podra editarlo mas
+                                {{msgDialog}}
                             </q-card-section>
 
                             <q-card-actions align="right">
-                                 <q-btn flat label="Cancelar" color="primary" v-close-popup />
-                                 <q-btn flat @click="closeTicket" label="Finalizar" color="primary" v-close-popup />
+                                 <q-btn v-if="cancelAction" flat label="Cancelar" color="primary" v-close-popup />
+                                 <q-btn flat @click="confirAction" label="Ok" color="primary" v-close-popup />
                             </q-card-actions>
                         </q-card>
                     </q-dialog>
@@ -89,7 +86,7 @@
                                     :disable="draggingFab"
                                     v-touch-pan.prevent.mouse="moveFab"
                                 >
-                                    <q-fab-action @click="finalizationAlert=true" color="primary" icon="done" label="Finalizar" :disable="draggingFab" />
+                                    <q-fab-action @click="finalizateTicket" color="primary" icon="done" label="Finalizar" :disable="draggingFab" />
                                     <q-fab-action @click="saveTicket" color="primary" icon="save" label="Guardar" :disable="draggingFab" />
                                     <q-fab-action  @click="takePicture" color="primary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
 
@@ -122,35 +119,55 @@ export default defineComponent({
                 fabPos.value[ 1 ] - ev.delta.y
                 ]
         }
-        //dialog
-        const saveDialog=ref(false)
-        const dialog= ref(true)
+        //dialog que contiene a toda la pagina, la pagina en si es un dialog
+        const dialogContainer=ref(true)
         
+        /*-------Atributos y acciones del dialog ----------------*/
+        const showDialog=ref(false)
+        const titleDialog=ref('')
+        const msgDialog=ref('')
+        const confirAction=ref(null)
+        const cancelAction=ref(false)
 
-        /* Observation */
+        /*---------- Observation ---------------------*/
         const obeservation=ref('')
 
-        /* Ticket */
+        /*------------- Ticket -------------------------- */
         const ticketId=ref(route.params.id)
         const {getTicketById}=useGetters()
         const ticket=computed(()=>{
             return getTicketById.value(ticketId.value)
         })
+
+        //Dialog para guaradar ticket
         const saveTicket=()=>{
-            saveDialog.value=true
+             showDialog.value=true
+             titleDialog.value='Guardado '
+             msgDialog.value='El ticket se guardo exitosamente, podra editarlo mas adelante si lo desea'
+             confirAction.value=goBack
+             cancelAction.value=false
         }
+
+        //Funcion que se encarga de finalizar un ticket
         const closeTicket=()=>{
-            dialog.value=false
+            dialogContainer.value=false
+            showDialog.value=true
             setTimeout(()=>{
                 //router.replace({path:'/'})
                 router.replace({path:'/'})
             },200)
         }
-        const finalizationAlert=ref(false)
-
-        //Go Back
+        //Dialog de confirmacion para finalizar un ticket
+        const finalizateTicket=()=>{
+             showDialog.value=true
+             titleDialog.value='Finalizar Ticket'
+             msgDialog.value='Estas seguro que desea finalizar el ticket'
+             confirAction.value=closeTicket
+             cancelAction.value=true
+        }
+        //Volver a la pantalla de atras
         const goBack=()=>{
-            dialog.value=false
+            dialogContainer.value=false
             setTimeout(()=>{
                 //router.replace({path:'/'})
                 router.go(-1)
@@ -161,9 +178,28 @@ export default defineComponent({
             goBack()
         })
 
-        //Images And Camera
-        const listImg=ref([])
+        /*-------------------Images And Camera ---------------------*/
+
+        const listImg=ref(['https://cdn.quasar.dev/img/parallax2.jpg','https://cdn.quasar.dev/img/mountains.jpg','https://cdn.quasar.dev/img/parallax1.jpg'])
         const imageSrc = ref('')
+        const imageSelected=ref(null) //variable que guarda el indice de la imagen que se quiere eliminar
+
+        //dialog para confirma la eliminacion de una imagen
+        const removeImgDialog=(indexImage)=>{
+             imageSelected.value=indexImage
+             showDialog.value=true
+             titleDialog.value='Eliminar imagen'
+             msgDialog.value='Estas seguro que desea eliminar la imagen'
+             confirAction.value=removeImg
+             cancelAction.value=true
+        }
+
+        //funcion que elimina la imagen de la lista
+        const removeImg=()=>{
+            console.log('Eliminando Imagen con index',imageSelected.value)
+            listImg.value=listImg.value.filter((_,index)=>index!=imageSelected.value)
+            showDialog.value=true
+        }
         const takePicture = async () => {
         
             const image = await Camera.getPhoto({
@@ -181,28 +217,31 @@ export default defineComponent({
         };
         
         
-        const formattedDate=computed(()=>{
-            const date=new Date(ticket.value.cf.cf_fecha_hora)
-            return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')} `
-        })
+        
         return{
             ticketId,
             ticket,
             goBack,
-            dialog,
-            formattedDate,
+            dialogContainer,
             obeservation,
-            saveDialog,
             saveTicket,
-            finalizationAlert,
             closeTicket,
             fabPos,
             draggingFab,
             moveFab,
             takePicture,
             imageSrc,
-            listImg
-            }
+            listImg,
+            removeImgDialog,
+            removeImg,
+            finalizateTicket,
+            showDialog,
+            titleDialog,
+            msgDialog,
+            confirAction,
+            cancelAction,
+            slide: ref(0),
+        }
     },
 })
 </script>
@@ -217,4 +256,12 @@ p{
     text-decoration: underline;
     color: $blue;
 }
+.remove-icon{
+    top: 8px; 
+    right: 8px; 
+    background-color:rgba(0, 0, 0, 0.5);
+    opacity: 0.9;
+    border-radius: 50%;
+}
+ 
 </style>
