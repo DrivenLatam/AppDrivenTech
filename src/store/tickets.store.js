@@ -32,7 +32,25 @@ export default {
                     handleMessageError(error)
                     return {error}
                 }
+        },
+        async editTicket({commit,getters},{listImg,observation}){
+            const formdata = new FormData();
+            console.log('.....',listImg)
+            const config={
+                headers:{'Content-Type':'multipart/form-data'}
+            }
+            try {
+                formdata.append('image',listImg[0].path)
+                formdata.append('ob',observation)
+                const {data} = await axios.put(BASE_URL+"tickets/edit",formdata,config)
+                console.log(data)
+                return {data}
+            } catch (error) {
+                handleMessageError(error)
+                return {error}
+            }
         }
+
     },
     getters:{
         tickets(state,getters){
