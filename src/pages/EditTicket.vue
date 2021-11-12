@@ -50,7 +50,10 @@
                                 height="300px"
                                 class="text-white shadow-1 rounded-borders"
                             >
-                                <q-carousel-slide v-for="(img,index) in listImg" :key="index" :img-src="img" :name="index" class="column no-wrap flex-center">
+                                <q-carousel-slide v-for="(img,index) in listImg" :key="index" 
+                                            :img-src="img.webPath"  
+
+                                            :name="index" class="column no-wrap flex-center uncropped-image">
                                               <q-icon @click="removeImgDialog(index)" class="absolute all-pointer-events remove-icon" size="lg" name="remove" color="white">
                                                 <q-tooltip>
                                                         Eliminar
@@ -61,7 +64,7 @@
                         </div>
                     </div>
                      <!--Dialog para confirmar si se quiere finalizar un ticket -->
-                    <q-dialog v-model="showDialog">
+                    <q-dialog v-model="showDialog" :persistent="persistentDialog">
                         <q-card>
                             <q-card-section class="bg-primary text-white fs-20 py-20">
                                 {{titleDialog}}
@@ -73,7 +76,7 @@
 
                             <q-card-actions align="right">
                                  <q-btn v-if="cancelAction" flat label="Cancelar" color="primary" v-close-popup />
-                                 <q-btn flat @click="confirAction" label="Ok" color="primary" v-close-popup />
+                                 <q-btn v-if="confirAction" flat @click="confirAction" label="Ok" color="primary" v-close-popup />
                             </q-card-actions>
                         </q-card>
                     </q-dialog>
@@ -86,8 +89,8 @@
                                     :disable="draggingFab"
                                     v-touch-pan.prevent.mouse="moveFab"
                                 >
-                                    <q-fab-action @click="finalizateTicket" color="primary" icon="done" label="Finalizar" :disable="draggingFab" />
-                                    <q-fab-action @click="saveTicket" color="primary" icon="save" label="Guardar" :disable="draggingFab" />
+                                    <q-fab-action @click="finalizateTicketDialog" color="primary" icon="done" label="Finalizar" :disable="draggingFab" />
+                                    <q-fab-action @click="updateTicket" color="primary" icon="update" label="Actualizar" :disable="draggingFab" />
                                     <q-fab-action  @click="takePicture" color="primary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
 
                                 </q-fab>
@@ -102,7 +105,7 @@
 
 import { defineComponent,ref,computed } from 'vue'
 import {useRoute,useRouter} from 'vue-router'
-import {useGetters} from 'src/store'
+import {useGetters,useActions} from 'src/store'
 import { Camera, CameraResultType } from '@capacitor/camera'
 
 export default defineComponent({
@@ -128,37 +131,57 @@ export default defineComponent({
         const msgDialog=ref('')
         const confirAction=ref(null)
         const cancelAction=ref(false)
-
+        const persistentDialog=ref(true)
         /*---------- Observation ---------------------*/
         const obeservation=ref('')
 
         /*------------- Ticket -------------------------- */
         const ticketId=ref(route.params.id)
         const {getTicketById}=useGetters()
+        const {editTicket}=useActions()
+        const {finalizateTicket}=useActions()
         const ticket=computed(()=>{
             return getTicketById.value(ticketId.value)
         })
 
-        //Dialog para guaradar ticket
-        const saveTicket=()=>{
+        //Dialog para mensajes de confirmacion
+        const succesDialog=(title,message,okAction=goBack)=>{
              showDialog.value=true
-             titleDialog.value='Guardado '
-             msgDialog.value='El ticket se guardo exitosamente, podra editarlo mas adelante si lo desea'
-             confirAction.value=goBack
+             titleDialog.value=title
+             msgDialog.value=message
+             confirAction.value=okAction
              cancelAction.value=false
         }
 
+        //Dialog para mensajes de error
+        const errorDialog=(title,message)=>{
+             showDialog.value=true
+             titleDialog.value=title
+             msgDialog.value=message
+             confirAction.value=null
+             cancelAction.value=false
+             persistentDialog.value=false
+        }
         //Funcion que se encarga de finalizar un ticket
-        const closeTicket=()=>{
-            dialogContainer.value=false
-            showDialog.value=true
-            setTimeout(()=>{
-                //router.replace({path:'/'})
-                router.replace({path:'/'})
-            },200)
+        const closeTicket=async()=>{
+            const {data,error}=await finalizateTicket()
+            //---------Aca validar que el ticket tenga obeservacion y que almenos el usuario adjunto una imagen al servidor
+            if(data){
+                //Funcion a llamar cuando se apriete ok en el dialog
+                const okDialog=()=>{
+                    dialogContainer.value=false
+                    setTimeout(()=>{
+                        router.replace({path:'/'})
+                    },200)
+                }
+                succesDialog('Finalizado','El ticket se pudo finalizar con exito',okDialog)
+            }else{
+                errorDialog('Error','No se pudo finalizar el ticket, intentelo mas tarde')
+            }
+            
         }
         //Dialog de confirmacion para finalizar un ticket
-        const finalizateTicket=()=>{
+        const finalizateTicketDialog=()=>{
              showDialog.value=true
              titleDialog.value='Finalizar Ticket'
              msgDialog.value='Estas seguro que desea finalizar el ticket'
@@ -166,21 +189,37 @@ export default defineComponent({
              cancelAction.value=true
         }
         //Volver a la pantalla de atras
-        const goBack=()=>{
+        const updateTicket= async()=>{
+            //dialogContainer.value=false
+            const {data,error}=await editTicket({imageList:listImg.value,obeservation:obeservation.value})
+            
+            if(data){
+                
+                succesDialog('Actualizado','El ticket se actualizo con exito')
+            }else{
+                errorDialog('Error','No se pudo actualizar el ticket, intentelo mas tarde')
+            }
+            
+
+        }
+        //Volver a la pantalla de atras
+        const goBack= async()=>{
             dialogContainer.value=false
             setTimeout(()=>{
                 //router.replace({path:'/'})
                 router.go(-1)
             },200)
-
         }
+
+
         document.addEventListener('backbutton',()=>{
             goBack()
         })
 
         /*-------------------Images And Camera ---------------------*/
 
-        const listImg=ref(['https://cdn.quasar.dev/img/parallax2.jpg','https://cdn.quasar.dev/img/mountains.jpg','https://cdn.quasar.dev/img/parallax1.jpg'])
+        //const listImg=ref(['https://cdn.quasar.dev/img/parallax2.jpg','https://cdn.quasar.dev/img/mountains.jpg','https://cdn.quasar.dev/img/parallax1.jpg'])
+        const listImg=ref([])
         const imageSrc = ref('')
         const imageSelected=ref(null) //variable que guarda el indice de la imagen que se quiere eliminar
 
@@ -213,7 +252,8 @@ export default defineComponent({
             // passed to the Filesystem API to read the raw data of the image,
             // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
             imageSrc.value = image.webPath
-            listImg.value.push(image.webPath)
+            console.log('pathh...',image)
+            listImg.value.push(image)
         };
         
         
@@ -224,7 +264,7 @@ export default defineComponent({
             goBack,
             dialogContainer,
             obeservation,
-            saveTicket,
+            updateTicket,
             closeTicket,
             fabPos,
             draggingFab,
@@ -234,13 +274,14 @@ export default defineComponent({
             listImg,
             removeImgDialog,
             removeImg,
-            finalizateTicket,
+            finalizateTicketDialog,
             showDialog,
             titleDialog,
             msgDialog,
             confirAction,
             cancelAction,
             slide: ref(0),
+            persistentDialog
         }
     },
 })
@@ -263,5 +304,10 @@ p{
     opacity: 0.9;
     border-radius: 50%;
 }
- 
+.uncropped-image {
+  background-size: contain;  /* don't crop the image  */
+  background-repeat: no-repeat;  /* only show the image one time  */
+  background-color: white;  /* color to fill empty space with  */
+}
+
 </style>

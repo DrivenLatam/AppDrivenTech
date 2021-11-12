@@ -21,6 +21,7 @@ export default {
         }
     },
     actions:{
+        //Obtiene todos los ticket del servidor
         async getTicketsFromServer({commit,getters}){
                 const {username,country}=store.get("user")
                 const params={username,country}
@@ -33,17 +34,29 @@ export default {
                     return {error}
                 }
         },
-        async editTicket({commit,getters},{listImg,observation}){
+        //edita un ticket al servidor
+        async editTicket({commit,getters},{imageList,obeservation}){
             const formdata = new FormData();
-            console.log('.....',listImg)
+            console.log('.....',imageList)
             const config={
                 headers:{'Content-Type':'multipart/form-data'}
             }
             try {
-                formdata.append('image',listImg[0].path)
-                formdata.append('ob',observation)
+                formdata.append('image',imageList[0].path)
+                formdata.append('ob',obeservation)
                 const {data} = await axios.put(BASE_URL+"tickets/edit",formdata,config)
                 console.log(data)
+                return {data}
+            } catch (error) {
+                handleMessageError(error)
+                return {error}
+            }
+        },
+        //edita un ticket al servidor
+        async finalizateTicket({commit,getters}){
+            try {
+                const {data} = await axios.put(BASE_URL+"tickets/finalizate")
+                
                 return {data}
             } catch (error) {
                 handleMessageError(error)

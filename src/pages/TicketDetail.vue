@@ -22,15 +22,13 @@
                 <q-page>
                     <div class="container">
                         <div class="row">
-                            <div class="col-auto">
+                            <div class="col">
                                 <p class="fs-18 text-bold q-my-sm q-py">#{{ticket.ticket_number}}</p>
                                 <p class=" text-weight-light  fs-16 q-my-sm">{{ticket.subject}}</p>
                                 <p class="text-weight-medium fs-15 q-my-sm">Estado: <span :class="ticketStatusColor" class="text-weight-light fs-15"> {{ticket.status}}</span></p>
                                 <p class="text-weight-medium fs-15 q-my-sm">Prioridad: <span  class="text-weight-light fs-15"> {{ticket.priority}}</span></p>
                             </div>
-                            <div class="col">
-                                    <q-img  max-width="100px" height="100px" :src="imgDriven" fit="scale-down" />
-                            </div>
+                            
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
                         <div class="q-mt-md">   
