@@ -6,7 +6,8 @@ export default {
     state(){
         return { 
             tickets:[],
-            loadingTicket:true
+            loadingTicket:true,
+            contacts:store.get("contacts",null)
         }
     },
     mutations:{
@@ -18,6 +19,10 @@ export default {
         },
         setLoadingTicket(state,value){
             state.loadingTicket=value
+        },
+        setContacts(state,contacts){
+            state.contacts=contacts
+            store.set("contacts",contacts)
         }
     },
     actions:{
@@ -25,6 +30,7 @@ export default {
         async getTicketsFromServer({commit,getters}){
                 const {username,country}=store.get("user")
                 const params={username,country}
+                
                 try {
                     const {data} = await axios.get(BASE_URL+"tickets/",{params:{username,country}})
                     commit('setTickets',data)
@@ -34,17 +40,20 @@ export default {
                     return {error}
                 }
         },
-        //edita un ticket al servidor
-        async editTicket({commit,getters},{imageList,obeservation}){
+        //envia una foto de un ticket al servidor
+        async uploadImageTicket({commit,getters},{file,ticketId,country}){
             const formdata = new FormData();
-            console.log('.....',imageList)
+            
             const config={
                 headers:{'Content-Type':'multipart/form-data'}
             }
             try {
-                formdata.append('image',imageList[0].path)
-                formdata.append('ob',obeservation)
-                const {data} = await axios.put(BASE_URL+"tickets/edit",formdata,config)
+                console.log('...FFF',file)
+                //formdata.append('file',file.webPath)
+                formdata.append('file',file)
+                formdata.append('ticketId',ticketId)
+                formdata.append('country',country)
+                const {data} = await axios.post(BASE_URL+"tickets/file",formdata,config)
                 console.log(data)
                 return {data}
             } catch (error) {
@@ -57,6 +66,30 @@ export default {
             try {
                 const {data} = await axios.put(BASE_URL+"tickets/finalizate")
                 
+                return {data}
+            } catch (error) {
+                handleMessageError(error)
+                return {error}
+            }
+        },
+        //agregar un ticket al servidor
+        async addTicket({commit,getters},{body}){
+            //console.log('DueData',body)
+            try {
+
+                const {data} = await axios.post(BASE_URL+"tickets2/",body)
+                //console.log('data',data)
+                return {data}
+            } catch (error) {
+                handleMessageError(error)
+                return {error}
+            }
+        },
+        //Obtine la lista de contactos, recibe como parametro el pais(PY o UY)
+        async getContacts({commit,getters},{country}){
+            try {
+                const {data}=await axios.get(BASE_URL+"contacts",{params:{country}})
+                commit("setContacts",data)
                 return {data}
             } catch (error) {
                 handleMessageError(error)
@@ -76,6 +109,9 @@ export default {
         },
         loadingTicket(state,getters){
             return state.loadingTicket
+        },
+        contacts(state,getters){
+            return state.contacts
         }
     }
 }

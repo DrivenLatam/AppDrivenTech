@@ -63,23 +63,7 @@
                             </q-carousel>
                         </div>
                     </div>
-                     <!--Dialog para confirmar si se quiere finalizar un ticket -->
-                    <q-dialog v-model="showDialog" :persistent="persistentDialog">
-                        <q-card>
-                            <q-card-section class="bg-primary text-white fs-20 py-20">
-                                {{titleDialog}}
-                            </q-card-section>
-
-                            <q-card-section class="bg-white text-grey-9 q-py-lg">
-                                {{msgDialog}}
-                            </q-card-section>
-
-                            <q-card-actions align="right">
-                                 <q-btn v-if="cancelAction" flat label="Cancelar" color="primary" v-close-popup />
-                                 <q-btn v-if="confirAction" flat @click="confirAction" label="Ok" color="primary" v-close-popup />
-                            </q-card-actions>
-                        </q-card>
-                    </q-dialog>
+                
 
                     <q-page-sticky  position="bottom-right" :offset="fabPos">
                                 <q-fab
@@ -89,12 +73,35 @@
                                     :disable="draggingFab"
                                     v-touch-pan.prevent.mouse="moveFab"
                                 >
-                                    <q-fab-action @click="finalizateTicketDialog" color="primary" icon="done" label="Finalizar" :disable="draggingFab" />
-                                    <q-fab-action @click="updateTicket" color="primary" icon="update" label="Actualizar" :disable="draggingFab" />
+                                    <q-fab-action @click="dialogFinalizateTicket" color="primary" icon="done" label="Finalizar" :disable="draggingFab" />
+                                    <q-fab-action @click="uploadImage" color="primary" icon="update" label="Actualizar" :disable="draggingFab" />
                                     <q-fab-action  @click="takePicture" color="primary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
 
                                 </q-fab>
                     </q-page-sticky>
+                    <!-- Dialog para confirmar finalizar un ticket -->
+                    <confirm-dialog  v-if="showConfirDialog" 
+                                      @confirAction="confirAction"  
+                                      @cancelAction="showConfirDialog=false"
+                                      :title="titleDialog"
+                                      :message="msgDialog"
+                                      :label="label"
+                    />
+                  
+                    <!-- Dialog para mesaje de Error -->
+                    <error-dialog
+                            v-if="showErrorDialog"
+                            :title="titleDialog"
+                            :message="msgDialog"
+                            @confirAction="showErrorDialog=false"
+                    />
+                    <!-- Dialog para confirmacion Exitosa -->
+                    <succes-dialog
+                        v-if="showSuccesDialog"
+                        :title="titleDialog"
+                        :message="msgDialog"
+                        @confirAction="confirAction"
+                    />
                 </q-page>
             </q-page-container>
             
@@ -107,8 +114,12 @@ import { defineComponent,ref,computed } from 'vue'
 import {useRoute,useRouter} from 'vue-router'
 import {useGetters,useActions} from 'src/store'
 import { Camera, CameraResultType } from '@capacitor/camera'
+import ConfirmDialog from 'src/components/Dialog/ConfirmDialog.vue'
+import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
+import SuccesDialog from 'src/components/Dialog/SuccesDialog.vue'
 
 export default defineComponent({
+    components:{ ConfirmDialog,ErrorDialog,SuccesDialog },
     setup() {
         const route=useRoute()
         const router=useRouter()
@@ -122,47 +133,54 @@ export default defineComponent({
                 fabPos.value[ 1 ] - ev.delta.y
                 ]
         }
+
+        
+
         //dialog que contiene a toda la pagina, la pagina en si es un dialog
         const dialogContainer=ref(true)
-        
         /*-------Atributos y acciones del dialog ----------------*/
-        const showDialog=ref(false)
+        const showConfirDialog=ref(false)
+        const showErrorDialog=ref(false)
+        const showSuccesDialog=ref(false)
         const titleDialog=ref('')
         const msgDialog=ref('')
         const confirAction=ref(null)
-        const cancelAction=ref(false)
-        const persistentDialog=ref(true)
+        const label=ref('')
+
+        //Dialog para mensajes de confirmacion
+        const succesDialog=(title,message,okAction=goBack)=>{
+             showSuccesDialog.value=true
+             titleDialog.value=title
+             msgDialog.value=message
+             confirAction.value=okAction
+             
+        }
+        //Dialog para mensajes de error
+        const errorDialog=(title,message)=>{
+             showErrorDialog.value=true
+             titleDialog.value=title
+             msgDialog.value=message
+        }
+        //Dialog para confirmar si finalizamos un ticket
+        const dialogFinalizateTicket=()=>{
+            showConfirDialog.value=true
+            titleDialog.value="Finalizar Ticket"
+            msgDialog.value="Estas seguro que desea finalizar el ticket?"
+            label.value="Finalizar"
+            confirAction.value=closeTicket
+        }
+
         /*---------- Observation ---------------------*/
         const obeservation=ref('')
-
         /*------------- Ticket -------------------------- */
         const ticketId=ref(route.params.id)
         const {getTicketById}=useGetters()
-        const {editTicket}=useActions()
+        const {uploadImageTicket}=useActions()
         const {finalizateTicket}=useActions()
         const ticket=computed(()=>{
             return getTicketById.value(ticketId.value)
         })
-
-        //Dialog para mensajes de confirmacion
-        const succesDialog=(title,message,okAction=goBack)=>{
-             showDialog.value=true
-             titleDialog.value=title
-             msgDialog.value=message
-             confirAction.value=okAction
-             cancelAction.value=false
-        }
-
-        //Dialog para mensajes de error
-        const errorDialog=(title,message)=>{
-             showDialog.value=true
-             titleDialog.value=title
-             msgDialog.value=message
-             confirAction.value=null
-             cancelAction.value=false
-             persistentDialog.value=false
-        }
-        //Funcion que se encarga de finalizar un ticket
+        //Funcion que se encarga de finalizar un ticket en el servidor
         const closeTicket=async()=>{
             const {data,error}=await finalizateTicket()
             //---------Aca validar que el ticket tenga obeservacion y que almenos el usuario adjunto una imagen al servidor
@@ -170,37 +188,31 @@ export default defineComponent({
                 //Funcion a llamar cuando se apriete ok en el dialog
                 const okDialog=()=>{
                     dialogContainer.value=false
+                    showConfirDialog.value=false
                     setTimeout(()=>{
                         router.replace({path:'/'})
                     },200)
                 }
                 succesDialog('Finalizado','El ticket se pudo finalizar con exito',okDialog)
             }else{
+                showConfirDialog.value=false
                 errorDialog('Error','No se pudo finalizar el ticket, intentelo mas tarde')
-            }
-            
+            } 
         }
-        //Dialog de confirmacion para finalizar un ticket
-        const finalizateTicketDialog=()=>{
-             showDialog.value=true
-             titleDialog.value='Finalizar Ticket'
-             msgDialog.value='Estas seguro que desea finalizar el ticket'
-             confirAction.value=closeTicket
-             cancelAction.value=true
-        }
-        //Volver a la pantalla de atras
-        const updateTicket= async()=>{
+        //Actualizar un ticket en el servidor
+        const uploadImage= async()=>{
             //dialogContainer.value=false
-            const {data,error}=await editTicket({imageList:listImg.value,obeservation:obeservation.value})
-            
-            if(data){
-                
-                succesDialog('Actualizado','El ticket se actualizo con exito')
-            }else{
-                errorDialog('Error','No se pudo actualizar el ticket, intentelo mas tarde')
+            //console.log('...aa',listImg.value[0])
+            const params={
+                //file:listImg.value[0],
+                file:model.value,
+                ticketId:ticketId.value,
+                country:'PY' //obtener el correcto del storage
             }
+            const {data,error}=await uploadImageTicket(params)
+            if(data) succesDialog('Actualizado','El ticket se actualizo con exito')
+            else errorDialog('Error','No se pudo actualizar el ticket, intentelo mas tarde')
             
-
         }
         //Volver a la pantalla de atras
         const goBack= async()=>{
@@ -210,8 +222,7 @@ export default defineComponent({
                 router.go(-1)
             },200)
         }
-
-
+    
         document.addEventListener('backbutton',()=>{
             goBack()
         })
@@ -226,21 +237,23 @@ export default defineComponent({
         //dialog para confirma la eliminacion de una imagen
         const removeImgDialog=(indexImage)=>{
              imageSelected.value=indexImage
-             showDialog.value=true
+             showConfirDialog.value=true
              titleDialog.value='Eliminar imagen'
              msgDialog.value='Estas seguro que desea eliminar la imagen'
+             label.value="Eliminar"
              confirAction.value=removeImg
-             cancelAction.value=true
+             
         }
 
         //funcion que elimina la imagen de la lista
         const removeImg=()=>{
             console.log('Eliminando Imagen con index',imageSelected.value)
             listImg.value=listImg.value.filter((_,index)=>index!=imageSelected.value)
-            showDialog.value=true
+            showConfirDialog.value=false
         }
+
+        //Funcion que toma una imagen desde el telefono
         const takePicture = async () => {
-        
             const image = await Camera.getPhoto({
                 quality: 90,
                 allowEditing: true,
@@ -252,7 +265,7 @@ export default defineComponent({
             // passed to the Filesystem API to read the raw data of the image,
             // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
             imageSrc.value = image.webPath
-            console.log('pathh...',image)
+            
             listImg.value.push(image)
         };
         
@@ -264,7 +277,7 @@ export default defineComponent({
             goBack,
             dialogContainer,
             obeservation,
-            updateTicket,
+            uploadImage,
             closeTicket,
             fabPos,
             draggingFab,
@@ -274,14 +287,17 @@ export default defineComponent({
             listImg,
             removeImgDialog,
             removeImg,
-            finalizateTicketDialog,
-            showDialog,
             titleDialog,
             msgDialog,
             confirAction,
-            cancelAction,
+          
             slide: ref(0),
-            persistentDialog
+            dialogFinalizateTicket,
+            showConfirDialog,
+            showErrorDialog,
+            showSuccesDialog,
+            label,
+            
         }
     },
 })
