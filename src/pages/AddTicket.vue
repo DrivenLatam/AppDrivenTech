@@ -75,7 +75,7 @@
                                 @blur="focusTicketClient(false)"
                                 :error="!!ticketClientError"
                                 :error-message="ticketClientError"
-                                 @click="showListClient=true"
+                                @click="showListClient=true"
                                  
                             >
                                 <template v-slot:prepend>
@@ -126,11 +126,13 @@
                             <q-input   
                                 label="Nombre del Producto"  
                                 dense 
+                                autogrow
                                 class="mb-5"
-                                v-model="ticketProductName"
+                                v-model="ticketProduct.productName"
                                 :ref="el=>ticketProductNameInput=el"
                                 @focus="focusTicketProductName"
                                 @blur="focusTicketProductName(false)"
+                                @click="showListProducts=true"
                             >
                                 <template v-slot:prepend>
                                         <q-icon :color="ticketProductNameIconColor" size="xs" name="inventory_2"/>
@@ -154,6 +156,8 @@
                                 <q-btn @click="createTicket" class="py-5 px-50" color="primary" label="Crear Ticket" />
                             </div>
                         </div>
+
+                        <!--Modales de mensajes de error y confirmacion -->
                         <succes-dialog 
                             v-if="successMessage"
                             title="Creado" 
@@ -169,10 +173,18 @@
                             @confirAction="errorMessage=false"
                         />
                     </div>
+                    <!-- Componente para seleccionar el cliente -->
                     <contatcs 
                         v-if="showListClient" 
                         @hide-dialog="showListClient=false"
                         @client-selected="(e)=>ticketClient=e"
+                    />
+
+                    <!-- Componente para seleccionar el producto -->
+                    <products 
+                        v-if="showListProducts" 
+                        @hide-dialog="showListProducts=false"
+                        @client-selected="(e)=>ticketProduct=e"
                     />
                 </q-page>
             </q-page-container>
@@ -188,8 +200,10 @@ import {useGetters,useActions} from 'src/store'
 import SuccesDialog from 'src/components/Dialog/SuccesDialog.vue'
 import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
 import Contatcs from 'src/components/tickets/Contacts.vue'
+import Products from 'src/components/tickets/Products.vue'
+
 export default defineComponent({
-    components:{ SuccesDialog,ErrorDialog,Contatcs },
+    components:{ SuccesDialog,ErrorDialog,Contatcs,Products },
     setup() {
         const route=useRoute()
         const router=useRouter()
@@ -238,7 +252,8 @@ export default defineComponent({
 
 
         //ticketProductName
-        const ticketProductName=ref('')
+        const ticketProduct=ref('')
+        const showListProducts=ref(false)
         const ticketProductNameInput=ref(null)
         const focusTicketProductName=(state=true)=>{
                 if(state)focusedInput.value=ticketProductNameInput.value
@@ -306,7 +321,7 @@ export default defineComponent({
                 subject:ticketName.value,
                 description:ticketDescription.value,
                 contactId:ticketClient.value.accountId,
-                productId:ticketProductName.value,
+                productId:ticketProduct.value.id,
                 dueDate:parseDate(ticketDueDate.value), 
                 priority:ticketPriority.value,
                 country: user.value.country 
@@ -359,10 +374,11 @@ export default defineComponent({
             ticketClientError,
             showListClient,
            
-            ticketProductName,
+            ticketProduct,
             ticketProductNameInput,
             focusTicketProductName,
             ticketProductNameIconColor,
+            showListProducts,
 
             ticketDueDate,
             ticketDueDateInput,

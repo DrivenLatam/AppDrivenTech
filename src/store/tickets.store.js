@@ -7,7 +7,8 @@ export default {
         return { 
             tickets:[],
             loadingTicket:true,
-            contacts:store.get("contacts",null)
+            contacts:store.get("contacts",null),
+            products:store.get("products",null)
         }
     },
     mutations:{
@@ -23,6 +24,10 @@ export default {
         setContacts(state,contacts){
             state.contacts=contacts
             store.set("contacts",contacts)
+        },
+        setProducts(state,products){
+            state.prodcutos=products
+            store.set("products",products)
         }
     },
     actions:{
@@ -95,6 +100,18 @@ export default {
                 handleMessageError(error)
                 return {error}
             }
+        },
+
+        //Obtine la lista de prodcutos, recibe como parametro el pais(PY o UY)
+        async getProducts({commit,getters},{country}){
+            try {
+                const {data}=await axios.get(BASE_URL+"products",{params:{country}})
+                commit("setProducts",data)
+                return {data}
+            } catch (error) {
+                handleMessageError(error)
+                return {error}
+            }
         }
 
     },
@@ -112,6 +129,9 @@ export default {
         },
         contacts(state,getters){
             return state.contacts
+        },
+        products(state,getters){
+            return state.products
         }
     }
 }
