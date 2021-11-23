@@ -124,7 +124,7 @@
 
                             <!-- Nombre del Producto-->
                             <q-input   
-                                label="Nombre del Producto"  
+                                label="Nombre del Producto(*)"  
                                 dense 
                                 autogrow
                                 class="mb-5"
@@ -133,6 +133,8 @@
                                 @focus="focusTicketProductName"
                                 @blur="focusTicketProductName(false)"
                                 @click="showListProducts=true"
+                                :error="!!ticketProductError"
+                                :error-message="ticketProductError"
                             >
                                 <template v-slot:prepend>
                                         <q-icon :color="ticketProductNameIconColor" size="xs" name="inventory_2"/>
@@ -259,8 +261,11 @@ export default defineComponent({
                 if(state)focusedInput.value=ticketProductNameInput.value
                 else if(focusedInput.value==ticketProductNameInput.value) focusedInput.value=null
         }
-        const ticketProductNameIconColor=computed(()=> focusedInput.value==ticketProductNameInput.value ? 'primary' : 'grey-8')
-       
+        const ticketProductNameIconColor=computed(()=> ticketProductError.value ? 'negative': focusedInput.value==ticketProductNameInput.value ? 'primary' : 'grey-8')
+        const ticketProductError=ref('')
+        watch(ticketProduct,()=>ticketProductError.value="")
+
+
        //ticketDueDate
         const todayDate=ref(null) //fecha que sirve para validar la fecha seleccionada por el tecnico
         const ticketDueDate=ref(null)
@@ -307,7 +312,8 @@ export default defineComponent({
             if(!ticketDescription.value){ticketDescriptionError.value= "Este campo no puede quedar vacio"; return false}
             if(!ticketClient.value){ticketClientError.value="Este campo no puede quedar vacio";return false}
             if(!validateDate()){ticketDueDateError.value="Fecha incorrecta, ingrese una fecha mayor o igual a la de hoy"; return false}
-            
+            if(!ticketProduct.value){ticketProductError.value="Este campo no puede quedar vacio";return false}
+
             return true
         }
         const createTicket=async()=>{
@@ -390,6 +396,7 @@ export default defineComponent({
             ticketPriorityInput,
             focusTicketPriority,
             ticketPriorityIconColor,
+            ticketProductError,
 
             createTicket,
             successMessage,

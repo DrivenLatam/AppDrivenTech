@@ -95,6 +95,7 @@ export default {
             try {
                 const {data}=await axios.get(BASE_URL+"contacts",{params:{country}})
                 commit("setContacts",data)
+                //console.log("dataa",data)
                 return {data}
             } catch (error) {
                 handleMessageError(error)
@@ -107,6 +108,7 @@ export default {
             try {
                 const {data}=await axios.get(BASE_URL+"products",{params:{country}})
                 commit("setProducts",data)
+                //console.log("prductos",data)
                 return {data}
             } catch (error) {
                 handleMessageError(error)

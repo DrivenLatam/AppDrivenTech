@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    
+
     <q-dialog v-model="fixed" full-width  @hide="hideDialog">
         <q-spinner
             color="primary"
@@ -20,14 +20,20 @@
         <q-separator />
 
         <q-card-section style="max-height: 50vh" class="scroll">
-            <q-item v-for="(contact,index) in contactListFilter" :key="index" 
-                @click="selectContact(index)"
-                clickable v-ripple>
-                <q-item-section>
-                    <q-item-label>{{contact.name.split("-")[0]}}</q-item-label>
-                    <q-item-label caption>{{contact.name.split("-")[1]}}</q-item-label>
-                </q-item-section>
-            </q-item>
+             <q-pull-to-refresh @refresh="refreshContacts"  >
+                <div  v-if="contactListFilter.length>0">
+                    <q-item v-for="(contact,index) in contactListFilter" :key="index" 
+                        @click="selectContact(index)"
+                        clickable v-ripple>
+                        <q-item-section>
+                            <q-item-label>{{contact.name.split("-")[0]}}</q-item-label>
+                            <q-item-label caption>{{contact.name.split("-")[1]}}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                </div>
+                <div class="text-grey-8 fs-13 pa-5 bg-blue-1 px-8 py-8" v-else > No se encontraron coincidencias, quiza el cliente no existe o deberia 
+                            <span @click="getContactsServer" class="underline text-primary text-bold"> actualizar</span> la lista </div>
+            </q-pull-to-refresh>
         </q-card-section>
 
         <q-separator />
@@ -60,6 +66,7 @@ export default defineComponent({
 
         //obtener los contactos del servidor
         const getContactsServer=async()=>{
+            search.value=""
             loading.value=true
             const {data,error}= await getContacts({country:user.value.country})
             if(data) {
@@ -81,6 +88,18 @@ export default defineComponent({
             emit('hide-dialog')
             emit("client-selected",client)
         }
+
+        //obtiene la lista de contactos del servidor
+        const refreshContacts=async(done)=>{
+            const {data,error}= await getContacts({country:user.value.country})
+            if(data){
+                contactsList.value=data
+                contactListFilter.value=data
+            }
+            search.value=""
+            done()
+        }
+
         /*----------Search----------*/
         const search=ref("")     
 
@@ -108,7 +127,9 @@ export default defineComponent({
             contactListFilter,
             loading,
             hideDialog,
-            selectContact
+            selectContact,
+            getContactsServer,
+            refreshContacts,
         }
     },
 })

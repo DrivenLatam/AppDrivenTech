@@ -20,14 +20,20 @@
         <q-separator />
 
         <q-card-section style="max-height: 50vh" class="scroll">
-            <q-item v-for="(product,index) in productListFiltered" :key="index" 
-                @click="selectProduct(index)"
-                clickable v-ripple>
-                <q-item-section>
-                    <q-item-label>{{product.productName}}</q-item-label>
-                    <q-item-label caption>{{product.productCode}}</q-item-label>
-                </q-item-section>
-            </q-item>
+            <q-pull-to-refresh @refresh="refreshProducts"  >
+                <div  v-if="productListFiltered.length>0">
+                    <q-item v-for="(product,index) in productListFiltered" :key="index" 
+                        @click="selectProduct(index)"
+                        clickable v-ripple>
+                        <q-item-section>
+                            <q-item-label>{{product.productName}}</q-item-label>
+                            <q-item-label caption>{{product.productCode}}</q-item-label>
+                        </q-item-section>
+                    </q-item>
+                </div>
+                <div class="text-grey-8 fs-13 pa-5 bg-blue-1 px-8 py-8" v-else > No se encontraron coincidencias, quiza el producto no existe o deberia 
+                            <span @click="getProductsFromServer" class="underline text-primary text-bold"> actualizar</span> la lista </div>
+            </q-pull-to-refresh>
         </q-card-section>
 
         <q-separator />
@@ -61,6 +67,7 @@ export default defineComponent({
         //obtener los contactos del servidor
         const getProductsFromServer=async()=>{
             loading.value=true
+            search.value=""
             const {data,error}= await getProducts({country:user.value.country})
             if(data) {
                 productList.value=data
@@ -73,13 +80,25 @@ export default defineComponent({
 
         //lanza un evento con el cliente seleccionado
         const selectProduct=(index)=>{
-            console.log("---",productListFiltered.value[index])
+            //console.log("---",productListFiltered.value[index])
             const product={
                 ... productListFiltered.value[index]
             }
             emit('hide-dialog')
             emit("client-selected",product)
         }
+
+        //obtiene la lista de contactos del servidor
+        const refreshProducts=async(done)=>{
+            const {data,error}= await getProducts({country:user.value.country})
+            if(data) {
+                productList.value=data
+                productListFiltered.value=data
+            }
+            search.value=""
+            done()
+        }
+
         /*----------Search----------*/
         const search=ref("")     
 
@@ -106,7 +125,9 @@ export default defineComponent({
             productListFiltered,
             loading,
             hideDialog,
-            selectProduct
+            selectProduct,
+            refreshProducts,
+            getProductsFromServer
         }
     },
 })

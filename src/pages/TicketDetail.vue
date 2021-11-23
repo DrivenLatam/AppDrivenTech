@@ -78,7 +78,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="flex justify-center mt-20">
+                        <div class="flex justify-center mt-20 mb-20">
                             <q-btn @click="goToEditTicket" class="py-5 px-50" color="primary" label="Editar" />
                         </div>
                         
