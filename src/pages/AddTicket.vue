@@ -27,7 +27,6 @@
                     </div>
                     
                     <div v-else >
-                    
                         <p class="text-h5 text-grey-8-9">Crea un nuevo Ticket</p>
                         <p class="text-grey-8-8 q-mb-md">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios </p>
                         <div class="mb-20">
@@ -35,7 +34,7 @@
                                 autofocus
                                 dense
                                 label="Nombre(*)" 
-                                class="mb-20"
+                                class="mb-5"
                                 v-model="ticketName"
                                 :ref=" el=>ticketNameInput=el"
                                 @focus="focusTicketName"
@@ -52,7 +51,7 @@
                                 autogrow
                                 label="Descripcion(*)" 
                                 dense
-                                class="mb-20"
+                                class="mb-5"
                                 v-model="ticketDescription"
                                 :ref="el=>ticketDescriptionInput=el"
                                 @focus="focusTicketDescription"
@@ -69,7 +68,7 @@
                             <q-input   
                                 label="Seleccionar cliente(*)"   
                                 dense
-                                class="mb-20"
+                                class="mb-5"
                                 v-model="ticketClient.name"
                                 :ref="el=>ticketClientInput=el"
                                 @focus="focusTicketClient"
@@ -83,31 +82,16 @@
                                         <q-icon :color="ticketClientIconColor" size="xs" name="person"/>
                                 </template>
                             </q-input>
-
-                            <!-- Nombre del Producto-->
-                            <q-input   
-                                label="Nombre del Producto"  
-                                dense 
-                                class="mb-20"
-                                v-model="ticketProductName"
-                                :ref="el=>ticketProductNameInput=el"
-                                @focus="focusTicketProductName"
-                                @blur="focusTicketProductName(false)"
-                            >
-                                <template v-slot:prepend>
-                                        <q-icon :color="ticketProductNameIconColor" size="xs" name="inventory_2"/>
-                                </template>
-                            </q-input>
-
-
                             
                             <!-- Vencimiento Fecha y Hora-->
                             <q-input dense  v-model="ticketDueDate" 
                                     label="Fecha y Hora de Vencimiento" 
-                                    class="mb-20"
+                                    class="mb-5"
                                     :ref="el=>ticketDueDateInput=el"
                                     @focus="focusTicketDueDate"
                                     @blur="focusTicketDueDate(false)"
+                                    :error="!!ticketDueDateError"
+                                    :error-message="ticketDueDateError"
                                     >
                                 <template v-slot:prepend>
                                     <q-icon :color="ticketDueDateIconColor" size="xs" name="event" class="cursor-pointer">
@@ -138,6 +122,22 @@
                                 </template>
                             </q-input>
 
+                            <!-- Nombre del Producto-->
+                            <q-input   
+                                label="Nombre del Producto"  
+                                dense 
+                                class="mb-5"
+                                v-model="ticketProductName"
+                                :ref="el=>ticketProductNameInput=el"
+                                @focus="focusTicketProductName"
+                                @blur="focusTicketProductName(false)"
+                            >
+                                <template v-slot:prepend>
+                                        <q-icon :color="ticketProductNameIconColor" size="xs" name="inventory_2"/>
+                                </template>
+                            </q-input>
+
+                            <!--Prioridar del ticket-->
                             <q-select 
                                     dense  v-model="ticketPriority" 
                                     color="primary"  :options="['Alta','Media','Baja']" 
@@ -254,8 +254,10 @@ export default defineComponent({
                 if(state)focusedInput.value=ticketDueDateInput.value
                 else if(focusedInput.value==ticketDueDateInput.value) focusedInput.value=null
         }
-        const ticketDueDateIconColor=computed(()=> focusedInput.value==ticketDueDateInput.value ? 'primary' : 'grey-8')
-        
+        const ticketDueDateIconColor=computed(()=> ticketDueDateError.value? 'negative': focusedInput.value==ticketDueDateInput.value ? 'primary' : 'grey-8')
+        const ticketDueDateError=ref('')
+        watch(ticketDueDate,()=>ticketDueDateError.value="")
+
         //verifica si la fecha ingresada es valida
         const validateDate=()=>{
             return new Date(parseDate(ticketDueDate.value)).getTime()>= new Date(parseDate(todayDate.value)).getTime()
@@ -289,8 +291,8 @@ export default defineComponent({
             if(!ticketName.value) {ticketNameError.value="Este campo no puede quedar vacio";return false}
             if(!ticketDescription.value){ticketDescriptionError.value= "Este campo no puede quedar vacio"; return false}
             if(!ticketClient.value){ticketClientError.value="Este campo no puede quedar vacio";return false}
-            if(!validateDate()){console.log("fecha invalidaa"); return false}
-            console.log("ticketClient.value",ticketClient.value)
+            if(!validateDate()){ticketDueDateError.value="Fecha incorrecta, ingrese una fecha mayor o igual a la de hoy"; return false}
+            
             return true
         }
         const createTicket=async()=>{
@@ -366,7 +368,7 @@ export default defineComponent({
             ticketDueDateInput,
             focusTicketDueDate,
             ticketDueDateIconColor,
-           
+            ticketDueDateError,
 
             ticketPriority,
             ticketPriorityInput,
