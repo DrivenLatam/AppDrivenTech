@@ -46,9 +46,11 @@ export default {
                 }
         },
         //envia una foto de un ticket al servidor
-        async uploadImageTicket({commit,getters},{file,ticketId,country}){
+        async uploadImageTicket({commit,getters},{file,ticketId,fileName}){
+            const {username,country}=store.get("user")
+            const params={username,country}
             const formdata = new FormData();
-            
+             
             const config={
                 headers:{'Content-Type':'multipart/form-data'}
             }
@@ -58,6 +60,7 @@ export default {
                 formdata.append('file',file)
                 formdata.append('ticketId',ticketId)
                 formdata.append('country',country)
+                formdata.append('fileName',fileName)
                 const {data} = await axios.post(BASE_URL+"tickets/file",formdata,config)
                 console.log(data)
                 return {data}
@@ -80,6 +83,8 @@ export default {
         //agregar un ticket al servidor
         async addTicket({commit,getters},{body}){
             //console.log('DueData',body)
+            const {username,country}=store.get("user")
+            body.username=username
             try {
 
                 const {data} = await axios.post(BASE_URL+"tickets2/",body)

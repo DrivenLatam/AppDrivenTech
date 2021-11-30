@@ -317,7 +317,7 @@ export default defineComponent({
             return true
         }
         const createTicket=async()=>{
-            
+            //loading.value=true arreglar
             //validar campos con funcion validateField
             if(!validateFields()) {
                 loading.value=false
@@ -326,15 +326,15 @@ export default defineComponent({
             const body={
                 subject:ticketName.value,
                 description:ticketDescription.value,
-                contactId:ticketClient.value.accountId,
+                contactId:ticketClient.value.id,
                 productId:ticketProduct.value.id,
                 dueDate:parseDate(ticketDueDate.value), 
                 priority:ticketPriority.value,
                 country: user.value.country 
             }
             console.log(body)
-            //const {data,error}=await addTicket({body})
-            if(true){
+            const {data,error}=await addTicket({body})
+            if(data){
                 loading.value=false
                 successMessage.value=true
             }else{

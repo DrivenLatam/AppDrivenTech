@@ -62,6 +62,7 @@
                                  </q-carousel-slide>
                             </q-carousel>
                         </div>
+                      
                     </div>
                 
 
@@ -73,9 +74,9 @@
                                     :disable="draggingFab"
                                     v-touch-pan.prevent.mouse="moveFab"
                                 >
-                                    <q-fab-action @click="dialogFinalizateTicket" color="primary" icon="done" label="Finalizar" :disable="draggingFab" />
+                                   <!-- <q-fab-action @click="dialogFinalizateTicket" color="primary" icon="done" label="Finalizar" :disable="draggingFab" /> -->
                                     <q-fab-action @click="uploadImage" color="primary" icon="update" label="Actualizar" :disable="draggingFab" />
-                                    <q-fab-action  @click="takePicture" color="primary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
+                                    <q-fab-action v-if="listImg.length==0"  @click="takePicture" color="primary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
 
                                 </q-fab>
                     </q-page-sticky>
@@ -102,6 +103,7 @@
                         :message="msgDialog"
                         @confirAction="confirAction"
                     />
+                    
                 </q-page>
             </q-page-container>
             
@@ -114,6 +116,8 @@ import { defineComponent,ref,computed } from 'vue'
 import {useRoute,useRouter} from 'vue-router'
 import {useGetters,useActions} from 'src/store'
 import { Camera, CameraResultType } from '@capacitor/camera'
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+
 import ConfirmDialog from 'src/components/Dialog/ConfirmDialog.vue'
 import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
 import SuccesDialog from 'src/components/Dialog/SuccesDialog.vue'
@@ -134,7 +138,7 @@ export default defineComponent({
                 ]
         }
 
-        
+        const fileBase64=ref("")
 
         //dialog que contiene a toda la pagina, la pagina en si es un dialog
         const dialogContainer=ref(true)
@@ -201,19 +205,31 @@ export default defineComponent({
         }
         //Actualizar un ticket en el servidor
         const uploadImage= async()=>{
-            //dialogContainer.value=false
-            //console.log('...aa',listImg.value[0])
+            
+            let fileBase64= await readFilePath(listImg.value[0])
             const params={
-                //file:listImg.value[0],
-                file:model.value,
+                file:fileBase64,
+                //file:model.value,
                 ticketId:ticketId.value,
-                country:'PY' //obtener el correcto del storage
+                fileName: `TICKET ${ticket.value.ticket_number}`
             }
             const {data,error}=await uploadImageTicket(params)
             if(data) succesDialog('Actualizado','El ticket se actualizo con exito')
             else errorDialog('Error','No se pudo actualizar el ticket, intentelo mas tarde')
             
         }
+
+        const readFilePath = async (image) => {
+            // Here's an example of reading a file with a full file path. Use this to
+            // read binary data (base64 encoded) from plugins that return File URIs, such as
+            // the Camera.
+            const contents = await Filesystem.readFile({
+                path: image.path
+            });
+            if(contents) return contents.data
+            else return image.path
+            
+        };
         //Volver a la pantalla de atras
         const goBack= async()=>{
             dialogContainer.value=false
@@ -298,6 +314,7 @@ export default defineComponent({
             showSuccesDialog,
             label,
             
+
         }
     },
 })
