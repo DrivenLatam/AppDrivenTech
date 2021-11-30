@@ -22,21 +22,19 @@
                     <div class="container">
                         <div class="col">
                             <p class="text-h5 text-grey-8-9">Editar el Ticket</p>
-                            <p class="text-grey-8-8 q-mb-md">En esta seccion podra agregar observacion y fotos a un ticket, presione el boton Finalizar cuando desea terminar con el trabajo</p> 
+                            <p class="text-grey-8-8 q-mb-md">En esta sección podra editar la observación y agregar fotos al ticket</p> 
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
                          <q-input   
                             autogrow
-                            label="Observacion" 
+                            label="Observación" 
                             class="mt-20"
                             outlined
                             v-model="obeservation"
                         >
                         </q-input>
-                        
+                        <p class="text-grey-9 fs-20">Imagen seleccionada:</p>
                         <div v-if="listImg.length>0" class="mt-25">
-                            <p class="text-grey-9 fs-20">Images adjuntadas: </p>
-                            
                             <q-carousel
                                 v-model="slide"
                                 transition-prev="jump-right"
@@ -61,6 +59,9 @@
                                             </q-icon>
                                  </q-carousel-slide>
                             </q-carousel>
+                        </div>
+                        <div class="text-grey-8 fs-14 pa-5 bg-blue-1 px-8 py-8" 
+                            v-else > Aún no se adjunto una imagen
                         </div>
                       
                     </div>
@@ -197,10 +198,10 @@ export default defineComponent({
                         router.replace({path:'/'})
                     },200)
                 }
-                succesDialog('Finalizado','El ticket se pudo finalizar con exito',okDialog)
+                succesDialog('Finalizado','El ticket se finalizo con éxito',okDialog)
             }else{
                 showConfirDialog.value=false
-                errorDialog('Error','No se pudo finalizar el ticket, intentelo mas tarde')
+                errorDialog('Error','No se pudo finalizar el ticket, inténtelo mas tarde')
             } 
         }
         //Actualizar un ticket en el servidor
@@ -214,8 +215,8 @@ export default defineComponent({
                 fileName: `TICKET ${ticket.value.ticket_number}`
             }
             const {data,error}=await uploadImageTicket(params)
-            if(data) succesDialog('Actualizado','El ticket se actualizo con exito')
-            else errorDialog('Error','No se pudo actualizar el ticket, intentelo mas tarde')
+            if(data) succesDialog('Actualizado','El ticket se actualizo con éxito')
+            else errorDialog('Error','No se pudo actualizar el ticket, inténtelo mas tarde')
             
         }
 
@@ -263,7 +264,6 @@ export default defineComponent({
 
         //funcion que elimina la imagen de la lista
         const removeImg=()=>{
-            console.log('Eliminando Imagen con index',imageSelected.value)
             listImg.value=listImg.value.filter((_,index)=>index!=imageSelected.value)
             showConfirDialog.value=false
         }

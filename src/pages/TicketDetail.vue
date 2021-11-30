@@ -86,7 +86,7 @@
                         <q-separator class="q-mt-md" color="primary" />
 
                         <!-- Cuarta seccion, para ver las fotos de un ticket-->
-                        <p class="text-weight-medium fs-15 q-mt-md">Imágenes adjuntas: </p>
+                        <p class="text-weight-medium fs-15 q-mt-md">Imágenes subidas: </p>
                         <div v-if="ticketImages" class="q-mt-md">
                             <q-carousel
                                 v-if="ticketImages.length>0"
@@ -126,7 +126,7 @@
                         
                         <!-- Boton para editar el ticket -->
                         <div class="flex justify-center mt-20 mb-20">
-                            <q-btn @click="goToEditTicket" class="py-5 px-50" color="primary" label="Editar" />
+                            <q-btn no-caps @click="goToEditTicket" class="py-5 px-50" color="primary" label="Editar Ticket" />
                         </div>
                         
                     </div>

@@ -49,7 +49,7 @@
 
                             <q-input   
                                 autogrow
-                                label="Descripcion(*)" 
+                                label="Descripción(*)" 
                                 dense
                                 class="mb-5"
                                 v-model="ticketDescription"
@@ -85,7 +85,7 @@
                             
                             <!-- Vencimiento Fecha y Hora-->
                             <q-input dense  v-model="ticketDueDate" 
-                                    label="Fecha y Hora de Vencimiento" 
+                                    label="Fecha y hora de vencimiento" 
                                     class="mb-5"
                                     :ref="el=>ticketDueDateInput=el"
                                     @focus="focusTicketDueDate"
@@ -124,7 +124,7 @@
 
                             <!-- Nombre del Producto-->
                             <q-input   
-                                label="Nombre del Producto(*)"  
+                                label="Nombre del producto(*)"  
                                 dense 
                                 autogrow
                                 class="mb-5"
@@ -155,7 +155,7 @@
                                     </template>
                             </q-select>
                             <div class="flex justify-center mt-20">
-                                <q-btn @click="createTicket" class="py-5 px-50" color="primary" label="Crear Ticket" />
+                                <q-btn no-caps @click="createTicket" class="py-5 px-50" color="primary" label="Crear Ticket" />
                             </div>
                         </div>
 
@@ -163,7 +163,7 @@
                         <succes-dialog 
                             v-if="successMessage"
                             title="Creado" 
-                            message="El ticket se creo exitosamente" 
+                            message="El ticket se creó exitosamente" 
                             @confirAction="goBack" 
 
                         />
@@ -219,7 +219,7 @@ export default defineComponent({
         const {user}=useGetters()
 
         //TicketName
-        const ticketName=ref('Prueba Para API QUASAR')
+        const ticketName=ref('')
         const ticketNameInput=ref(null)
         const focusTicketName=(state=true)=>{
             if(state) focusedInput.value=ticketNameInput.value
@@ -229,7 +229,7 @@ export default defineComponent({
         const ticketNameError=ref('')
         watch(ticketName,()=>ticketNameError.value="")
         //ticketDescription
-        const ticketDescription=ref('Descripcion')
+        const ticketDescription=ref('')
         const ticketDescriptionInput=ref(null)
         const focusTicketDescription=(state=true)=>{
                 if(state)focusedInput.value=ticketDescriptionInput.value

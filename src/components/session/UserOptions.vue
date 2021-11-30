@@ -9,7 +9,7 @@
                 <q-separator />
                 <q-item clickable v-ripple @click="goToChangePasswordPage">
                     <q-item-section avatar><q-icon name="manage_accounts" /></q-item-section>
-                    <q-item-section>Cambiar Contraseña</q-item-section>
+                    <q-item-section>Cambiar contraseña</q-item-section>
                 </q-item>
                 <q-separator />
                 <q-item clickable v-ripple @click="logout">
