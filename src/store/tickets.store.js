@@ -69,17 +69,18 @@ export default {
                 return {error}
             }
         },
-        //edita un ticket al servidor
+
+        //finaliza un ticket al servidor
         async finalizateTicket({commit,getters}){
             try {
                 const {data} = await axios.put(BASE_URL+"tickets/finalizate")
-                
                 return {data}
             } catch (error) {
                 handleMessageError(error)
                 return {error}
             }
         },
+
         //agregar un ticket al servidor
         async addTicket({commit,getters},{body}){
             //console.log('DueData',body)
@@ -116,6 +117,19 @@ export default {
                 //console.log("prductos",data)
                 return {data}
             } catch (error) {
+                handleMessageError(error)
+                return {error}
+            }
+        },
+
+        //Obtiene las images del ticket
+        async getTicketImages({commit,getters},{ticketId}){
+            const {country}=store.get("user")
+            try {
+                const {data}= await axios.get(BASE_URL+"tickets/getfile",{params:{ticketId,country}})
+                return {data}
+            } catch (error) {
+                console.log("Error al obtener imagenes")
                 handleMessageError(error)
                 return {error}
             }

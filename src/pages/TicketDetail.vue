@@ -21,6 +21,7 @@
             <q-page-container>
                 <q-page>
                     <div class="container">
+                        <!--Primera Seccion -->
                         <div class="row">
                             <div class="col">
                                 <p class="fs-18 text-bold q-my-sm q-py">#{{ticket.ticket_number}}</p>
@@ -31,12 +32,16 @@
                             
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
+
+                        <!--Segunda Seccion -->
                         <div class="q-mt-md">   
-                            <p class="text-weight-medium fs-15 q-my-sm">Descripcion:</p>
+                            <p class="text-weight-medium fs-15 q-my-sm">Descripción:</p>
                             <p class="text-weight-light fs-15 ">{{ticket.description}}</p>
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
-                        <div class="pb-30">
+
+                        <!--Terceera Seccion -->
+                        <div >
                             <div class="row q-col-gutter-x-sm q-mt-sm">
                                 <div class="col-auto text-weight-medium  fs-15">
                                         Cliente
@@ -47,7 +52,7 @@
                             </div>
                             <div class="row q-col-gutter-x-sm q-mt-sm">
                                 <div class="col-auto text-weight-medium  fs-15">
-                                        Nombre del Producto
+                                        Nombre del producto
                                 </div>
                                 <div class="col text-weight-light  fs-15">
                                         <label class="float-right">{{ticket.product_name}}</label>
@@ -71,13 +76,55 @@
                             </div>
                             <div class="row q-col-gutter-x-sm q-mt-sm">
                                 <div class="col-auto text-weight-medium  fs-15">
-                                        Ubicacion
+                                        Ubicación
                                 </div>
                                 <div class="col text-weight-light  fs-15">
-                                        <label :class=" hasUrlDirection ? 'link' : '' " class="float-right">{{hasUrlDirection ? 'Abrir en Maps' : 'Sin Informacion' }}</label>
+                                        <label :class=" hasUrlDirection ? 'link' : '' " class="float-right">{{hasUrlDirection ? 'Abrir en Maps' : 'Sin información' }}</label>
                                 </div>
                             </div>
                         </div>
+                        <q-separator class="q-mt-md" color="primary" />
+
+                        <!-- Cuarta seccion, para ver las fotos de un ticket-->
+                        <p class="text-weight-medium fs-15 q-mt-md">Imágenes adjuntas: </p>
+                        <div v-if="ticketImages" class="q-mt-md">
+                            <q-carousel
+                                v-if="ticketImages.length>0"
+                                v-model="slide"
+                                transition-prev="jump-right"
+                                transition-next="jump-left"
+                                swipeable
+                                animated
+                                control-color="primary"
+                                navigation
+                                control-type="regular"
+                                arrows
+                                height="300px"
+                                class="text-white shadow-1 rounded-borders"
+                            >
+                                <q-carousel-slide v-for="(img,index) in ticketImages" 
+                                            :key="index" 
+                                            :img-src="'data:image/gif;base64,'+ img.image_base64"  
+                                            :name="index" 
+                                            class="column no-wrap flex-center uncropped-image">       
+                                 </q-carousel-slide>
+                            </q-carousel>
+                            <div class="text-grey-8 fs-14 pa-5 bg-blue-1 px-8 py-8" 
+                                v-else > El ticket aún no tiene imágenes adjuntas, puede agregarlo haciendo click  
+                            <span  @click="goToEditTicket" class="underline text-primary text-bold"> aquí</span></div>
+                            
+                        </div>
+                        
+                            <q-card v-else class="q-mt-md my-card column justify-center items-center ">
+                                <q-spinner
+                                    color="primary"
+                                    size="3em"
+                                />
+                                <p class="text-weight-light fs-15 mt-5" >Cargando imágenes</p>
+                            </q-card>
+                      
+                        
+                        <!-- Boton para editar el ticket -->
                         <div class="flex justify-center mt-20 mb-20">
                             <q-btn @click="goToEditTicket" class="py-5 px-50" color="primary" label="Editar" />
                         </div>
@@ -94,7 +141,7 @@
 
 import { defineComponent,ref,computed } from 'vue'
 import {useRoute,useRouter} from 'vue-router'
-import {useGetters} from 'src/store'
+import {useGetters,useActions} from 'src/store'
 import Edit from 'src/components/tickets/Edit.vue'
 export default defineComponent({
     components:{
@@ -107,7 +154,9 @@ export default defineComponent({
         const ticketId=ref(route.params.id)
         const {getTicketById}=useGetters()
         const imgDriven=ref("imgs/drivenImg.png")
+        const slide=ref(true)
         //Ticket
+        const {getTicketImages}=useActions()
         const ticket=computed(()=>{
             return getTicketById.value(ticketId.value)
         })
@@ -115,7 +164,20 @@ export default defineComponent({
         const ticketStatusColor=computed(()=> ticket.value.status=='Abierto' ? 'text-positive' : ticket.value.status=='Cerrado' ? 'text-dark' : 'text-warning' )
         const hasMobileContact=computed(()=>(ticket.value.contact.mobile!='Sin Informacion') ? true : false )
         const hasUrlDirection=computed(()=>(ticket.value.cf.cf_direccion_url!='Sin Informacion') ? true : false )
-       
+       // Imagenes del ticket
+       const ticketImages=ref(null)
+       const loadImageTickets=async()=>{    
+           const {data,error}= await getTicketImages({ticketId:ticketId.value})
+           if(data){
+                console.log("imageees",data)
+                ticketImages.value=data
+                slide.value=0
+           }else{
+               console.log("error..")
+           }
+       }
+       loadImageTickets()
+
        const goBack=()=>{
             dialog.value=false
             setTimeout(()=>{
@@ -144,7 +206,9 @@ export default defineComponent({
             ticketStatusColor,
             hasMobileContact,
             hasUrlDirection,
-            goToEditTicket
+            goToEditTicket,
+            slide,
+            ticketImages
             }
     },
 })
@@ -160,4 +224,14 @@ p{
     text-decoration: underline;
     color: $blue;
 }
+.my-card{
+  width: 100%;
+  height:300px;
+}
+.uncropped-image {
+  background-size: contain;  /* don't crop the image  */
+  background-repeat: no-repeat;  /* only show the image one time  */
+  background-color: white;  /* color to fill empty space with  */
+}
+
 </style>
