@@ -19,16 +19,17 @@
             </q-header>
             <q-page-container>
                 <q-page class="mt-30 mx-20 pb-20">
-                    <div v-if="loading"  > <!--Hace que aparezca centrado -->
+                    <div class="q-mt-md  column justify-center items-center " v-if="loading"  > <!--Hace que aparezca centrado -->
                         <q-spinner   
                             color="primary"
                             size="3em"
                         />
+                        <p class="text-grey-8 fs-14 mt-5" >Creando  ticket</p>
                     </div>
                     
                     <div v-else >
-                        <p class="text-h5 text-grey-8-9">Crea un nuevo Ticket</p>
-                        <p class="text-grey-8-8 q-mb-md">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios </p>
+                        <p class="text-h6 text-grey-8-9">Crea un nuevo Ticket</p>
+                        <p class="text-caption text-grey-8-8 q-mb-md">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios. </p>
                         <div class="mb-20">
                             <q-input   
                                 autofocus
@@ -219,7 +220,7 @@ export default defineComponent({
         const {user}=useGetters()
 
         //TicketName
-        const ticketName=ref('')
+        const ticketName=ref('Prueba de crear')
         const ticketNameInput=ref(null)
         const focusTicketName=(state=true)=>{
             if(state) focusedInput.value=ticketNameInput.value
@@ -229,7 +230,7 @@ export default defineComponent({
         const ticketNameError=ref('')
         watch(ticketName,()=>ticketNameError.value="")
         //ticketDescription
-        const ticketDescription=ref('')
+        const ticketDescription=ref('Prueba para validar la fecha')
         const ticketDescriptionInput=ref(null)
         const focusTicketDescription=(state=true)=>{
                 if(state)focusedInput.value=ticketDescriptionInput.value
@@ -317,12 +318,13 @@ export default defineComponent({
             return true
         }
         const createTicket=async()=>{
-            //loading.value=true arreglar
+            loading.value=true 
             //validar campos con funcion validateField
             if(!validateFields()) {
                 loading.value=false
                 return
             }
+            
             const body={
                 subject:ticketName.value,
                 description:ticketDescription.value,
@@ -332,8 +334,9 @@ export default defineComponent({
                 priority:ticketPriority.value,
                 country: user.value.country 
             }
-            console.log(body)
+            //console.log(body)
             const {data,error}=await addTicket({body})
+            console.log('Crear ticket data',data)
             if(data){
                 loading.value=false
                 successMessage.value=true
@@ -341,8 +344,8 @@ export default defineComponent({
                 loading.value=false
                 errorMessage.value=true
             }
+         
             
-            //Enviar datos al servidor
         }
         const goBack=()=>{
             dialog.value=false

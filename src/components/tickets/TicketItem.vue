@@ -22,8 +22,10 @@ export default defineComponent({
 
 
         const formattedDueDate=computed(()=>{
-            const date=new Date(ticket.value.cf.cf_fecha_hora)
-            return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')} `
+            const date=new Date(ticket.value.dueDate)
+            //console.log('..',date)
+            if (date=='Invalid Date') return 'Sin Informacion'
+            else return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')} `
         })
         const onClickTicket=()=>{
             router.push({path:`/ticket/${ticket.value.id}`})

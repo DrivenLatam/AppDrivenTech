@@ -18,6 +18,10 @@ export default {
         setTickets(state,tickets){
             state.tickets=tickets
         },
+        updateTicket(state,{ticketID,ticketUpdated}){
+            const ticketIndex=state.tickets.findIndex(ticket=>ticket.id==ticketID)
+            state.tickets[ticketIndex]=ticketUpdated
+        },
         setLoadingTicket(state,value){
             state.loadingTicket=value
         },
@@ -39,6 +43,7 @@ export default {
                 try {
                     const {data} = await axios.get(BASE_URL+"tickets/",{params:{username,country}})
                     commit('setTickets',data)
+                    console.log("tickets",data)
                     return {data}
                 } catch (error) {
                     handleMessageError(error)
@@ -71,11 +76,14 @@ export default {
         },
 
         //finaliza un ticket al servidor
-        async finalizateTicket({commit,getters}){
+        async finalizateTicket({commit,getters},{ticketId}){
+            const {country}=store.get("user")
             try {
-                const {data} = await axios.put(BASE_URL+"tickets/finalizate")
+                const {data} = await axios.patch(BASE_URL+"tickets/finish",{ticketId,country})
+                console.log('finalizarTicket',data)
                 return {data}
             } catch (error) {
+                console.log('FinalizateTicketErrorr')
                 handleMessageError(error)
                 return {error}
             }
@@ -89,9 +97,10 @@ export default {
             try {
 
                 const {data} = await axios.post(BASE_URL+"tickets2/",body)
-                //console.log('data',data)
+                console.log('data de crearr',data)
                 return {data}
             } catch (error) {
+                console.log('error de crear')
                 handleMessageError(error)
                 return {error}
             }

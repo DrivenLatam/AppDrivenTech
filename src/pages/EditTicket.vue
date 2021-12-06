@@ -9,7 +9,7 @@
             <q-header elevated class="bg-white text-black">
             <q-toolbar>
                     <q-btn icon="arrow_back" flat round @click="goBack" />
-                    <q-toolbar-title class="fs-30 text-weight-regular">Driven</q-toolbar-title> 
+                    <q-toolbar-title class="fs-20 ">Editar Ticket</q-toolbar-title> 
                     <q-avatar size="40px" >
                             <img src="imgs/drivenImg.png"/>
                     </q-avatar>
@@ -19,10 +19,17 @@
 
             <q-page-container>
                 <q-page class="mt-20 pb-100">
-                    <div class="container">
+                    <div class="q-mt-md  column justify-center items-center " v-if="loading"  > <!--Hace que aparezca centrado -->
+                        <q-spinner   
+                            color="primary"
+                            size="3em"
+                        />
+                        <p class="text-grey-8  fs-14 mt-5" >{{loadingMessage}}</p>
+                    </div>
+                    <div v-else class="container">
+                        <p>ir a atras{{goBackText}}</p>
                         <div class="col">
-                            <p class="text-h5 text-grey-8-9">Editar el Ticket</p>
-                            <p class="text-grey-8-8 q-mb-md">En esta sección podra editar la observación y agregar fotos al ticket</p> 
+                            <p class="fs-14 text-weight-light  q-mb-md">En esta sección podra editar la observación y agregar fotos al ticket.</p> 
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
                          <q-input   
@@ -33,7 +40,7 @@
                             v-model="obeservation"
                         >
                         </q-input>
-                        <p class="text-grey-9 fs-20">Imagen seleccionada:</p>
+                        <p class="text-weight-medium fs-15">Imagen seleccionada</p>
                         <div v-if="listImg.length>0" class="mt-25">
                             <q-carousel
                                 v-model="slide"
@@ -60,13 +67,11 @@
                                  </q-carousel-slide>
                             </q-carousel>
                         </div>
-                        <div class="text-grey-8 fs-14 pa-5 bg-blue-1 px-8 py-8" 
+                        <div class="text-weight-light text-center fs-14 pa-5 bg-blue-1 px-8 py-8" 
                             v-else > Aún no se adjunto una imagen
                         </div>
-                      
                     </div>
-                
-
+                    <!-- Boton de FAB -->
                     <q-page-sticky  position="bottom-right" :offset="fabPos">
                                 <q-fab
                                     icon="expand_less"
@@ -75,7 +80,7 @@
                                     :disable="draggingFab"
                                     v-touch-pan.prevent.mouse="moveFab"
                                 >
-                                   <!-- <q-fab-action @click="dialogFinalizateTicket" color="primary" icon="done" label="Finalizar" :disable="draggingFab" /> -->
+                                    <q-fab-action @click="dialogFinalizateTicket" color="primary" icon="done" label="Finalizar" :disable="draggingFab" /> 
                                     <q-fab-action @click="uploadImage" color="primary" icon="update" label="Actualizar" :disable="draggingFab" />
                                     <q-fab-action v-if="listImg.length==0"  @click="takePicture" color="primary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
 
@@ -117,7 +122,10 @@ import { defineComponent,ref,computed } from 'vue'
 import {useRoute,useRouter} from 'vue-router'
 import {useGetters,useActions} from 'src/store'
 import { Camera, CameraResultType } from '@capacitor/camera'
+
+
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { App } from '@capacitor/app';
 
 import ConfirmDialog from 'src/components/Dialog/ConfirmDialog.vue'
 import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
@@ -138,9 +146,9 @@ export default defineComponent({
                 fabPos.value[ 1 ] - ev.delta.y
                 ]
         }
-
         const fileBase64=ref("")
-
+        const loading=ref(false) //para mostrar spinner cuando se finaliza o actualiza un ticket
+        const loadingMessage=ref("")
         //dialog que contiene a toda la pagina, la pagina en si es un dialog
         const dialogContainer=ref(true)
         /*-------Atributos y acciones del dialog ----------------*/
@@ -152,6 +160,9 @@ export default defineComponent({
         const confirAction=ref(null)
         const label=ref('')
 
+
+        //-----
+        const goBackText=ref("")
         //Dialog para mensajes de confirmacion
         const succesDialog=(title,message,okAction=goBack)=>{
              showSuccesDialog.value=true
@@ -185,10 +196,17 @@ export default defineComponent({
         const ticket=computed(()=>{
             return getTicketById.value(ticketId.value)
         })
+        
         //Funcion que se encarga de finalizar un ticket en el servidor
         const closeTicket=async()=>{
-            const {data,error}=await finalizateTicket()
-            //---------Aca validar que el ticket tenga obeservacion y que almenos el usuario adjunto una imagen al servidor
+            if(!ticket.value.images ){ //si el ticket aun no tiene imagenes adjuntas, no se puede finalizar
+                    errorDialog("Sin imágenes","El ticket no puede finalizarse sin imágenes subidas")
+                    showConfirDialog.value=false
+                    return
+            }
+            loading.value=true
+            loadingMessage.value="Finalizando ticket"
+            const {data,error}=await finalizateTicket({ticketId:ticketId.value})
             if(data){
                 //Funcion a llamar cuando se apriete ok en el dialog
                 const okDialog=()=>{
@@ -198,26 +216,45 @@ export default defineComponent({
                         router.replace({path:'/'})
                     },200)
                 }
+                loading.value=false
+                loadingMessage.value=""
                 succesDialog('Finalizado','El ticket se finalizo con éxito',okDialog)
             }else{
                 showConfirDialog.value=false
+                loading.value=false
+                loadingMessage.value=""
                 errorDialog('Error','No se pudo finalizar el ticket, inténtelo mas tarde')
             } 
+            
         }
         //Actualizar un ticket en el servidor
         const uploadImage= async()=>{
-            
+            if(!listImg.value.length){
+                    errorDialog("Sin imágenes","Adjunte una imagen para actualizar el ticket")
+                    showConfirDialog.value=false
+                    return
+            }
+            //Mensaje del spinner
+            loading.value=true
+            loadingMessage.value="Actualizando ticket"
+
             let fileBase64= await readFilePath(listImg.value[0])
             const params={
                 file:fileBase64,
-                //file:model.value,
                 ticketId:ticketId.value,
                 fileName: `TICKET ${ticket.value.ticket_number}`
-            }
+            } 
             const {data,error}=await uploadImageTicket(params)
-            if(data) succesDialog('Actualizado','El ticket se actualizo con éxito')
-            else errorDialog('Error','No se pudo actualizar el ticket, inténtelo mas tarde')
-            
+            if(data){
+                loading.value=false
+                loadingMessage.value=""
+                succesDialog('Actualizado','El ticket se actualizo con éxito') 
+            }
+            else {
+                loading.value=false
+                loadingMessage.value=""
+                errorDialog('Error','No se pudo actualizar el ticket, inténtelo mas tarde')
+            }
         }
 
         const readFilePath = async (image) => {
@@ -237,12 +274,21 @@ export default defineComponent({
             setTimeout(()=>{
                 //router.replace({path:'/'})
                 router.go(-1)
-            },200)
+            },200)   
         }
-    
-        document.addEventListener('backbutton',()=>{
-            goBack()
+
+        App.addListener("backButton",({canGoBack})=>{
+            goBackText.value="saliiir" + str(canGoBack)
+            setTimeout(()=>{
+                goBackText.value="saliiir" + str(canGoBack)
+                window.history.back()
+            },3000)
         })
+        
+        App.addListener('appStateChange', ({ isActive }) => {
+            console.log('App state changed. Is active?', isActive);
+        });
+        
 
         /*-------------------Images And Camera ---------------------*/
 
@@ -313,7 +359,10 @@ export default defineComponent({
             showErrorDialog,
             showSuccesDialog,
             label,
-            
+            loading,
+            loadingMessage,
+
+            goBackText
 
         }
     },

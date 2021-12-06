@@ -10,11 +10,10 @@
             <q-header elevated class="bg-white text-black">
             <q-toolbar>
                     <q-btn icon="arrow_back" flat round @click="goBack" />
-                    <q-toolbar-title class="fs-30 text-weight-regular">Driven</q-toolbar-title> 
+                    <q-toolbar-title class="fs-20 ">Detalles Ticket</q-toolbar-title> 
                     <q-avatar size="40px" >
                             <img src="imgs/drivenImg.png"/>
                     </q-avatar>
-                    
                 </q-toolbar>
             </q-header>
 
@@ -24,48 +23,50 @@
                         <!--Primera Seccion -->
                         <div class="row">
                             <div class="col">
-                                <p class="fs-18 text-bold q-my-sm q-py">#{{ticket.ticket_number}}</p>
-                                <p class=" text-weight-light  fs-16 q-my-sm">{{ticket.subject}}</p>
-                                <p class="text-weight-medium fs-15 q-my-sm">Estado: <span :class="ticketStatusColor" class="text-weight-light fs-15"> {{ticket.status}}</span></p>
-                                <p class="text-weight-medium fs-15 q-my-sm">Prioridad: <span  class="text-weight-light fs-15"> {{ticket.priority}}</span></p>
+                                <div class="row justify-between">
+                                    <p class="fs-18 text-bold q-my-sm q-py">#{{ticket.ticket_number}}</p>
+                                    <div class="text-bold mt-5 " ><q-badge  :color="ticketStatusColor " class="fs-15 py-5 "  :label="ticket.status" /></div>
+                                </div>
+                                <p class=" fs-14 text-weight-light  text-lowercase  q-my-sm">{{ticket.subject}}</p>
+                                <div class="fs-14 text-weight-medium q-my-sm"> Prioridad <q-badge outline class=" fs-15 " color="black" :label="ticket.priority" /></div>
                             </div>
-                            
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
 
                         <!--Segunda Seccion -->
                         <div class="q-mt-md">   
-                            <p class="text-weight-medium fs-15 q-my-sm">Descripción:</p>
-                            <p class="text-weight-light fs-15 ">{{ticket.description}}</p>
+                            <p class="text-weight-medium fs-14 q-my-sm">Descripción</p>
+                            <p class="text-weight-light fs-14 text-lowercase ">{{ticket.description}}</p>
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
 
                         <!--Terceera Seccion -->
                         <div >
                             <div class="row q-col-gutter-x-sm q-mt-sm">
-                                <div class="col-auto text-weight-medium  fs-15">
+                                <div class="col-auto text-weight-medium fs-14">
                                         Cliente
                                 </div>
-                                <div class="col text-weight-light  fs-15">
+                                <div class="col text-weight-light fs-14">
                                         <label class="float-right">{{ticket.contact.name}}</label>
                                 </div>
                             </div>
                             <div class="row q-col-gutter-x-sm q-mt-sm">
-                                <div class="col-auto text-weight-medium  fs-15">
-                                        Nombre del producto
+                                <div class="col-auto text-weight-medium fs-14">
+                                        Producto
                                 </div>
-                                <div class="col text-weight-light  fs-15">
-                                        <label class="float-right">{{ticket.product_name}}</label>
+                                <div class="col text-weight-light  fs-14">
+                                        <label class="float-right text-lowercase ">{{ticket.product_name}}</label>
                                 </div>
                             </div>
                             <div class="row q-col-gutter-x-sm q-mt-sm">
-                                <div class="col-auto text-weight-medium  fs-15">
+                                <div class="col-auto text-weight-medium  fs-14">
                                         Vencimiento
                                 </div>
-                                <div class="col text-weight-light  fs-15">
+                                <div class="col text-weight-light  fs-14">
                                         <label class="float-right">{{formattedDate}}</label>
                                 </div>
                             </div>
+                            <!--
                             <div class="row q-col-gutter-x-sm q-mt-sm">
                                 <div class="col-auto text-weight-medium  fs-15">
                                         Contacto
@@ -82,11 +83,12 @@
                                         <label :class=" hasUrlDirection ? 'link' : '' " class="float-right">{{hasUrlDirection ? 'Abrir en Maps' : 'Sin información' }}</label>
                                 </div>
                             </div>
+                            -->
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
 
                         <!-- Cuarta seccion, para ver las fotos de un ticket-->
-                        <p class="text-weight-medium fs-15 q-mt-md">Imágenes subidas: </p>
+                        <p class="text-weight-medium fs-14 q-mt-md">Imágenes subidas</p>
                         <div v-if="ticketImages" class="q-mt-md">
                             <q-carousel
                                 v-if="ticketImages.length>0"
@@ -109,10 +111,15 @@
                                             class="column no-wrap flex-center uncropped-image">       
                                  </q-carousel-slide>
                             </q-carousel>
-                            <div class="text-grey-8 fs-14 pa-5 bg-blue-1 px-8 py-8" 
-                                v-else > El ticket aún no tiene imágenes adjuntas, puede agregarlo haciendo click  
-                            <span  @click="goToEditTicket" class="underline text-primary text-bold"> aquí</span></div>
-                            
+                            <div v-else class="text-weight-light  fs-14 pa-5 bg-blue-1 px-8 py-8">
+                                <p v-if="ticket.status=='Abierto'" >
+                                    El ticket aún no tiene imágenes adjuntas, puede agregarlo haciendo click  
+                                    <span @click="goToEditTicket" class="underline text-primary text-bold"> aquí</span>
+                                </p>
+                                <p v-else class="text-center">
+                                    El ticket no tiene imágenes adjuntas
+                                </p>
+                            </div> 
                         </div>
                         
                             <q-card v-else class="q-mt-md my-card column justify-center items-center ">
@@ -125,8 +132,8 @@
                       
                         
                         <!-- Boton para editar el ticket -->
-                        <div class="flex justify-center mt-20 mb-20">
-                            <q-btn no-caps @click="goToEditTicket" class="py-5 px-50" color="primary" label="Editar Ticket" />
+                        <div  class="flex justify-center mt-20 mb-20">
+                            <q-btn v-if="ticket.status == 'Abierto'" no-caps @click="goToEditTicket" class="py-5 px-50" color="primary" label="Editar Ticket" />
                         </div>
                         
                     </div>
@@ -141,7 +148,7 @@
 
 import { defineComponent,ref,computed } from 'vue'
 import {useRoute,useRouter} from 'vue-router'
-import {useGetters,useActions} from 'src/store'
+import {useGetters,useActions,useMutations} from 'src/store'
 import Edit from 'src/components/tickets/Edit.vue'
 export default defineComponent({
     components:{
@@ -157,11 +164,12 @@ export default defineComponent({
         const slide=ref(true)
         //Ticket
         const {getTicketImages}=useActions()
+        const {updateTicket}=useMutations()
         const ticket=computed(()=>{
             return getTicketById.value(ticketId.value)
         })
         //Ticket atributes
-        const ticketStatusColor=computed(()=> ticket.value.status=='Abierto' ? 'text-positive' : ticket.value.status=='Cerrado' ? 'text-dark' : 'text-warning' )
+        const ticketStatusColor=computed(()=> ticket.value.status=='Abierto' ? 'positive' : ticket.value.status=='Cerrado' ? 'primary' : 'warning' )
         const hasMobileContact=computed(()=>(ticket.value.contact.mobile!='Sin Informacion') ? true : false )
         const hasUrlDirection=computed(()=>(ticket.value.cf.cf_direccion_url!='Sin Informacion') ? true : false )
        // Imagenes del ticket
@@ -169,13 +177,20 @@ export default defineComponent({
        const loadImageTickets=async()=>{    
            const {data,error}= await getTicketImages({ticketId:ticketId.value})
            if(data){
-                console.log("imageees",data)
+                //console.log("imageees",data)
                 ticketImages.value=data
+                updateTicket( {
+                        ticketID:ticket.value.id,
+                        ticketUpdated:{images:data.length,...ticket.value}
+                        }
+                    )
                 slide.value=0
            }else{
                console.log("error..")
            }
        }
+       
+
        loadImageTickets()
 
        const goBack=()=>{
@@ -193,8 +208,9 @@ export default defineComponent({
             goBack()
         })
         const formattedDate=computed(()=>{
-            const date=new Date(ticket.value.cf.cf_fecha_hora)
-            return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')} `
+            const date=new Date(ticket.value.dueDate)
+            if (date=='Invalid Date') return 'Sin Informacion'
+            else return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()} - ${date.getHours().toString().padStart(2,'0')}:${date.getMinutes().toString().padStart(2,'0')} `
         })
         return{
             ticketId,
@@ -215,7 +231,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .container{
-    margin:5px 20px 0px;
+    margin:10px 20px 0px;
 }
 p{
     margin: 5px 0px;

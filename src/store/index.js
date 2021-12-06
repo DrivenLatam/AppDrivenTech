@@ -5,7 +5,7 @@ import ticketsStore from './tickets.store';
 
 import { computed } from 'vue';
 
-//export const BASE_URL = "https://b3e5-186-2-207-58.ngrok.io/"
+//export const BASE_URL = "https://85e3-181-121-195-72.ngrok.io/"
 //export const BASE_URL = "http://localhost:8000/";
 export const BASE_URL = "https://jesusroman.live/";
 
