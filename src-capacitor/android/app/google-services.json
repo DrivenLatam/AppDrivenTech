@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "35091605462",
+    "project_id": "driventech-90e3b",
+    "storage_bucket": "driventech-90e3b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:35091605462:android:7410478ca366388b97e677",
+        "android_client_info": {
+          "package_name": "org.capacitor.quasar.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "35091605462-lgoqc7umk95f3t2svgdrpsoghasgl8s3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUScTVDJOiO-GAv0ul6uNJ_eaFWcLpry8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "35091605462-lgoqc7umk95f3t2svgdrpsoghasgl8s3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
