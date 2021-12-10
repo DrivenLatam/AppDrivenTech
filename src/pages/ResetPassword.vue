@@ -1,5 +1,12 @@
 <template>
+    <!-- Boton de atras -->
+    <div v-if="!codeVerificated" class="mt-5 ml-5">
+        <q-btn icon="arrow_back" class="" flat round size="lg" @click="goBack" />
+    </div>  
     <q-page class="flex justify-center bg-white items-center column">
+       
+
+        <p> Codigo de Error: {{code}}</p>
         <!-- PAHSES -->
         <div class="fs-50 full-width text-center row justify-center items-center mt-24" style="height:160px">
             <!-- F1 ICON -->
@@ -128,17 +135,14 @@
                 </q-card-actions>
             </q-card>
         </q-dialog>
-        <!--SHOW CODE VERIFICATION -->
-        <q-dialog :model-value="dialogCodeVerification" position="bottom">
-            <q-card style="width: 350px">
-                <q-card-section class="row items-center no-wrap">
-                    <div>
-                        <div class="text-weight-bold text-subtitle1">Codigo de Verificacion</div>
-                        <div class=" text-h6 text-grey-8">{{verificationCodeDialog}}</div>
-                    </div>
-                </q-card-section>
-            </q-card>
-        </q-dialog>
+        <!-- ERROR Message -->
+        <error-dialog
+            v-if="showErrorDialog"
+            :title="titleDialog"
+            :message="msgDialog"
+            @confirAction="showErrorDialog=false"
+        />
+
     </q-page>
 </template>
 
@@ -146,6 +150,7 @@
 import { defineComponent, ref,watch,computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {useActions,useGetters,useMutations} from 'src/store'
+import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
 const _awaiter = async (time = 1500) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -155,6 +160,7 @@ const _awaiter = async (time = 1500) => {
 };
 
 export default defineComponent({
+    components:{ErrorDialog},
     name: 'ResetPassword',
     setup() {
         const route = useRoute();
@@ -165,12 +171,22 @@ export default defineComponent({
         const goToLogin=()=>{
             router.replace({path:'/login'})
         }
+        //--------Prueba-----
+        const code=ref('')
+        //
+        //COMPONENTE DE ERROR
+        //
+
+        const showErrorDialog= ref(false)
+        const titleDialog = ref('')
+        const msgDialog=ref('')
 
         //
         // EMAIL
         //
+
         const {resetPasswordEmail}=useGetters()
-        const email = ref(route.params.email || resetPasswordEmail.value || 'marcos@gmail.com');
+        const email = ref(route.params.email || resetPasswordEmail.value || 'gerardocabrer@fpuna.edu.py');
         const emailSended = ref(!!resetPasswordEmail.value);
         const {generatePasswordCode}=useActions()
         const emailError=ref('')
@@ -187,22 +203,29 @@ export default defineComponent({
             sending.value = true;
             const {data,error,field}=await generatePasswordCode(email.value)
             sending.value = false;
-            if(error && field){
-                emailSended.value = false;
-                emailError.value=error
+            if(error ){
+                if(error=='No se pudo enviar mail'){ //Error de no poder enviar email
+                    showErrorDialog.value=true
+                    titleDialog.value='Error al enviar al email'
+                    msgDialog.value='No se pudo enviar al email, por favor intentelo mas tarde'
+                }else{  //Error de email ingresado no existe
+                    emailSended.value = false;
+                    emailError.value=error
+                }
+
             }else{
-                verificationCodeDialog.value=data.verification_code
-                console.log('verig',verificationCode.value)
+                code.value=data.verification_code
                 emailSended.value = true;
             }
             
         };
+
         //
         // VERIFICATION CODE
         //
+        
         const {resetVerificationCode}=useGetters()
         const verificationCode = ref('');
-        const verificationCodeDialog=ref(resetVerificationCode.value || '');  //eliminar despues
         const codeVerificated = ref(false);
         const {validatePasswordCode} = useActions()
         const verificationCodeError=ref('')
@@ -218,10 +241,17 @@ export default defineComponent({
             sending.value = true;
             const {data,error,field}= await validatePasswordCode({email:email.value,code:verificationCode.value})
             if(error && field){
-                verificationCodeError.value=error
+                if(error=="El codigo de verificacion ha expirado"){ //Erro de codigo de verificacion
+                    showErrorDialog.value=true
+                    titleDialog.value='Codigo de Verificacion'
+                    msgDialog.value='El codigo de verificacion ha expirado'
+                    //Si hay un error, entoces vuelvo al paso anterior
+                    emailSended.value = false; 
+                    verificationCode.value=''
+                }else  verificationCodeError.value=error  //Error de valor ingresado incorrecto
             }else{
-                codeVerificated.value = true;
                 
+                codeVerificated.value = true;
             }
             sending.value = false;
         };
@@ -231,9 +261,11 @@ export default defineComponent({
                 emailSended.value=false
                 email.value=""
         }
+
         //
         // NEW PASSWORD
         //
+
         const newPassword = ref('');
         const {resetPassword}=useActions()
         const newPasswordInput=ref(null)
@@ -246,9 +278,11 @@ export default defineComponent({
         const isNewPasswordFocus=computed(()=>newPasswordInput.value==focusedInput.value)
         const newPasswordColorIcon= computed(()=> newPasswordError.value ? 'negative' : isNewPasswordFocus.value ? 'primary': 'grey-7' )
         watch(newPassword,_=>newPasswordError.value="")
+
         //
         //CONFIR NEW PASSWORD
         //
+
         const newPasswordConfirmation = ref('');
         const newPasswordConfirmationInput=ref(null)
         const newPasswordConfirmationError=ref("")
@@ -291,6 +325,15 @@ export default defineComponent({
             
         };
 
+        //
+        //BOTON DE IR ATRAS
+        //
+
+        const goBack=()=>{            
+            if(emailSended.value) changeResetEmail(); //Fase 2
+            else goToLogin() //Fase 1
+        }
+
         return {
             email,
             sending,
@@ -320,13 +363,22 @@ export default defineComponent({
             newPasswordConfirmationError,
             dialogCodeVerification,
             resetVerificationCode,
-            verificationCodeDialog
+            showErrorDialog,
+            titleDialog,
+            msgDialog,
+            goBack,
+
+            code
         }
     },
 })
 </script>
 
 <style scoped>
+
+.back-icon{
+    border: 1px solid red;
+}
 .title-number {
     border: 2px dashed #222;
     width: 90px;

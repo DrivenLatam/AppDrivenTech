@@ -1,18 +1,17 @@
 <template>
     <!--Dialog para confirmar si se quiere finalizar un ticket -->
-        <q-dialog v-model="showDialog" persistent full-width >
-            <q-card>
-                <q-card-section class="bg-negative text-white fs-20 py-10">
-                    {{title}}
+        <q-dialog v-model="showDialog" persistent full-width position="bottom" >
+            <q-card class="bg-red-4 section no-padding">
+                <q-card-section class="bg-red-5 text-white py-20 px-15 ">
+                    <div class="fs-22 text-weight-bold">
+                        <div>Error !!</div>
+                        <div class="btn-close"><q-btn flat icon="close" @click="confirAction"   v-close-popup /> </div>
+                    </div>
+                    <div class="text-body2">
+                         {{message}}
+                    </div>
                 </q-card-section>
 
-                <q-card-section class="bg-white text-grey-9 q-py-sm">
-                    {{message}}
-                </q-card-section>
-
-                <q-card-actions align="right">
-                        <q-btn @click="confirAction" flat  label="Ok" color="primary" v-close-popup />
-                </q-card-actions>
             </q-card>
         </q-dialog>
 </template>
@@ -36,3 +35,15 @@ export default defineComponent({
 })
 
 </script>
+<style lang="scss" scoped>
+.btn-close{ 
+    position: absolute;
+    right: 1px;
+    top: 5px;
+    
+}
+.section{
+        position: relative;
+
+}
+</style>

@@ -56,7 +56,7 @@ export default {
         async generatePasswordCode({commit},email){
             try{
                 const {data}= await axios.get(BASE_URL+'users/password/generateCode/',{params:{email}})
-                console.log('data',data.verification_code)
+                console.log('data...',data.verification_code)
                 commit('setResetPasswordEmail',{email:email,verificationCode:data.verification_code})
                 return {data}
             }catch(_error){
