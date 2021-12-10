@@ -20,6 +20,7 @@
   <!-- TICKET LIST -->
 
   <q-page class="flex p-18">
+    
     <ticket-list :search="search" class="full-width" />
     <q-page-sticky position="bottom-right" :offset="[20, 20]">
             <q-btn fab @click="addTicket"  icon="add" color="primary" />
@@ -37,14 +38,14 @@ import { defineComponent, ref } from 'vue';
 import TicketList from 'src/components/tickets/TicketList.vue'
 import UserOptions from 'src/components/session/UserOptions.vue'
 import TicketDetail from './TicketDetail.vue'
-import {useRouter} from 'vue-router'
+import {useRouter} from 'vue-router' 
+
 export default defineComponent({
   name: 'PageIndex',
   components:{
     TicketList,
     UserOptions,
     TicketDetail
-
   },
   setup() {
     const search = ref('');
@@ -52,9 +53,13 @@ export default defineComponent({
     const addTicket=()=>{
         router.push({path:'/add'})
     }
+  
+    
+  
     return {
       search,
-      addTicket
+      addTicket,
+      
     }
   },
 })

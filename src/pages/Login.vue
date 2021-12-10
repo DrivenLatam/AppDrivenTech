@@ -8,8 +8,8 @@
             <q-icon name="assignment" color="white" size="16px"/>
         </div>
         <div class="text-h5 text-grey-7 mb-25">Autenticación</div>
-
-        
+        <p>hola</p>
+        <p>Tokeeen {{tokenNotification}}</p>
         <!-- email INPUT -->
 
         <q-input v-model="email" dense autofocus :disable="sendingLogin" :ref="el => emailInput=el"   
@@ -69,7 +69,9 @@ import { defineComponent, ref, nextTick, computed, watch, onMounted } from 'vue'
 import { useGetters, useActions } from 'src/store';
 import LoginImg from "../components/draws/LoginImg";
 import {useRouter} from 'vue-router'
-
+import {
+  PushNotifications,
+} from '@capacitor/push-notifications';
 export default defineComponent({
     name: 'Login',
     components: {LoginImg},
@@ -122,6 +124,31 @@ export default defineComponent({
             if (loginError.value.email) emailInput.value.focus();
             else if (loginError.value.password) passwordInput.value.focus();
         });
+
+        //
+        //TOKEN NOTIFICATIONS
+        //
+
+        const tokenNotification=ref('')
+
+        //Solicitar Permiso
+        PushNotifications.requestPermissions().then(result => {
+        if (result.receive === 'granted') {
+            PushNotifications.register();
+        } else {
+            // Show some error
+        }
+        });
+        //Si se tiene el permiso, obtener el token
+        PushNotifications.addListener('registration', (token) => {
+            tokenNotification.value=token.value
+        });
+        //Si no se tiene el permiso, enviar un error
+        PushNotifications.addListener('registrationError', (error) => {
+            tokenNotification.value='error'
+        });
+
+
         //
         // LOGIN
         //
@@ -150,7 +177,7 @@ export default defineComponent({
             loginError.value = null;
             
             if (validateLogin()) {
-                const { data, error,field } = await login({ email:email.value, password:password.value });
+                const { data, error,field } = await login({ email:email.value, password:password.value,tokenNotification:tokenNotification.value });
                 
                 if (error) {
                     if(field=="global") loginError.value={email:error[0],password:error[0]}
@@ -193,7 +220,8 @@ export default defineComponent({
             gotoResetPassword,
             hidePassword,
             emailColorIcon,
-            passwordColorIcon
+            passwordColorIcon,
+            tokenNotification
         }
         
     },

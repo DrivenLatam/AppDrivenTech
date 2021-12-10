@@ -24,11 +24,11 @@ export default {
         }
     },
     actions: {
-        async login({ commit }, { email, password }) {
+        async login({ commit }, { email, password,tokenNotification }) {
             try {
-                console.log('login')
+                console.log('Token Notification',tokenNotification)
                 const { data } = await axios.post(BASE_URL + "users/login/",
-                    { email, password });
+                    { email, password,tokenNotification });
                 const user = { ...data.user, token: data.access_token };
                 commit('setUser', user);
                 return { data: user };
@@ -56,7 +56,7 @@ export default {
         async generatePasswordCode({commit},email){
             try{
                 const {data}= await axios.get(BASE_URL+'users/password/generateCode/',{params:{email}})
-                console.log('data...',data.verification_code)
+                //console.log('data...',data.verification_code)
                 commit('setResetPasswordEmail',{email:email,verificationCode:data.verification_code})
                 return {data}
             }catch(_error){
