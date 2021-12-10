@@ -8,8 +8,6 @@
             <q-icon name="assignment" color="white" size="16px"/>
         </div>
         <div class="text-h5 text-grey-7 mb-25">Autenticación</div>
-        <p>hola</p>
-        <p>Tokeeen {{tokenNotification}}</p>
         <!-- email INPUT -->
 
         <q-input v-model="email" dense autofocus :disable="sendingLogin" :ref="el => emailInput=el"   
