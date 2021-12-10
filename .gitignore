@@ -31,3 +31,11 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+yarn.lock
+
+src-capacitor/package-lock.json
+
+src-capacitor/android/app/src/main/assets/capacitor.config.json
+
+package-lock.json
