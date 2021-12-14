@@ -9,7 +9,8 @@
     "lint": "eslint --ext .js,.vue src",
     "test": "echo \"No test specified\" && exit 0",
     "capa:dev": "quasar dev -m capacitor -T android",
-    "capa:build": "quasar build -m cordova -T android -- --buildConfig=\"../build.capacitor.json\""
+    "capa:build":"quasar build -m capacitor -T android --debug",
+    "cordo:build": "quasar build -m cordova -T android -- --buildConfig=\"../build.capacitor.json\""
   },
   "dependencies": {
     "@capacitor/android": "^3.3.1",

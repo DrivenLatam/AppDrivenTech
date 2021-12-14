@@ -186,7 +186,7 @@ export default defineComponent({
         //
 
         const {resetPasswordEmail}=useGetters()
-        const email = ref(route.params.email || resetPasswordEmail.value || 'gerardocabrer@fpuna.edu.py');
+        const email = ref(route.params.email || resetPasswordEmail.value || '');
         const emailSended = ref(!!resetPasswordEmail.value);
         const {generatePasswordCode}=useActions()
         const emailError=ref('')
