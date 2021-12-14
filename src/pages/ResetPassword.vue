@@ -6,7 +6,7 @@
     <q-page class="flex justify-center bg-white items-center column">
        
 
-        <p> Codigo de Error: {{code}}</p>
+        
         <!-- PAHSES -->
         <div class="fs-50 full-width text-center row justify-center items-center mt-24" style="height:160px">
             <!-- F1 ICON -->

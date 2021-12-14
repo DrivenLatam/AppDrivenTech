@@ -7,10 +7,10 @@
             transition-hide="slide-down"
     >
         <q-layout view="hHh lpR fFf" class="bg-white">
-            <q-header elevated class="bg-white text-black">
+            <q-header bordered class="bg-white text-black">
                 <q-toolbar>
                     <q-btn icon="arrow_back" flat round @click="goBack" />
-                    <q-toolbar-title class="fs-30 text-weight-regular">Driven</q-toolbar-title> 
+                    <q-toolbar-title class="fs-20 ">Crear Ticket</q-toolbar-title> 
                     <q-avatar size="40px" >
                             <img src="imgs/drivenImg.png"/>
                     </q-avatar>
@@ -18,8 +18,8 @@
                 </q-toolbar>
             </q-header>
             <q-page-container>
-                <q-page class="mt-30 mx-20 pb-20">
-                    <div class="q-mt-md  column justify-center items-center " v-if="loading"  > <!--Hace que aparezca centrado -->
+                <q-page class="mx-20 pb-20 q-mt-lg">
+                    <div class="column justify-center items-center " v-if="loading"  > <!--Hace que aparezca centrado -->
                         <q-spinner   
                             color="primary"
                             size="3em"
@@ -28,13 +28,13 @@
                     </div>
                     
                     <div v-else >
-                        <p class="text-h6 text-grey-8-9">Crea un nuevo Ticket</p>
-                        <p class="text-caption text-grey-8-8 q-mb-md">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios. </p>
+                        
+                        <p class="text-grey-8 q-mb-md ">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios. </p>
                         <div class="mb-20">
                             <q-input   
                                 autofocus
                                 dense
-                                label="Nombre(*)" 
+                                label="Asunto(*)" 
                                 class="mb-5"
                                 v-model="ticketName"
                                 :ref=" el=>ticketNameInput=el"
@@ -220,7 +220,7 @@ export default defineComponent({
         const {user}=useGetters()
 
         //TicketName
-        const ticketName=ref('Prueba de crear')
+        const ticketName=ref('')
         const ticketNameInput=ref(null)
         const focusTicketName=(state=true)=>{
             if(state) focusedInput.value=ticketNameInput.value
@@ -230,7 +230,7 @@ export default defineComponent({
         const ticketNameError=ref('')
         watch(ticketName,()=>ticketNameError.value="")
         //ticketDescription
-        const ticketDescription=ref('Prueba para validar la fecha')
+        const ticketDescription=ref('')
         const ticketDescriptionInput=ref(null)
         const focusTicketDescription=(state=true)=>{
                 if(state)focusedInput.value=ticketDescriptionInput.value

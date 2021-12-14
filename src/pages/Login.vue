@@ -1,5 +1,5 @@
 <template>
-    <q-page class="flex justify-center items-center bg-white items-center column px-30">
+    <q-page class="flex justify-center items-center bg-white  column px-15">
 
         <!-- HEADER -->
 
@@ -227,9 +227,7 @@ export default defineComponent({
 </script>
 
 <style scoped>
-.login-input {
-    min-width: 340px;
-}
+
 .assignment {
     width:26px;
     height:26px;

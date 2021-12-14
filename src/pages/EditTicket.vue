@@ -6,7 +6,7 @@
             
     >
         <q-layout view="hHh lpR fFf" class="bg-white">
-            <q-header elevated class="bg-white text-black">
+            <q-header bordered class="bg-white text-black">
             <q-toolbar>
                     <q-btn icon="arrow_back" flat round @click="goBack" />
                     <q-toolbar-title class="fs-20 ">Editar Ticket</q-toolbar-title> 
@@ -18,7 +18,7 @@
             </q-header>
 
             <q-page-container>
-                <q-page class="mt-20 pb-100">
+                <q-page class="q-mt-lg pb-100">
                     <div class="q-mt-md  column justify-center items-center " v-if="loading"  > <!--Hace que aparezca centrado -->
                         <q-spinner   
                             color="primary"
@@ -27,9 +27,9 @@
                         <p class="text-grey-8  fs-14 mt-5" >{{loadingMessage}}</p>
                     </div>
                     <div v-else class="container">
-                        <p>ir a atras{{goBackText}}</p>
+                        
                         <div class="col">
-                            <p class="fs-14 text-weight-light  q-mb-md">En esta sección podra editar la observación y agregar fotos al ticket.</p> 
+                            <p class="text-grey-8  q-mb-md">En esta sección podra editar la observación y agregar fotos al ticket.</p> 
                         </div>
                         <q-separator class="q-mt-md" color="primary" />
                          <q-input   

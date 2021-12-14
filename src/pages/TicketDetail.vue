@@ -7,7 +7,7 @@
             transition-hide="slide-down"
     >
         <q-layout view="hHh lpR fFf" class="bg-white">
-            <q-header elevated class="bg-white text-black">
+            <q-header bordered class="bg-white text-black">
             <q-toolbar>
                     <q-btn icon="arrow_back" flat round @click="goBack" />
                     <q-toolbar-title class="fs-20 ">Detalles Ticket</q-toolbar-title> 
@@ -19,7 +19,7 @@
 
             <q-page-container>
                 <q-page>
-                    <div class="container">
+                    <div class="mx-15 q-mt-lg">
                         <!--Primera Seccion -->
                         <div class="row">
                             <div class="col">
@@ -231,7 +231,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .container{
-    margin:10px 20px 0px;
+    margin:0px 20px 0px;
 }
 p{
     margin: 5px 0px;

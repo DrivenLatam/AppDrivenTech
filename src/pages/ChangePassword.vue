@@ -1,10 +1,10 @@
 
 <template>
         <q-layout view="hHh lpR fFf" class="bg-white">
-            <q-header elevated class="bg-white text-black">
+            <q-header bordered class="bg-white text-black">
             <q-toolbar>
                     <q-btn icon="arrow_back" flat round @click="goBack" />
-                    <q-toolbar-title class="fs-30 text-weight-regular">Driven</q-toolbar-title> 
+                    <q-toolbar-title class="fs-20">Cambiar Contraseña</q-toolbar-title> 
                     <q-avatar size="40px" >
                             <img src="imgs/drivenImg.png"/>
                     </q-avatar>
@@ -15,7 +15,7 @@
             <q-page-container>
                 <q-page class="flex  bg-white  column ">
                     <div class="current-password-container q-mt-lg  ">
-                        <p class="text-h5">Contraseña actual</p>
+                        <p class="text-h6">Contraseña actual</p>
                         <p class="text-grey-8 q-mb-md">Ingrese la contraseña actual </p>
                         <q-input v-model="currentPassword" dense 
                             autofocus
@@ -42,8 +42,9 @@
                             </template>
                         </q-input>
                     </div>
+                    
                     <div class="new-password-container mt-20">
-                            <p class="text-h5">Nueva contraseña</p>
+                            <p class="text-h6">Nueva contraseña</p>
                             <p class="text-grey-8 q-mb-md">Ingrese una nueva contraseña para tu cuenta</p>
                             <q-input v-model="newPassword" dense  class="q-mb-md" 
                                 label="Nueva contraseña"
@@ -89,7 +90,7 @@
                                 </template>
                             </q-input>
                     </div>
-                    <q-btn class="self-center mt-20 px-84 py-8  q-mx-lg text-subtitle2" no-caps color="primary" 
+                    <q-btn class="self-center mt-20 px-40 py-8  q-mx-lg text-subtitle2" no-caps color="primary" 
                      @click="changePassword">
                         <div v-if="!isSendingRequest" > Cambiar contraseña</div>
                         <div v-else >Enviando solicitud  <q-spinner color="white" size="1em" /></div>
