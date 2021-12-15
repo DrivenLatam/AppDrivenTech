@@ -8,7 +8,8 @@ export default {
         return {
             user: store.get('user', null),
             resetPasswordEmail:store.get('resetPasswordEmail',""),
-            resetVerificationCode:store.get('resetVerificationCode',"")
+            resetVerificationCode:store.get('resetVerificationCode',""),
+           
         }
     },
     mutations: {
@@ -22,6 +23,7 @@ export default {
             store.set('resetPasswordEmail',email)
             store.set('resetVerificationCode',verificationCode)
         }
+        
     },
     actions: {
         async login({ commit }, { email, password,tokenNotification }) {
@@ -29,7 +31,7 @@ export default {
                 console.log('Token Notification',tokenNotification)
                 const { data } = await axios.post(BASE_URL + "users/login/",
                     { email, password,tokenFB:tokenNotification });
-                const user = { ...data.user, token: data.access_token };
+                const user = { ...data.user, token: data.access_token,tokenFB:tokenNotification };
                 commit('setUser', user);
                 return { data: user };
             }
@@ -39,7 +41,20 @@ export default {
             }
         },
 
-        logout({ commit }) { commit('setUser', null) },
+        async logout({ commit }) { 
+            const {tokenFB}=store.get("user")
+            commit('setUser', null)
+            try {
+                const {data}= await axios.delete(BASE_URL+'users/logout/',{params:{tokenFB}})
+                return {data:'Ok'}
+            } catch (error) {
+                console.log('Eror del logout')
+                handleMessageError(error)
+                return error
+            }
+             
+        
+        },
 
         async changePasswordServer({commit},{current_password,new_password,confir_new_password}){
             try {

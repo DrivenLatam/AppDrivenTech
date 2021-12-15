@@ -30,10 +30,11 @@ export default defineComponent({
     setup() {
         const {getTicketsFromServer}=useActions()
         const router=useRouter()
-
-        const logout = () => {
+        
+        const {logout:logoutServer}=useActions()
+        const logout = async () => {
             // TODO: ELIMIAR DATOS DEL LOCAL STORAGE, DEL STORE, Y REDIRIGIR A LA PÁGINA DE LOGIN
-            store.set("user",null)
+            const {data,error}= await logoutServer()
             router.replace({path:'/login'})
         }
         const refresh = async () => {

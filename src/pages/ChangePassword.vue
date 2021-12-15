@@ -230,10 +230,12 @@ export default defineComponent({
              }
         };
         
-        const logOut=()=>{
+        const {logout}=useActions()
+        const logOut=async ()=>{
              // TODO: ELIMIAR DATOS DEL LOCAL STORAGE, DEL STORE, Y REDIRIGIR A LA PÁGINA DE LOGIN
-            store.set("user",null)
+            const {data,error}=await logout()
             router.replace({path:'/login'})
+
         }
         const goBack=()=>{
             router.go(-1)
