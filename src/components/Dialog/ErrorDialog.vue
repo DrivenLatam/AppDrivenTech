@@ -1,17 +1,23 @@
-<template>
-    <!--Dialog para confirmar si se quiere finalizar un ticket -->
-        <q-dialog v-model="showDialog" persistent full-width position="bottom" >
-            <q-card class="bg-red-4 section no-padding">
-                <q-card-section class="bg-red-5 text-white py-20 px-15 ">
-                    <div class="fs-22 text-weight-bold">
-                        <div>Error !!</div>
-                        <div class="btn-close"><q-btn flat icon="close" @click="confirAction"   v-close-popup /> </div>
-                    </div>
-                    <div class="text-body2">
-                         {{message}}
-                    </div>
-                </q-card-section>
 
+<template>
+
+        <q-dialog v-model="showDialog" persistent full-width position="bottom" >
+            <q-card class="  section no-padding">
+                <div class="row q-gutter-sm dialog-container">
+                    <div class="col-2 image-container ">
+                        <q-icon name="check_circle_outline" class="text-red-6 image"  style="font-size: 3em;" />
+                    </div>
+                    <div class="col  py-10">
+                        <div class="fs-20 text-weight-medium">Error!!</div>
+                        <div class=" fs-13 text-grey-8 text-weight-regular">{{message}}</div>
+                    </div>
+                    <div class="col-2 close-btn-container px-5" @click="confirAction">
+                            <div class="close-btn-text text-grey-6 text-weight-light">
+                                CERRAR
+                            </div>
+                    </div>
+                </div>
+                
             </q-card>
         </q-dialog>
 </template>
@@ -35,15 +41,32 @@ export default defineComponent({
 })
 
 </script>
-<style lang="scss" scoped>
-.btn-close{ 
-    position: absolute;
-    right: 1px;
-    top: 5px;
-    
-}
-.section{
-        position: relative;
 
+<style lang="scss" scoped>
+
+.dialog-container{
+    min-height: 70px;   
+}
+.image-container{
+    border-left: 10px solid $red-6; 
+    position: relative; 
+}
+.image{
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%   ;
+    transform: translate(-50%,-50%);
+}
+
+.close-btn-container{
+    border-left: 1px solid $grey-4;
+    position: relative;
+}
+.close-btn-text{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 </style>
