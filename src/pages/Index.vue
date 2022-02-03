@@ -63,15 +63,14 @@ export default defineComponent({
     /*Optener ubicacion  */
     const getCurrentPosition = async () => {
     const position = await Geolocation.getCurrentPosition();
-        console.log('Current position:', JSON.stringify(position));
+        //console.log('Current position:', JSON.stringify(position));
         cordinates.value=position.coords
-
     };
   
 
     /*Crear watch */
     const {sendCordinate} =useActions()
-    console.log('UseActions',JSON.stringify(useActions()))
+    //console.log('UseActions',JSON.stringify(useActions()))
     const watchPosition= async()=> {
       const options={
         enableHighAccuracy: true,

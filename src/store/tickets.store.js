@@ -6,7 +6,7 @@ export default {
     state(){
         return { 
             tickets:[],
-            loadingTicket:true,
+            loadingTicket:false,
             contacts:store.get("contacts",null),
             products:store.get("products",null)
         }
@@ -48,6 +48,9 @@ export default {
                 } catch (error) {
                     handleMessageError(error)
                     return {error}
+                }finally{
+                    console.log("finally block")
+                    commit('setLoadingTicket',false)
                 }
         },
         //envia una foto de un ticket al servidor

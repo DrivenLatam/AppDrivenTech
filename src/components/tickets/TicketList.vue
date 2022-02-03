@@ -1,62 +1,58 @@
-<template>     
-    
-    <div > 
-        
-            <!-- LIST HEADER -->
-            <div class="row items-center mb-16 px-8 justify-between text-grey-8 ">
-            <!-- FILTER INFO -->
-                <div class="px-8 ">
-                    {{tickets.length}} {{tickets.length === 1 ? 'ticket' : 'tickets'}}
-                    {{!search ? '' : tickets.length === 1 ? 'filtrado' : 'filtrados'}}
-                </div>
-                
-                <!-- FILTER OPTIONS -->
-                <div>
-                    <q-btn flat round dense icon="filter_alt">
-                        <q-menu>
-                            <q-list>
-                                <q-item-label header>Mostrar</q-item-label>
-                                <q-item clickable v-ripple @click="statusFilter=''">
-                                    <q-item-section avatar><q-icon :name="statusFilter===''?'check':''" /></q-item-section>
-                                    <q-item-section>Todos</q-item-section>
-                                </q-item>
-                                <q-item clickable v-ripple @click="statusFilter='Abierto'">
-                                    <q-item-section avatar><q-icon :name="statusFilter==='Abierto'?'check':''" /></q-item-section>
-                                    <q-item-section>Abiertos</q-item-section>
-                                </q-item>
-                                <q-item clickable v-ripple  @click="statusFilter='Cerrado'">
-                                    <q-item-section avatar><q-icon :name="statusFilter==='Cerrado'?'check':''" /></q-item-section>
-                                    <q-item-section>Cerrados</q-item-section>
-                                </q-item>
-                                <q-item clickable v-ripple  @click="statusFilter='Pendiente'">
-                                    <q-item-section avatar><q-icon :name="statusFilter==='Pendiente'?'check':''" /></q-item-section>
-                                    <q-item-section>Pendientes</q-item-section>
-                                </q-item>
-                            </q-list>
-                        </q-menu>
-                    </q-btn>
-                </div>
+<template> 
+    <div v-if="loading" class="flex justify-center items-center">
+        <q-spinner
+        color="primary"
+        size="3em"
+        :thickness="2"
+    />
+    </div>      
+    <div v-else > 
+        <!-- LIST HEADER -->
+        <div class="row items-center mb-16 px-8 justify-between text-grey-8 ">
+        <!-- FILTER INFO -->
+            <div class="px-8 ">
+                {{tickets.length}} {{tickets.length === 1 ? 'ticket' : 'tickets'}}
+                {{!search ? '' : tickets.length === 1 ? 'filtrado' : 'filtrados'}}
             </div>
-     
-       
-            <!-- LIST BODY -->
-            <!-- -->
-          
-            <q-scroll-area  style="height: calc(100vh - 160px); max-width: 100%;">
-                 
-                <q-pull-to-refresh   @refresh="onrefresh" > 
-                    
-                <div class="full-width pb-60">
-                        <div v-for="ticket of tickets" :key="ticket.id">
-                            <ticket-item :ticket="ticket"/>
-                            <q-separator spaced inset />   
-                        </div>
-                </div>
-                </q-pull-to-refresh>
-            </q-scroll-area>
-
-
-        
+            <!-- FILTER OPTIONS -->
+            <div>
+                <q-btn flat round dense icon="filter_alt">
+                    <q-menu>
+                        <q-list>
+                            <q-item-label header>Mostrar</q-item-label>
+                            <q-item clickable v-ripple @click="statusFilter=''">
+                                <q-item-section avatar><q-icon :name="statusFilter===''?'check':''" /></q-item-section>
+                                <q-item-section>Todos</q-item-section>
+                            </q-item>
+                            <q-item clickable v-ripple @click="statusFilter='Abierto'">
+                                <q-item-section avatar><q-icon :name="statusFilter==='Abierto'?'check':''" /></q-item-section>
+                                <q-item-section>Abiertos</q-item-section>
+                            </q-item>
+                            <q-item clickable v-ripple  @click="statusFilter='Cerrado'">
+                                <q-item-section avatar><q-icon :name="statusFilter==='Cerrado'?'check':''" /></q-item-section>
+                                <q-item-section>Cerrados</q-item-section>
+                            </q-item>
+                            <q-item clickable v-ripple  @click="statusFilter='Pendiente'">
+                                <q-item-section avatar><q-icon :name="statusFilter==='Pendiente'?'check':''" /></q-item-section>
+                                <q-item-section>Pendientes</q-item-section>
+                            </q-item>
+                        </q-list>
+                    </q-menu>
+                </q-btn>
+            </div>
+        </div>
+        <!-- LIST BODY -->
+        <!-- -->
+        <q-scroll-area  style="height: calc(100vh - 160px); max-width: 100%;"> 
+            <q-pull-to-refresh   @refresh="onrefresh" > 
+            <div class="full-width pb-60">
+                    <div v-for="ticket of tickets" :key="ticket.id">
+                        <ticket-item :ticket="ticket"/>
+                        <q-separator spaced inset />   
+                    </div>
+            </div>
+            </q-pull-to-refresh>
+        </q-scroll-area>
     </div>
 </template>
 
@@ -83,9 +79,7 @@ export default defineComponent({
         const loadTickets=async()=>{
             const {data,error} = await getTicketsFromServer()
             if(error){
-
-                ticketError.value=JSON.stringify(error.message)
-                
+                ticketError.value=JSON.stringify(error.message)  
             }else{
                 ticketError.value="No hay error"
             }
@@ -93,11 +87,12 @@ export default defineComponent({
         }
         const loadTicketsOnStart= async ()=>{
             if(loadingTicket.value){
+                console.log("Is true")
                 await loadTickets()
                 setLoadingTicket(false)
             }
         }
-        loadTicketsOnStart()
+        //loadTicketsOnStart()
         
         const onrefresh= async(done)=>{
             await loadTickets()

@@ -127,7 +127,7 @@ export default defineComponent({
         //TOKEN NOTIFICATIONS
         //
 
-        const tokenNotification=ref('')
+        const tokenNotification=ref('value')
 
         //Solicitar Permiso
         PushNotifications.requestPermissions().then(result => {

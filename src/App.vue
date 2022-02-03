@@ -18,9 +18,11 @@ export default defineComponent({
       if (!isLogged.value) router.replace({path:'/login'})
       // Si está logeado, obtiene los tickets del servidor
       else {
+        setLoadingTicket(true)
         const { data, error } = await getTicketsFromServer()
+        console.log("Obteniendo tickets del servidor en el App.vue",data)
         // TODO: SI HAY ERROR, MOSTRAR MENSAJE, SINO, setLoadingTicket(false)
-        setLoadingTicket(false)
+        //setLoadingTicket(false)
       }
     }
     verifyLogin()
