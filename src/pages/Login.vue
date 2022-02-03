@@ -8,16 +8,16 @@
             <q-icon name="assignment" color="white" size="16px"/>
         </div>
         <div class="text-h5 text-grey-7 mb-25">Autenticación</div>
-        <!-- email INPUT -->
+        <!-- nickName INPUT -->
 
-        <q-input v-model="email" dense autofocus :disable="sendingLogin" :ref="el => emailInput=el"   
-                label="Email" class="full-width mt-32 login-input" 
-                @keypress.enter="requestLogin" @focus="focusEmail" @blur="focusEmail(false)"
-                :error="!!emailError"
-                :error-message="emailError"
+        <q-input v-model="nickName" dense autofocus :disable="sendingLogin" :ref="el => nickNameInput=el"   
+                label="Usuario" class="full-width mt-32 login-input" 
+                @keypress.enter="requestLogin" @focus="focusnickName" @blur="focusnickName(false)"
+                :error="!!nickNameError"
+                :error-message="nickNameError"
                 >
             <template v-slot:prepend>
-                <q-icon  name="email" :color="emailColorIcon" />
+                <q-icon  name="email" :color="nickNameColorIcon" />
             </template>
         </q-input>
  
@@ -78,21 +78,21 @@ export default defineComponent({
         const { isLogged } = useGetters();
         const { login } = useActions();
         const focusedInput = ref(null);
-        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+        const nickNamePattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         const hidePassword=ref(true)
         //
         // USER NAME
         //
-        const email = ref("");
-        const emailInput = ref(null);
-        const focusEmail = (state = true) => { 
-            if (state) focusedInput.value = emailInput.value; 
-            else if (focusedInput.value === emailInput.value) focusedInput.value = null;
+        const nickName = ref("");
+        const nickNameInput = ref(null);
+        const focusnickName = (state = true) => { 
+            if (state) focusedInput.value = nickNameInput.value; 
+            else if (focusedInput.value === nickNameInput.value) focusedInput.value = null;
         }
-        const isEmailFocus = computed(() => focusedInput.value === emailInput.value)
-        const emailColorIcon= computed(()=>emailError.value ? 'negative' : isEmailFocus.value ? 'primary' :'grey-7' )
+        const isnickNameFocus = computed(() => focusedInput.value === nickNameInput.value)
+        const nickNameColorIcon= computed(()=>nickNameError.value ? 'negative' : isnickNameFocus.value ? 'primary' :'grey-7' )
         
-        watch(email, () => loginError.value && (loginError.value.email = undefined));
+        watch(nickName, () => loginError.value && (loginError.value.nickName = undefined));
         //
         // PASSWORD
         //
@@ -103,7 +103,7 @@ export default defineComponent({
             else if (focusedInput.value === passwordInput.value) focusedInput.value = null;
         }
         const gotoResetPassword = () => {
-            router.push({ path: `/login/resetPassword/${email.value}` });
+            router.push({ path: `/login/resetPassword/${nickName.value}` });
         }
         const isPasswordFocus = computed(() => focusedInput.value === passwordInput.value)
         const passwordColorIcon= computed(()=> passwordError.value ? 'negative' : isPasswordFocus.value ? 'primary' :'grey-7' )
@@ -114,12 +114,12 @@ export default defineComponent({
         // ERROR
         //
         const loginError = ref("");
-        const emailError = computed(() => loginError.value ? loginError.value.email : "")
+        const nickNameError = computed(() => loginError.value ? loginError.value.nickName : "")
         const passwordError = computed(() => loginError.value ? loginError.value.password : "")
         const genericError = computed(() => loginError.value ? loginError.value.error : "")
         watch(loginError, () => {
             if (!loginError.value) return;
-            if (loginError.value.email) emailInput.value.focus();
+            if (loginError.value.nickName) nickNameInput.value.focus();
             else if (loginError.value.password) passwordInput.value.focus();
         });
 
@@ -153,11 +153,11 @@ export default defineComponent({
         const sendingLogin = ref(false);
         const validateLogin = () => {
             
-            if (!email.value) {
-                loginError.value = { email: "Ingrese su nombre de usuario" };
+            if (!nickName.value) {
+                loginError.value = { nickName: "Ingrese su nombre de usuario" };
                 return false;
-            }else if ( email.value.length<5 || !emailPattern.test(email.value )){
-                loginError.value = { email: "Ingrese un email valido" };
+            }else if ( nickName.value.length<5 ){
+                loginError.value = { nickName: "Ingrese un usuario valido" };
                 return false;
             }else if (!password.value) {
                 loginError.value = { password: "Ingrese su contraseña" };
@@ -175,10 +175,10 @@ export default defineComponent({
             loginError.value = null;
             
             if (validateLogin()) {
-                const { data, error,field } = await login({ email:email.value, password:password.value,tokenNotification:tokenNotification.value });
+                const { data, error,field } = await login({ nickname:nickName.value, password:password.value,tokenNotification:tokenNotification.value });
                 
                 if (error) {
-                    if(field=="global") loginError.value={email:error[0],password:error[0]}
+                    if(field=="global") loginError.value={nickName:error[0],password:error[0]}
                     console.log('error')
                     //await nextTick();
                      
@@ -202,22 +202,22 @@ export default defineComponent({
 
         return {
             error: loginError,
-            email,
+            nickName,
             password,
             requestLogin,
             sendingLogin,
             genericError,
-            emailError,
+            nickNameError,
             passwordError,
-            emailInput,
+            nickNameInput,
             passwordInput,
-            focusEmail,
+            focusnickName,
             focusPassword,
-            isEmailFocus,
+            isnickNameFocus,
             isPasswordFocus,
             gotoResetPassword,
             hidePassword,
-            emailColorIcon,
+            nickNameColorIcon,
             passwordColorIcon,
             tokenNotification
         }

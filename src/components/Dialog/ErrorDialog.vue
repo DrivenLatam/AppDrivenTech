@@ -5,7 +5,7 @@
             <q-card class="  section no-padding">
                 <div class="row q-gutter-sm dialog-container">
                     <div class="col-2 image-container ">
-                        <q-icon name="check_circle_outline" class="text-red-6 image"  style="font-size: 3em;" />
+                        <q-icon name="error_outline" class="text-red-6 image"  style="font-size: 3em;" />
                     </div>
                     <div class="col  py-10">
                         <div class="fs-20 text-weight-medium">Error!!</div>

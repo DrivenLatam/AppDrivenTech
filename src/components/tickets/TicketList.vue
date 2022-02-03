@@ -77,6 +77,7 @@ export default defineComponent({
         const ticketError=ref("E")
 
         const loadTickets=async()=>{
+            console.log("loadingticket")
             const {data,error} = await getTicketsFromServer()
             if(error){
                 ticketError.value=JSON.stringify(error.message)  
