@@ -27,11 +27,12 @@
                         <p class="text-grey-8  fs-14 mt-5" >{{loadingMessage}}</p>
                     </div>
                     <div v-else class="container">
-                        
+                        <!--
                         <div class="col">
                             <p class="text-grey-8  q-mb-md">En esta sección podra editar la observación y agregar fotos al ticket.</p> 
                         </div>
-                        <q-separator class="q-mt-md" color="primary" />
+                        -->
+                       
                          <q-input   
                             autogrow
                             label="Observación" 
@@ -40,7 +41,7 @@
                             v-model="obeservation"
                         >
                         </q-input>
-                        <p class="text-weight-medium fs-15">Imagen seleccionada</p>
+                        <p class="text-label">Imagen seleccionada</p>
                         <div v-if="listImg.length>0" class="mt-25">
                             <q-carousel
                                 v-model="slide"
@@ -67,7 +68,7 @@
                                  </q-carousel-slide>
                             </q-carousel>
                         </div>
-                        <div class="text-weight-light text-center fs-14 pa-5 bg-blue-1 px-8 py-8" 
+                        <div class="text-caption fs-13 image-text-container text-center" 
                             v-else > Aún no se adjunto una imagen
                         </div>
                     </div>
@@ -76,13 +77,13 @@
                                 <q-fab
                                     icon="expand_less"
                                     direction="up"
-                                    color="primary"
+                                    color="secondary"
                                     :disable="draggingFab"
                                     v-touch-pan.prevent.mouse="moveFab"
                                 >
-                                    <q-fab-action @click="dialogFinalizateTicket" color="primary" icon="done" label="Finalizar" :disable="draggingFab" /> 
-                                    <q-fab-action @click="uploadImage" color="primary" icon="update" label="Actualizar" :disable="draggingFab" />
-                                    <q-fab-action v-if="listImg.length==0"  @click="takePicture" color="primary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
+                                    <q-fab-action @click="dialogFinalizateTicket" color="secondary" icon="done" label="Finalizar" :disable="draggingFab" /> 
+                                    <q-fab-action @click="uploadImage" color="secondary" icon="update" label="Actualizar" :disable="draggingFab" />
+                                    <q-fab-action v-if="listImg.length==0"  @click="takePicture" color="secondary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
 
                                 </q-fab>
                     </q-page-sticky>
@@ -390,6 +391,21 @@ p{
   background-size: contain;  /* don't crop the image  */
   background-repeat: no-repeat;  /* only show the image one time  */
   background-color: white;  /* color to fill empty space with  */
+}
+
+/* TEXT STYLES */
+.text-label {
+  color: #000;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/*IMAGE CONTAINER */
+.image-text-container{
+    background-color: rgba(33, 33, 33, 0.025);
+    padding: 10px;
 }
 
 </style>
