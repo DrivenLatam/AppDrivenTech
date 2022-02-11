@@ -101,7 +101,7 @@ export default defineComponent({
  
 } 
 .profile-data-container{
-    margin: 0px 1rem;
+    margin: 0px 1.3rem;
 }
 
 .profile-image-username{

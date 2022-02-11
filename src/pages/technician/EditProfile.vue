@@ -113,7 +113,7 @@
                                         @confirAction="errorDialog=false"
                                         />
                         <!--SAVE BUTTOM -->
-                        <btn mx="1rem"  label="Guardar" @click="saveProfile" :loading="sendingUpdate"/>  
+                        <btn mx="1.3rem"  label="Guardar" @click="saveProfile" :loading="sendingUpdate"/>  
                 </q-page>
             </q-page-container>
         </q-layout>
@@ -268,8 +268,8 @@ export default defineComponent({
 }
 
 .input{
-    width: 86%;
-    margin: 10px 7%;
+    
+    margin: 10px 1.3rem;
 }
 
 </style>

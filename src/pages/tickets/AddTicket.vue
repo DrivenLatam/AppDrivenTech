@@ -16,7 +16,7 @@
                 </q-toolbar>
             </q-header>
             <q-page-container>
-                <q-page class="mx-20 pb-20 q-mt-lg">
+                <q-page class="pb-20 q-mt-lg" style="margin-left: 1rem; margin-right:1rem ">
                     <div>
                         <p class="text-grey-8 q-mb-md ">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios. </p>
                         <div style="padding-bottom:45px" >

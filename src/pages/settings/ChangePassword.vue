@@ -18,7 +18,7 @@
 
                 <q-page-container>
                     <q-page class="flex  bg-white  column ">
-                        <div class="current-password-container q-mt-lg  ">
+                        <div class="current-password-container q-mt-lg">
                             <p class="text-h6">Contraseña actual</p>
                             <p class="text-grey-8 q-mb-md">Ingrese la contraseña actual </p>
                             <q-input v-model="currentPassword" outlined 
@@ -99,7 +99,7 @@
                         </div>
                         
                         <!--CHANGE PASSWORD BUTTOM -->
-                        <btn @click="changePassword" mx="1rem" label="Cambiar contraseña" :loading="isSendingRequest" />
+                        <btn @click="changePassword" mx="1.3rem" label="Cambiar contraseña" :loading="isSendingRequest" />
 
                         <!-- CONFIRMATION Message-->
                         <!-- DIALOGS-->
@@ -294,7 +294,7 @@ export default defineComponent({
 <style lang="scss" scoped>
 
 .current-password-container,.new-password-container{
-    margin: 0px 1rem ;
+    margin: 0px 1.3rem ;
     border-radius: 5px;
 }
 .header-background{
