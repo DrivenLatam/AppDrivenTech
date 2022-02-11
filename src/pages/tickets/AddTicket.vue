@@ -30,10 +30,10 @@
                     <div v-else >
                         
                         <p class="text-grey-8 q-mb-md ">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios. </p>
-                        <div class="mb-20">
+                        <div style="padding-bottom:45px" >
                             <q-input   
                                 autofocus
-                                dense
+                                outlined
                                 label="Asunto(*)" 
                                 class="mb-5"
                                 v-model="ticketName"
@@ -51,7 +51,7 @@
                             <q-input   
                                 autogrow
                                 label="Descripción(*)" 
-                                dense
+                                outlined
                                 class="mb-5"
                                 v-model="ticketDescription"
                                 :ref="el=>ticketDescriptionInput=el"
@@ -68,7 +68,7 @@
                             <!-- Nombre del Cliente-->
                             <q-input   
                                 label="Seleccionar cliente(*)"   
-                                dense
+                                outlined
                                 class="mb-5"
                                 v-model="ticketClient.name"
                                 :ref="el=>ticketClientInput=el"
@@ -85,7 +85,7 @@
                             </q-input>
                             
                             <!-- Vencimiento Fecha y Hora-->
-                            <q-input dense  v-model="ticketDueDate" 
+                            <q-input outlined  v-model="ticketDueDate" 
                                     label="Fecha y hora de vencimiento" 
                                     class="mb-5"
                                     :ref="el=>ticketDueDateInput=el"
@@ -93,10 +93,11 @@
                                     @blur="focusTicketDueDate(false)"
                                     :error="!!ticketDueDateError"
                                     :error-message="ticketDueDateError"
+                                    @click="showTicketDueDate=true"
                                     >
                                 <template v-slot:prepend>
                                     <q-icon :color="ticketDueDateIconColor" size="xs" name="event" class="cursor-pointer">
-                                    <q-popup-proxy transition-show="scale" transition-hide="scale">
+                                    <q-popup-proxy v-model="showTicketDueDate" transition-show="scale" transition-hide="scale">
                                         <q-date 
                                             v-model="ticketDueDate" 
                                             mask="DD/MM/YYYY HH:mm"
@@ -112,7 +113,7 @@
 
                                 <template v-slot:append>
                                     <q-icon :color="ticketDueDateIconColor" size="xs" name="access_time" class="cursor-pointer">
-                                    <q-popup-proxy transition-show="scale" transition-hide="scale">
+                                    <q-popup-proxy  transition-show="scale" transition-hide="scale">
                                         <q-time v-model="ticketDueDate" mask="DD/MM/YYYY HH:mm" format24h>
                                         <div class="row items-center justify-end">
                                             <q-btn v-close-popup label="Close" color="primary" flat />
@@ -126,7 +127,7 @@
                             <!-- Nombre del Producto-->
                             <q-input   
                                 label="Nombre del producto(*)"  
-                                dense 
+                                outlined 
                                 autogrow
                                 class="mb-5"
                                 v-model="ticketProduct.productName"
@@ -144,7 +145,7 @@
 
                             <!--Prioridar del ticket-->
                             <q-select 
-                                    dense  v-model="ticketPriority" 
+                                    outlined  v-model="ticketPriority" 
                                     color="primary"  :options="['Alta','Media','Baja']" 
                                     label="Prioridad"
                                     :ref="el=>ticketPriorityInput=el"
@@ -155,12 +156,19 @@
                                             <q-icon :color="ticketPriorityIconColor" size="xs" name="priority_high" />
                                     </template>
                             </q-select>
+                           
+                             <!--CREATE TICKET BUTTOM  
                             <div class="flex justify-center mt-20">
+
                                 <q-btn no-caps @click="createTicket" class="py-5 px-50" color="primary" label="Crear Ticket" />
                             </div>
+                              -->
                         </div>
-
-                        <!--Modales de mensajes de error y confirmacion -->
+                            
+                      
+                        <btn mx="1rem" @click="createTicket" label="Crear ticket"  />  
+                        
+                       <!--Modales de mensajes de error y confirmacion -->
                         <succes-dialog 
                             v-if="successMessage"
                             title="Creado" 
@@ -204,9 +212,11 @@ import SuccesDialog from 'src/components/Dialog/SuccesDialog.vue'
 import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
 import Contatcs from 'src/components/tickets/Contacts.vue'
 import Products from 'src/components/tickets/Products.vue'
+import Btn from "src/components/Btn.vue"
+
 
 export default defineComponent({
-    components:{ SuccesDialog,ErrorDialog,Contatcs,Products },
+    components:{ SuccesDialog,ErrorDialog,Contatcs,Products,Btn },
     setup() {
         const route=useRoute()
         const router=useRouter()
@@ -271,6 +281,7 @@ export default defineComponent({
         const todayDate=ref(null) //fecha que sirve para validar la fecha seleccionada por el tecnico
         const ticketDueDate=ref(null)
         const ticketDueDateInput=ref('')
+        const showTicketDueDate=ref(false)
         const focusTicketDueDate=(state=true)=>{
                 if(state)focusedInput.value=ticketDueDateInput.value
                 else if(focusedInput.value==ticketDueDateInput.value) focusedInput.value=null
@@ -394,6 +405,7 @@ export default defineComponent({
             focusTicketDueDate,
             ticketDueDateIconColor,
             ticketDueDateError,
+            showTicketDueDate,
 
             ticketPriority,
             ticketPriorityInput,
