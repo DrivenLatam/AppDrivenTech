@@ -1,120 +1,128 @@
 
 <template>
-        <q-layout view="hHh lpR fFf" class="bg-white">
-            <q-header bordered class="bg-white text-black">
-            <q-toolbar>
-                    <q-btn icon="arrow_back" flat round @click="goBack" />
-                    <q-toolbar-title class="fs-20">Cambiar Contraseña</q-toolbar-title> 
-                    <q-avatar size="40px" >
-                            <img src="imgs/drivenImg.png"/>
-                    </q-avatar>
-                    
-                </q-toolbar>
-            </q-header>
+        <q-dialog
+            v-model="dialog"
+            persistent
+            maximized
+            transition-show="slide-up"
+            transition-hide="slide-down"
+        >      
+            <q-layout view="hHh lpR fFf" class="bg-white">
+                <q-header bordered class="bg-white text-black">
+                <q-toolbar>
+                        <q-btn icon="arrow_back" flat round @click="goBack" />
+                        <q-toolbar-title class="fs-20">Cambiar Contraseña</q-toolbar-title> 
+                        <q-avatar size="40px" >
+                                <img src="imgs/drivenImg.png"/>
+                        </q-avatar>
+                        
+                    </q-toolbar>
+                </q-header>
 
-            <q-page-container>
-                <q-page class="flex  bg-white  column ">
-                    <div class="current-password-container q-mt-lg  ">
-                        <p class="text-h6">Contraseña actual</p>
-                        <p class="text-grey-8 q-mb-md">Ingrese la contraseña actual </p>
-                        <q-input v-model="currentPassword" dense 
-                            autofocus
-                            label="Contraseña actual" 
-                            @focus="focusCurrentPasword"
-                            @blur="focusCurrentPasword(false)" 
-                            :ref="el=>currentPasswordInput=el"
-                            :error="!!currentPasswordError" 
-                            :error-message="currentPasswordError"
-                            :type=" hideCurrentPassword ? 'password' : 'text' "
-                        >
-                            <template v-slot:prepend>
-                                <q-icon name="lock"
-                                 :color=" currentPasswordColorIcon "
-                                  
-                                />
-                            </template>
-                            <template v-slot:append>
-                                <q-icon
-                                    :name=" hideCurrentPassword ? 'visibility_off' : 'visibility' "
-                                    @click=" hideCurrentPassword=!hideCurrentPassword"
-                                />
-                                
-                            </template>
-                        </q-input>
-                    </div>
-                    
-                    <div class="new-password-container mt-20">
-                            <p class="text-h6">Nueva contraseña</p>
-                            <p class="text-grey-8 q-mb-md">Ingrese una nueva contraseña para tu cuenta</p>
-                            <q-input v-model="newPassword" dense  class="q-mb-md" 
-                                label="Nueva contraseña"
-                                @focus="focusNewPassword"
-                                @blur="focusNewPassword(false)"
-                                :ref="el=>newPasswordInput=el"
-                                :error="!!newPasswordError"
-                                :error-message="newPasswordError"
-                                :type=" hideNewPassword?'password':'text' "
+                <q-page-container>
+                    <q-page class="flex  bg-white  column ">
+                        <div class="current-password-container q-mt-lg  ">
+                            <p class="text-h6">Contraseña actual</p>
+                            <p class="text-grey-8 q-mb-md">Ingrese la contraseña actual </p>
+                            <q-input v-model="currentPassword" outlined 
+                                autofocus
+                                label="Contraseña actual" 
+                                @focus="focusCurrentPasword"
+                                @blur="focusCurrentPasword(false)" 
+                                :ref="el=>currentPasswordInput=el"
+                                :error="!!currentPasswordError" 
+                                :error-message="currentPasswordError"
+                                :type=" hideCurrentPassword ? 'password' : 'text' "
                             >
                                 <template v-slot:prepend>
                                     <q-icon name="lock"
-                                        :color=" newPasswordColorIcon"
-                                        
+                                    :color=" currentPasswordColorIcon "
+                                    
                                     />
                                 </template>
                                 <template v-slot:append>
-                                     <q-icon 
-                                        :name=" hideNewPassword ? 'visibility_off' : 'visibility' "
-                                        @click="hideNewPassword = !hideNewPassword"
+                                    <q-icon
+                                        :name=" hideCurrentPassword ? 'visibility_off' : 'visibility' "
+                                        @click=" hideCurrentPassword=!hideCurrentPassword"
                                     />
+                                    
                                 </template>
                             </q-input>
-                            <q-input v-model="confirNewPassword" dense  
-                                label="Confirmar nueva contraseña"
-                                @focus="focusConfirNewPassword"
-                                @blur="focusConfirNewPassword(false)"
-                                :ref="el=>confirNewPasswordInput=el"
-                                :error="!!confirNewPasswordError"
-                                :error-message="confirNewPasswordError"
-                                :type=" hideConfirNewPassword ? 'password' : 'text' "
-                              >
-                                <template v-slot:prepend>
-                                    <q-icon name="lock"
-                                        :color="confirNewPasswordColorIcon"
-                                     />
-                                </template>
-                                <template v-slot:append>
-                                    <q-icon 
-                                        :name=" hideConfirNewPassword ? 'visibility_off' : 'visibility' "
-                                        @click="hideConfirNewPassword = !hideConfirNewPassword"
-                                    />
-                                </template>
-                            </q-input>
-                    </div>
-                    <q-btn class="self-center mt-20 px-40 py-8  q-mx-lg text-subtitle2" no-caps color="primary" 
-                     @click="changePassword">
-                        <div v-if="!isSendingRequest" > Cambiar contraseña</div>
-                        <div v-else >Enviando solicitud  <q-spinner color="white" size="1em" /></div>
+                        </div>
                         
-                    </q-btn>
-
-
-                     <!-- CONFIRMATION Message-->
-                    <q-dialog  v-model="successMessage" persistent transition-show="scale" transition-hide="scale">
-                        <q-card class="bg-primary text-white" style="width: 300px">
+                        <div class="new-password-container mt-20">
+                                <p class="text-h6">Nueva contraseña</p>
+                                <p class="text-grey-8 q-mb-md">Ingrese una nueva contraseña para tu cuenta</p>
+                                <q-input v-model="newPassword" outlined  class="q-mb-md" 
+                                    label="Nueva contraseña"
+                                    @focus="focusNewPassword"
+                                    @blur="focusNewPassword(false)"
+                                    :ref="el=>newPasswordInput=el"
+                                    :error="!!newPasswordError"
+                                    :error-message="newPasswordError"
+                                    :type=" hideNewPassword?'password':'text' "
+                                >
+                                    <template v-slot:prepend>
+                                        <q-icon name="lock"
+                                            :color=" newPasswordColorIcon"
+                                            
+                                        />
+                                    </template>
+                                    <template v-slot:append>
+                                        <q-icon 
+                                            :name=" hideNewPassword ? 'visibility_off' : 'visibility' "
+                                            @click="hideNewPassword = !hideNewPassword"
+                                        />
+                                    </template>
+                                </q-input>
+                                <q-input v-model="confirNewPassword" outlined  
+                                    label="Confirmar nueva contraseña"
+                                    @focus="focusConfirNewPassword"
+                                    @blur="focusConfirNewPassword(false)"
+                                    :ref="el=>confirNewPasswordInput=el"
+                                    :error="!!confirNewPasswordError"
+                                    :error-message="confirNewPasswordError"
+                                    :type=" hideConfirNewPassword ? 'password' : 'text' "
+                                >
+                                    <template v-slot:prepend>
+                                        <q-icon name="lock"
+                                            :color="confirNewPasswordColorIcon"
+                                        />
+                                    </template>
+                                    <template v-slot:append>
+                                        <q-icon 
+                                            :name=" hideConfirNewPassword ? 'visibility_off' : 'visibility' "
+                                            @click="hideConfirNewPassword = !hideConfirNewPassword"
+                                        />
+                                    </template>
+                                </q-input>
+                        </div>
+                        <q-btn class="self-center mt-20 px-40 py-8  q-mx-lg text-subtitle2" no-caps color="primary" 
+                        @click="changePassword">
+                            <div v-if="!isSendingRequest" > Cambiar contraseña</div>
+                            <div v-else >Enviando solicitud  <q-spinner color="white" size="1em" /></div>
                             
+                        </q-btn>
 
-                            <q-card-section class="bg-white text-grey-9 q-py-lg">
-                                Su contraseña ha sido cambiada exitosamente, inicie sesión nuevamente para continuar
-                            </q-card-section>
 
-                            <q-card-actions align="right" class="bg-white text-primary">
-                                <q-btn @click="logOut" flat label="Iniciar sesion"  v-close-popup />
-                            </q-card-actions>
-                        </q-card>
-                    </q-dialog>
-                 </q-page>
-            </q-page-container>
-        </q-layout>
+                        <!-- CONFIRMATION Message-->
+                        <q-dialog  v-model="successMessage" persistent transition-show="scale" transition-hide="scale">
+                            <q-card class="bg-primary text-white" style="width: 300px">
+                                
+
+                                <q-card-section class="bg-white text-grey-9 q-py-lg">
+                                    Su contraseña ha sido cambiada exitosamente, inicie sesión nuevamente para continuar
+                                </q-card-section>
+
+                                <q-card-actions align="right" class="bg-white text-primary">
+                                    <q-btn @click="logOut" flat label="Iniciar sesion"  v-close-popup />
+                                </q-card-actions>
+                            </q-card>
+                        </q-dialog>
+                    </q-page>
+                </q-page-container>
+            </q-layout>
+        </q-dialog>
 </template>
 
 <script>
@@ -131,7 +139,7 @@ export default defineComponent({
         const router=useRouter()
         const {changePasswordServer}= useActions()
         const successMessage=ref(false)
-        
+        const dialog=ref(true)
         /* Current Password */
         const currentPassword=ref("")
         const currentPasswordInput=ref(null)
@@ -238,7 +246,9 @@ export default defineComponent({
 
         }
         const goBack=()=>{
-            router.go(-1)
+            dialog.value=false
+            setTimeout(_=>router.go(-1),200)    
+            
         };
         return{
             currentPassword,
@@ -270,7 +280,8 @@ export default defineComponent({
             changePassword,
             goBack,
             focusCurrentPasword,
-            logOut
+            logOut,
+            dialog
         }
     },
 })
