@@ -49,7 +49,12 @@
 
         <!-- SEND LOGIN BUTTON -->
 
-        <q-btn class="mt- bg-primary text-white  px-64 py-4" @click="requestLogin">
+        <q-btn  no-caps
+                unelevated 
+                rounded 
+                text-color="grey-1" 
+                class=" bg-secondary text-white full-width fs-16 " 
+                @click="requestLogin">
             <div v-if="!sendingLogin">Iniciar sesión</div>
             <q-spinner v-else color="white" size="1em" />
         </q-btn>
