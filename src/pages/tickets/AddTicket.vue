@@ -7,26 +7,17 @@
             transition-hide="slide-down"
     >
         <q-layout view="hHh lpR fFf" class="bg-white">
-            <q-header bordered class="bg-white text-black">
+            <q-header class="header-background">
                 <q-toolbar>
                     <q-btn icon="arrow_back" flat round @click="goBack" />
                     <q-toolbar-title class="fs-20 ">Crear Ticket</q-toolbar-title> 
-                    <q-avatar size="40px" >
-                            <img src="imgs/drivenImg.png"/>
-                    </q-avatar>
+                    
                     
                 </q-toolbar>
             </q-header>
             <q-page-container>
                 <q-page class="mx-20 pb-20 q-mt-lg">
-                    <div class="column justify-center items-center " v-if="loading"  > <!--Hace que aparezca centrado -->
-                        <q-spinner   
-                            color="primary"
-                            size="3em"
-                        />
-                        <p class="text-grey-8 fs-14 mt-5" >Creando  ticket</p>
-                    </div>
-                    <div v-else >
+                    <div>
                         <p class="text-grey-8 q-mb-md ">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios. </p>
                         <div style="padding-bottom:45px" >
                             <q-input   
@@ -40,6 +31,7 @@
                                 @blur="focusTicketName(false)"
                                 :error="!!ticketNameError"
                                 :error-message="ticketNameError"
+                                :disable="loading"
                             >
                                 <template v-slot:prepend>
                                         <q-icon :color="ticketNameIconColor" size="xs" name="subject"/>
@@ -57,6 +49,7 @@
                                 @blur="focusTicketDescription(false)"
                                 :error="!!ticketDescriptionError"
                                 :error-message="ticketDescriptionError"
+                                :disable="loading"
                             >
                                 <template v-slot:prepend>
                                         <q-icon :color="ticketDescriptionIconColor" size="xs" name="description"/>
@@ -75,7 +68,7 @@
                                 :error="!!ticketClientError"
                                 :error-message="ticketClientError"
                                 @click="showListClient=true"
-                                 
+                                :disable="loading"
                             >
                                 <template v-slot:prepend>
                                         <q-icon :color="ticketClientIconColor" size="xs" name="person"/>
@@ -92,6 +85,7 @@
                                     :error="!!ticketDueDateError"
                                     :error-message="ticketDueDateError"
                                     @click="showTicketDueDate=true"
+                                    :disable="loading"
                                     >
                                 <template v-slot:prepend>
                                     <q-icon :color="ticketDueDateIconColor" size="xs" name="event" class="cursor-pointer">
@@ -135,6 +129,7 @@
                                 @click="showListProducts=true"
                                 :error="!!ticketProductError"
                                 :error-message="ticketProductError"
+                                :disable="loading"
                             >
                                 <template v-slot:prepend>
                                         <q-icon :color="ticketProductNameIconColor" size="xs" name="inventory_2"/>
@@ -149,6 +144,7 @@
                                     :ref="el=>ticketPriorityInput=el"
                                     @focus="focusTicketPriority"
                                     @blur="focusTicketPriority(false)"
+                                    :disable="loading"
                             >
                                 <template v-slot:prepend>
                                         <q-icon :color="ticketPriorityIconColor" size="xs" name="priority_high" />
@@ -164,7 +160,7 @@
                         </div>
                             
                       
-                        <btn mx="1rem" @click="createTicket" label="Crear ticket"  />  
+                        <btn mx="1rem" @click="createTicket" label="Crear ticket" :loading="loading"  />  
                         
                        <!--Modales de mensajes de error y confirmacion -->
                         <succes-dialog 
@@ -317,6 +313,7 @@ export default defineComponent({
         const ticketPriorityIconColor=computed(()=> focusedInput.value==ticketPriorityInput.value ? 'primary' : 'grey-8')
 
         /*--------------------Crear ticket--------------------------*/
+
         const validateFields=()=>{
             if(!ticketName.value) {ticketNameError.value="Este campo no puede quedar vacio";return false}
             if(!ticketDescription.value){ticketDescriptionError.value= "Este campo no puede quedar vacio"; return false}
@@ -328,6 +325,7 @@ export default defineComponent({
         }
         const createTicket=async()=>{
             loading.value=true 
+           
             //validar campos con funcion validateField
             if(!validateFields()) {
                 loading.value=false
@@ -353,7 +351,7 @@ export default defineComponent({
                 loading.value=false
                 errorMessage.value=true
             }
-         
+            
             
         }
         const goBack=()=>{
@@ -419,12 +417,15 @@ export default defineComponent({
     },
 })
 </script>
-<style scoped>
+<style lang="scss" scoped>
 .item-detail{
     margin-top: 5   px;
 }
 .title-detail{
     margin:5px;
     padding-bottom: 0px;
+}
+.header-background{
+    background: linear-gradient(to right,$primary, $secondary);
 }
 </style>
