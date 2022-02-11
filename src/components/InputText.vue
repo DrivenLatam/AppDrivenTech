@@ -1,13 +1,13 @@
 <template>
   <div class="input-container row justify-between items-center">
-    <div class="column justify-evenly">
+    <div class="column justify-evenly no-wrap">
       <p class="input-container__label text-weight-light">{{ label }}</p>
-      <p class="input-container__text text-weight-regular">{{ value }}</p>
+      <p class="input-container__text text-weight-regular" >{{ value }}</p>
     </div>
     <q-icon  @click="onWhatsAppClick" v-if="whatsapp" 
             color="green-8" name="whatsapp" size="1.8rem"
             class="whatsapp-icon"
-             />
+    />
   </div>
 </template>
 
@@ -41,7 +41,7 @@ export default defineComponent({
   border-radius: 5px 5px 0px 0px;
 }
 .input-container > div{
-  height: 3.5rem;
+  min-height: 3.5rem;
 }
 .input-container__label {
   color: #000;
@@ -62,7 +62,7 @@ export default defineComponent({
 }
 
 .input-container p {
-  margin-left: 8px;
+  padding: 0px 8px;
 }
 .whatsapp-icon{
   margin-right: 0.5rem;
