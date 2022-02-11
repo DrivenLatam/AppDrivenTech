@@ -27,7 +27,7 @@
                         <div class="profile-data-container column justify-evenly  ">
                             <input-text label="Nombre Completo" :value="`${user.first_name} ${user.last_name}`"/>
                             <input-text label="Correo" :value="user.email"/>
-                            <input-text label="Direccion" value="Mecanicos de Aviacion"/>
+                            <input-text label="Direccion" value="Sin información"/>
                             <input-text label="Cedula" :value="user.nro_ci"/>
                             <input-text label="Fecha Nacimiento" value="Sin información"/>
                             <input-text label="Telefono" :value="user.phone_number"/>
