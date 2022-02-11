@@ -2,10 +2,11 @@ import { store } from 'quasar/wrappers';
 import { createStore, useStore } from 'vuex';
 import sessionStore from './session.store';
 import ticketsStore from './tickets.store';
+import technicianStore from './technician.store';
 import geolocationStore from './geolocation.store';
 import { computed } from 'vue';
 
-//export const BASE_URL = "https://ff58-181-121-195-72.ngrok.io/"
+//export const BASE_URL = "https://3aab-181-121-195-72.ngrok.io/"
 //export const BASE_URL = "http://localhost:8000/";
 export const BASE_URL = "https://jesusroman.live/";
 
@@ -42,7 +43,8 @@ export default store(function (/* { ssrContext } */) {
     modules: {
       sessionStore,
       ticketsStore,
-      geolocationStore
+      geolocationStore,
+      technicianStore
     },
 
     // enable strict mode (adds overhead!)
