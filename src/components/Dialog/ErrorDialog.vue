@@ -1,25 +1,23 @@
 
 <template>
-
-        <q-dialog v-model="showDialog" persistent full-width position="bottom" >
-            <q-card class="  section no-padding">
-                <div class="row q-gutter-sm dialog-container">
-                    <div class="col-2 image-container ">
-                        <q-icon name="error_outline" class="text-red-6 image"  style="font-size: 3em;" />
-                    </div>
-                    <div class="col  py-10">
-                        <div class="fs-20 text-weight-medium">Error!!</div>
-                        <div class=" fs-13 text-grey-8 text-weight-regular">{{message}}</div>
-                    </div>
-                    <div class="col-2 close-btn-container px-5" @click="confirAction">
-                            <div class="close-btn-text text-grey-6 text-weight-light">
-                                CERRAR
-                            </div>
-                    </div>
+    <q-dialog v-model="showDialog" persistent full-width position="bottom" >
+        <q-card class=" no-padding">
+            <div class="row q-gutter-sm dialog-container">
+                <div class="col-2 image-container ">
+                    <q-icon name="error_outline" class="text-red-6 image" style="font-size: 3em;" />
                 </div>
-                
-            </q-card>
-        </q-dialog>
+                <div class="col  py-10">
+                    <div class="fs-20 text-weight-medium">Error !!</div>
+                    <div class=" fs-15 text-grey-9 text-weight-regular">{{message}}</div>
+                </div>
+                <div class="col-2 close-btn-container px-5" @click="confirAction">
+                        <div class="close-btn-text text-grey-8 text-weight-light">
+                            CERRAR
+                        </div>
+                </div>
+            </div>
+        </q-card>
+    </q-dialog>
 </template>
 <script>
 import { defineComponent,ref,toRefs } from 'vue'
@@ -60,7 +58,7 @@ export default defineComponent({
 }
 
 .close-btn-container{
-    border-left: 1px solid $grey-4;
+    border-left: 1px solid $grey-5;
     position: relative;
 }
 .close-btn-text{

@@ -1,5 +1,5 @@
 <template>
-    <!--Dialog para confirmar si se quiere finalizar un ticket -->
+    
         <q-dialog v-model="showDialog" persistent full-width position="bottom" >
             <q-card class=" no-padding">
                 <div class="row q-gutter-sm dialog-container">
@@ -8,10 +8,10 @@
                     </div>
                     <div class="col  py-10">
                         <div class="fs-20 text-weight-medium">{{title}}</div>
-                        <div class=" fs-15 text-grey-8 text-weight-regular">{{message}}</div>
+                        <div class=" fs-15 text-grey-9 text-weight-regular">{{message}}</div>
                     </div>
                     <div class="col-2 close-btn-container px-5" @click="confirAction">
-                            <div class="close-btn-text text-grey-6 text-weight-light">
+                            <div class="close-btn-text text-grey-8 text-weight-light">
                                 CERRAR
                             </div>
                     </div>
@@ -58,7 +58,7 @@ export default defineComponent({
 }
 
 .close-btn-container{
-    border-left: 1px solid $grey-4;
+    border-left: 1px solid $grey-5;
     position: relative;
 }
 .close-btn-text{
