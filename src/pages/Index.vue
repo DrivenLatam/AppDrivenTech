@@ -22,7 +22,7 @@
   <q-page class="flex p-18"> 
     <ticket-list :search="search" class="full-width" />
     <q-page-sticky position="bottom-right" :offset="[20, 20]">
-            <q-btn fab @click="addTicket"  icon="add" color="primary" />
+            <q-btn fab @click="addTicket"  icon="add" color="secondary" />
     </q-page-sticky>
   </q-page>
 
@@ -36,10 +36,13 @@
 import { defineComponent, ref } from 'vue';
 import TicketList from 'src/components/tickets/TicketList.vue'
 import UserOptions from 'src/components/session/UserOptions.vue'
-import TicketDetail from './TicketDetail.vue'
+import TicketDetail from './tickets/TicketDetail.vue'
 import {useRouter} from 'vue-router' 
 import { Geolocation } from '@capacitor/geolocation';
 import {useActions} from 'src/store'
+
+import { Plugins } from '@capacitor/core';
+//import { BackgroundTask } from '@robingenz/capacitor-background-task';
 export default defineComponent({
   name: 'PageIndex',
   components:{
@@ -62,25 +65,24 @@ export default defineComponent({
 
     /*Optener ubicacion  */
     const getCurrentPosition = async () => {
-    const position = await Geolocation.getCurrentPosition();
-        //console.log('Current position:', JSON.stringify(position));
-        cordinates.value=position.coords
+        const position = await Geolocation.getCurrentPosition();
+        return position
     };
   
-
-    /*Crear watch */
+    //
+    //Crear watch 
+    //
     const {sendCordinate} =useActions()
     //console.log('UseActions',JSON.stringify(useActions()))
     const watchPosition= async()=> {
+      console.log("Creating watch")
       const options={
         enableHighAccuracy: true,
-        timeout: 30000
+        timeout: 1000
       }
       try {
           watchID.value= await Geolocation.watchPosition(options, (position, err) => {
-          console.log('sendCordinate',sendCordinate)
-          const {data,error}=sendCordinate(position.coords)
-          cordinates.value=position.coords;
+          const {data,error}= sendCordinate(position.coords)
         });
       } catch (e) {
         console.error(e);
@@ -90,11 +92,45 @@ export default defineComponent({
 
     /*Limpiar watch */
     const clearWatch=()=> {
-      if (this.watchId != null) {
-        Geolocation.clearWatch({ id: this.watchId });
+      console.log("Clearing watch")
+      if ( watchID.value != null) {
+        Geolocation.clearWatch({ id: watchID.value });
       }
     }
-
+    /*
+    //
+    //BACKGROUND TASK
+    //
+    
+    const { App } = Plugins;
+    /*create a background task */
+    /*
+    App.addListener('appStateChange', async (state) => {
+      if (!state.isActive) {
+        let taskId = BackgroundTask.beforeExit( async () => {
+          //clearWatch()
+          await sendCordinatesBackground()  
+          finishBackgroundTask(taskId)
+        });
+      }
+  });
+  */
+  /* */
+  const finishBackgroundTask=(taskId)=>{
+      console.log("Finishing task")
+      BackgroundTask.finish({
+            taskId,
+      });
+  }
+  /* */
+  /*
+  const sendCordinatesBackground=async ()=>{
+        const {coords}= await getCurrentPosition()
+        console.log("cords",coords)
+        const {data,error}=await sendCordinate(coords)
+        console.log("data",data)
+  }
+  */
     return {
       search,
       addTicket,

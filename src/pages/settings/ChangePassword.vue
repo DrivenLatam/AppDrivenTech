@@ -8,13 +8,10 @@
             transition-hide="slide-down"
         >      
             <q-layout view="hHh lpR fFf" class="bg-white">
-                <q-header bordered class="bg-white text-black">
+                <q-header  class="header-background">
                 <q-toolbar>
                         <q-btn icon="arrow_back" flat round @click="goBack" />
                         <q-toolbar-title class="fs-20">Cambiar Contraseña</q-toolbar-title> 
-                        <q-avatar size="40px" >
-                                <img src="imgs/drivenImg.png"/>
-                        </q-avatar>
                         
                     </q-toolbar>
                 </q-header>
@@ -33,6 +30,7 @@
                                 :error="!!currentPasswordError" 
                                 :error-message="currentPasswordError"
                                 :type=" hideCurrentPassword ? 'password' : 'text' "
+                                :disable="isSendingRequest"
                             >
                                 <template v-slot:prepend>
                                     <q-icon name="lock"
@@ -49,8 +47,8 @@
                                 </template>
                             </q-input>
                         </div>
-                        
-                        <div class="new-password-container mt-20">
+ 
+                        <div class="new-password-container" style="padding-bottom:45px;">
                                 <p class="text-h6">Nueva contraseña</p>
                                 <p class="text-grey-8 q-mb-md">Ingrese una nueva contraseña para tu cuenta</p>
                                 <q-input v-model="newPassword" outlined  class="q-mb-md" 
@@ -61,6 +59,7 @@
                                     :error="!!newPasswordError"
                                     :error-message="newPasswordError"
                                     :type=" hideNewPassword?'password':'text' "
+                                    :disable="isSendingRequest"
                                 >
                                     <template v-slot:prepend>
                                         <q-icon name="lock"
@@ -83,6 +82,7 @@
                                     :error="!!confirNewPasswordError"
                                     :error-message="confirNewPasswordError"
                                     :type=" hideConfirNewPassword ? 'password' : 'text' "
+                                    :disable="isSendingRequest"
                                 >
                                     <template v-slot:prepend>
                                         <q-icon name="lock"
@@ -97,28 +97,23 @@
                                     </template>
                                 </q-input>
                         </div>
-                        <q-btn class="self-center mt-20 px-40 py-8  q-mx-lg text-subtitle2" no-caps color="primary" 
-                        @click="changePassword">
-                            <div v-if="!isSendingRequest" > Cambiar contraseña</div>
-                            <div v-else >Enviando solicitud  <q-spinner color="white" size="1em" /></div>
-                            
-                        </q-btn>
-
+                        
+                        <!--CHANGE PASSWORD BUTTOM -->
+                        <btn @click="changePassword" mx="1rem" label="Cambiar contraseña" :loading="isSendingRequest" />
 
                         <!-- CONFIRMATION Message-->
-                        <q-dialog  v-model="successMessage" persistent transition-show="scale" transition-hide="scale">
-                            <q-card class="bg-primary text-white" style="width: 300px">
-                                
+                        <!-- DIALOGS-->
+                        <!-- SUCCESDIALOG-->
+                        <succes-dialog   v-if="successDialog" @confirAction="logOut"
+                                         title="Contraseña actualizada"
+                                         message="Inicie sesión nuevamente para continuar" />
 
-                                <q-card-section class="bg-white text-grey-9 q-py-lg">
-                                    Su contraseña ha sido cambiada exitosamente, inicie sesión nuevamente para continuar
-                                </q-card-section>
+                        <!-- ERRORDIALOG-->
+                        <error-dialog   v-if="errorDialog" 
+                                        title="Error" @confirAction="errorDialog=false"
+                                       message="No se pudo cambiar la contraseña, intentelo mas tarde" />
 
-                                <q-card-actions align="right" class="bg-white text-primary">
-                                    <q-btn @click="logOut" flat label="Iniciar sesion"  v-close-popup />
-                                </q-card-actions>
-                            </q-card>
-                        </q-dialog>
+                       
                     </q-page>
                 </q-page-container>
             </q-layout>
@@ -130,15 +125,21 @@ import { defineComponent,ref,computed,watch } from 'vue'
 import {useRouter} from 'vue-router'
 import {useActions} from "src/store"
 import {store} from 'src/store/local.store'
-
+import Btn from 'src/components/Btn.vue'
+import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
+import SuccesDialog from 'src/components/Dialog/SuccesDialog.vue'
 export default defineComponent({
+    components:{
+        Btn,ErrorDialog,SuccesDialog
+    },
     setup() {
         /* Globals */
         const focusedInput=ref(null)
         const isSendingRequest=ref(false)
         const router=useRouter()
         const {changePasswordServer}= useActions()
-        const successMessage=ref(false)
+        const successDialog=ref(false)
+        const errorDialog=ref(false)
         const dialog=ref(true)
         /* Current Password */
         const currentPassword=ref("")
@@ -185,7 +186,7 @@ export default defineComponent({
 
         /* CHANGE PASSWORD */
         const validateField=()=>{
-                console.log(newPassword.value)
+                
                 if(!currentPassword.value){
                     currentPasswordError.value="La contraseña actual no puede quedar vacia"
                     currentPasswordInput.value.focus()
@@ -227,7 +228,7 @@ export default defineComponent({
                  console.log(data)
                  isSendingRequest.value=false
                  if(data){
-                    successMessage.value=true
+                    successDialog.value=true
                  }
                  else if(error){
                     if(field=="current_password"){
@@ -275,7 +276,8 @@ export default defineComponent({
             hideConfirNewPassword,
             confirNewPasswordColorIcon,
 
-            successMessage,
+            successDialog,
+            errorDialog,
             isSendingRequest,
             changePassword,
             goBack,
@@ -289,9 +291,13 @@ export default defineComponent({
 
 
 
-<style>
+<style lang="scss" scoped>
+
 .current-password-container,.new-password-container{
-    padding: 0px 20px ;
+    margin: 0px 1rem ;
     border-radius: 5px;
+}
+.header-background{
+    background: linear-gradient(to right,$primary, $secondary);
 }
 </style>

@@ -4,7 +4,7 @@
                    position="bottom" :offset="[0, 15]">
             <q-btn 
                 class="full-width btn fs-16" 
-                color="primary" :label="label" 
+                color="secondary" :label="label" 
                 no-caps
                 unelevated 
                 rounded 

@@ -26,9 +26,7 @@
                         />
                         <p class="text-grey-8 fs-14 mt-5" >Creando  ticket</p>
                     </div>
-                    
                     <div v-else >
-                        
                         <p class="text-grey-8 q-mb-md ">Complete los siguientes campos para crear un nuevo ticket, los campos con asterisco (*) son obligatorios. </p>
                         <div style="padding-bottom:45px" >
                             <q-input   
@@ -152,9 +150,9 @@
                                     @focus="focusTicketPriority"
                                     @blur="focusTicketPriority(false)"
                             >
-                                    <template v-slot:prepend>
-                                            <q-icon :color="ticketPriorityIconColor" size="xs" name="priority_high" />
-                                    </template>
+                                <template v-slot:prepend>
+                                        <q-icon :color="ticketPriorityIconColor" size="xs" name="priority_high" />
+                                </template>
                             </q-select>
                            
                              <!--CREATE TICKET BUTTOM  

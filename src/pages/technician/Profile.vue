@@ -36,7 +36,7 @@
                         
                         <!--EDIT PROFILE BTN-->
                         <q-page-sticky position="bottom-right" :offset="[20, 20]">
-                            <q-btn fab @click="goToEditProfile"  icon="edit" color="primary" />
+                            <q-btn fab @click="goToEditProfile"  icon="edit" color="secondary" />
                         </q-page-sticky>
                     </q-page>
                 </q-page-container>
