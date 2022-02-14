@@ -6,16 +6,7 @@
             
     >
         <q-layout view="hHh lpR fFf" class="bg-white">
-            <q-header bordered class="bg-white text-black">
-            <q-toolbar>
-                    <q-btn icon="arrow_back" flat round @click="goBack" />
-                    <q-toolbar-title class="fs-20 ">Editar Ticket</q-toolbar-title> 
-                    <q-avatar size="40px" >
-                            <img src="imgs/drivenImg.png"/>
-                    </q-avatar>
-                    
-                </q-toolbar>
-            </q-header>
+            <custom-header title="Editar ticket" @onGoBack="goBack"/>
 
             <q-page-container>
                 <q-page class="q-mt-lg pb-100">
@@ -27,66 +18,35 @@
                         <p class="text-grey-8  fs-14 mt-5" >{{loadingMessage}}</p>
                     </div>
                     <div v-else class="container">
-                        <!--
-                        <div class="col">
-                            <p class="text-grey-8  q-mb-md">En esta sección podra editar la observación y agregar fotos al ticket.</p> 
+                        <div class="image-container  rounded-borders" v-if="listImg.length>0" >
+                            <div  class="" v-for="(img,index) in listImg" :key="index">
+                                <q-img style="height: 60vh;"
+                                fit="fill" 
+                                class="rounded-borders "
+                                :src="img.webPath" />
+                                
+                                <q-icon @click="removeImgDialog(index)" class="remove-icon" size="lg" name="remove" color="white">
+                                    <q-tooltip> Eliminar</q-tooltip>
+                                </q-icon>
+                            </div>
+                            
                         </div>
-                        -->
-                       
-                         <q-input   
-                            autogrow
-                            label="Observación" 
-                            class="mt-20"
-                            outlined
-                            v-model="obeservation"
-                        >
-                        </q-input>
-                        <p class="text-label">Imagen seleccionada</p>
-                        <div v-if="listImg.length>0" class="mt-25">
-                            <q-carousel
-                                v-model="slide"
-                                transition-prev="jump-right"
-                                transition-next="jump-left"
-                                swipeable
-                                animated
-                                control-color="primary"
-                                navigation
-                                control-type="regular"
-                                arrows
-                                height="300px"
-                                class="text-white shadow-1 rounded-borders"
-                            >
-                                <q-carousel-slide v-for="(img,index) in listImg" :key="index" 
-                                            :img-src="img.webPath"  
-
-                                            :name="index" class="column no-wrap flex-center uncropped-image">
-                                              <q-icon @click="removeImgDialog(index)" class="absolute all-pointer-events remove-icon" size="lg" name="remove" color="white">
-                                                <q-tooltip>
-                                                        Eliminar
-                                               </q-tooltip>
-                                            </q-icon>
-                                 </q-carousel-slide>
-                            </q-carousel>
+                         <!--UPLOAD IMAGE SECTION -->
+                        <div v-else class="image-container border-dashed rounded-borders column justify-center items-center">
+                            <q-icon  @click="takePicture"  name="upload" size="5.5rem" color="primary" class="mb-20"/>
+                            <div class="text-center px-45 mb-40">
+                                <p class="text-label">Agregar imagenes aquí</p>
+                                <p class="text-value">Selecciona la imagen que se adjuntara al ticket </p>
+                            </div>
+                            <q-btn   @click="takePicture" outline rounded size="0.8rem" color="secondary" label="Seleccionar imagen" />
                         </div>
-                        <div class="text-caption fs-13 image-text-container text-center" 
-                            v-else > Aún no se adjunto una imagen
-                        </div>
+                        <btn v-if="listImg.length>0" label="Subir imagen" @click="uploadImage" mx="1.5rem" />
+                        <btn v-else label="Finalizar ticket" mx="1.5rem" @click="dialogFinalizateTicket" />
                     </div>
-                    <!-- Boton de FAB -->
-                    <q-page-sticky  position="bottom-right" :offset="fabPos">
-                                <q-fab
-                                    icon="expand_less"
-                                    direction="up"
-                                    color="secondary"
-                                    :disable="draggingFab"
-                                    v-touch-pan.prevent.mouse="moveFab"
-                                >
-                                    <q-fab-action @click="dialogFinalizateTicket" color="secondary" icon="done" label="Finalizar" :disable="draggingFab" /> 
-                                    <q-fab-action @click="uploadImage" color="secondary" icon="update" label="Actualizar" :disable="draggingFab" />
-                                    <q-fab-action v-if="listImg.length==0"  @click="takePicture" color="secondary" icon="add_a_photo" label="Foto" :disable="draggingFab" />
+                    
 
-                                </q-fab>
-                    </q-page-sticky>
+                   
+
                     <!-- Dialog para confirmar finalizar un ticket -->
                     <confirm-dialog  v-if="showConfirDialog" 
                                       @confirAction="confirAction"  
@@ -131,9 +91,10 @@ import { App } from '@capacitor/app';
 import ConfirmDialog from 'src/components/Dialog/ConfirmDialog.vue'
 import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
 import SuccesDialog from 'src/components/Dialog/SuccesDialog.vue'
-
+import CustomHeader from 'src/components/CustomHeader.vue'
+import Btn from 'src/components/Btn.vue'
 export default defineComponent({
-    components:{ ConfirmDialog,ErrorDialog,SuccesDialog },
+    components:{ ConfirmDialog,ErrorDialog,SuccesDialog,CustomHeader,Btn },
     setup() {
         const route=useRoute()
         const router=useRouter()
@@ -371,7 +332,9 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .container{
-    margin:5px 20px 0px;
+    margin: 0px 1.5rem;
+    height: 60vh;
+    position: relative;
 }
 p{
     margin: 5px 0px;
@@ -381,11 +344,12 @@ p{
     color: $blue;
 }
 .remove-icon{
-    top: 8px; 
-    right: 8px; 
-    background-color:rgba(0, 0, 0, 0.5);
+    top: 10px; 
+    right: 25px; 
+    background-color:$primary;
     opacity: 0.9;
     border-radius: 50%;
+    position: absolute;
 }
 .uncropped-image {
   background-size: contain;  /* don't crop the image  */
@@ -393,19 +357,45 @@ p{
   background-color: white;  /* color to fill empty space with  */
 }
 
-/* TEXT STYLES */
-.text-label {
-  color: #000;
-  font-family: Roboto;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-
-/*IMAGE CONTAINER */
+/* IMAGE UPLOAD STYLES*/
 .image-text-container{
     background-color: rgba(33, 33, 33, 0.025);
     padding: 10px;
 }
 
+.image-container{
+    background-color: rgba(33, 33, 33,0.025);
+    height: 60vh;
+    
+}   
+.border-groove{
+    border : 1px groove rgba(0, 0, 0, 0.5);
+}
+.border-dashed{
+    border : 2px dashed rgba(0, 0, 0, 0.6);
+}
+.rounded-borders{
+    border-radius:10px;
+}
+
+/* TEXT STYLES */
+.text-value {
+    font-size: 0.9rem;
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.text-label {
+  color: #000;
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+.text-value__bold{
+    color: #000;
+    font-weight: bold;
+}
 </style>

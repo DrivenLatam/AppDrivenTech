@@ -112,6 +112,8 @@
                                         message="No se pudieron actualizar los datos, intentelo mas tarde"
                                         @confirAction="errorDialog=false"
                                         />
+
+                        
                         <!--SAVE BUTTOM -->
                         <btn mx="1.3rem"  label="Guardar" @click="saveProfile" :loading="sendingUpdate"/>  
                 </q-page>
@@ -268,8 +270,8 @@ export default defineComponent({
 }
 
 .input{
-    
     margin: 10px 1.3rem;
 }
+
 
 </style>
