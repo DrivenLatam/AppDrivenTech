@@ -30,7 +30,7 @@ export default {
             try {
                 console.log('Token Notification',tokenNotification)
                 const { data } = await axios.post(BASE_URL + "users/login/",
-                    { nickname, password,tokenFB:tokenNotification });
+                    { email:nickname, password,tokenFB:tokenNotification });
                 const user = { ...data.user, token: data.access_token,tokenFB:tokenNotification };
                 commit('setUser', user);
                 return { data: user };
@@ -68,11 +68,11 @@ export default {
             }
         },
 
-        async generatePasswordCode({commit},email){
+        async generatePasswordCode({commit},{email,phoneNumber}){
             try{
-                const {data}= await axios.get(BASE_URL+'users/password/generateCode/',{params:{email}})
-                //console.log('data...',data.verification_code)
-                commit('setResetPasswordEmail',{email:email,verificationCode:data.verification_code})
+                let resource=   email ? 'users/password/generateCode/' : 'users/password/generatePhoneCode/'
+                const {data}= await axios.get(BASE_URL+resource,{params:{email,phone_number:phoneNumber}})
+                commit('setResetPasswordEmail',{email:email || phoneNumber ,verificationCode:data.verification_code})
                 return {data}
             }catch(_error){
                 const {error,field}=handleMessageError(_error)

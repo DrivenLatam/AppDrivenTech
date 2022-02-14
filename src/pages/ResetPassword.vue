@@ -171,8 +171,11 @@ export default defineComponent({
         const goToLogin=()=>{
             router.replace({path:'/login'})
         }
+        //
         //--------Prueba-----
+        //
         const code=ref('')
+
         //
         //COMPONENTE DE ERROR
         //
@@ -184,7 +187,7 @@ export default defineComponent({
         //
         // EMAIL
         //
-
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         const {resetPasswordEmail}=useGetters()
         const email = ref(route.params.email || resetPasswordEmail.value || '');
         const emailSended = ref(!!resetPasswordEmail.value);
@@ -193,15 +196,15 @@ export default defineComponent({
 
         watch(email,()=>emailError.value="")
 
-        const sendEmail = async () => {
-
+        const sendEmail = async () => { 
             if(!email.value){
                 emailError.value="Ingrese el email"
-
                 return
             }
             sending.value = true;
-            const {data,error,field}=await generatePasswordCode(email.value)
+            const {data,error,field}= await generatePasswordCode({email:email.value}) 
+                                                                      
+            
             sending.value = false;
             if(error ){
                 if(error=='No se pudo enviar mail'){ //Error de no poder enviar email
@@ -212,18 +215,14 @@ export default defineComponent({
                     emailSended.value = false;
                     emailError.value=error
                 }
-
             }else{
                 code.value=data.verification_code
                 emailSended.value = true;
             }
-            
         };
-
         //
         // VERIFICATION CODE
         //
-        
         const {resetVerificationCode}=useGetters()
         const verificationCode = ref('');
         const codeVerificated = ref(false);
@@ -233,10 +232,7 @@ export default defineComponent({
         const dialogCodeVerification=computed(()=>  {
             return (!codeVerificated.value && emailSended.value) ? true : false
         })
-        
-        console.log('r',resetVerificationCode.value)
-        watch(verificationCode,()=>verificationCodeError.value="")
-       
+       watch(verificationCode,()=>verificationCodeError.value="")
        const sendVerficationCode = async () => {
             sending.value = true;
             const {data,error,field}= await validatePasswordCode({email:email.value,code:verificationCode.value})
@@ -250,7 +246,6 @@ export default defineComponent({
                     verificationCode.value=''
                 }else  verificationCodeError.value=error  //Error de valor ingresado incorrecto
             }else{
-                
                 codeVerificated.value = true;
             }
             sending.value = false;
