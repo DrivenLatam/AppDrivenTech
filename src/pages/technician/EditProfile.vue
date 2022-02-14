@@ -18,11 +18,19 @@
                 <q-page >
                     <q-scroll-area  style="height: calc(100vh - 115px); max-width: 100%;"> 
                         <!-- TECHNICIAN IMAGE SECTION -->
-                        <div class="profile-image-container column justify-center items-center">
-                            <q-avatar class="" size="8rem" >
-                                <img class="" src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg">
-                            </q-avatar>
-                            <p class="mt-5 profile-image-username ">Editar foto </p>
+                        <div class=" profile-image-container column justify-center items-center">
+                            <div style="position:relative;">
+                                <q-avatar class="" size="10rem" >
+                                    <img fit="contain"  
+                                        v-if="profileImageSrc" 
+                                        :src="profileImageSrc" />
+                                    <img v-else class="" src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg">
+                                </q-avatar>
+                                <q-icon @click="takePicture"
+                                        class="phone-camera-icon" size="md"
+                                        name="photo_camera" color="white"/>
+                            </div>
+                            
                         </div>
                         <!-- INPUTS -->
 
@@ -126,6 +134,11 @@
 import { defineComponent,ref,computed } from 'vue'
 import {useRouter} from 'vue-router'
 import {useActions, useGetters} from 'src/store'
+
+import { Camera, CameraResultType } from '@capacitor/camera'
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { App } from '@capacitor/app';
+
 import Btn from "src/components/Btn.vue"
 import SuccesDialog from 'src/components/Dialog/SuccesDialog.vue'
 import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
@@ -172,8 +185,27 @@ export default defineComponent({
         //
         //------------INPUTS--------------
         //
-
         //
+        //PROFILE IMAGE
+        //
+         //take a picture from the phone
+        const profileImage=ref("")
+        const profileImageSrc=ref("")
+        const takePicture = async () => {
+            const image = await Camera.getPhoto({
+                quality: 90,
+                allowEditing: true,
+                resultType: CameraResultType.Uri
+            });
+
+            // image.webPath will contain a path that can be set as an image src.
+            // You can access the original file using image.path, which can be
+            // passed to the Filesystem API to read the raw data of the image,
+            // if desired (or pass resultType: CameraResultType.Base64 to getPhoto)
+            profileImageSrc.value = image.webPath
+            profileImage.value=image
+        };
+        // 
         //  NICKNAME
         //
         const nickName=ref(user.value.nickname)
@@ -238,7 +270,9 @@ export default defineComponent({
             sendingUpdate,
             succesDialog,
             errorDialog,
-            showBirthdayDate:ref(false)
+            showBirthdayDate:ref(false),
+            takePicture,
+            profileImageSrc
 
         }
     },
@@ -253,8 +287,16 @@ export default defineComponent({
     height: 30vh;
     width: 100%;
     background: linear-gradient(to right,$primary, $secondary);
- 
+    
 } 
+.phone-camera-icon{
+   bottom:0px;
+   right: -10px;
+   position: absolute;
+   border-radius: 50%;
+   background: rgba($blue-grey-10,1);
+   padding: 7px;
+}
 
 .profile-image-username{
     font-family: Roboto;

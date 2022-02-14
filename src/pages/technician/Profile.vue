@@ -18,7 +18,7 @@
                         <!-- TECHNICIAN IMAGE SECTION -->
                         
                         <div class="profile-image-container column justify-center items-center">
-                            <q-avatar class="" size="8rem" >
+                            <q-avatar class="" size="10rem" >
                                 <img class="" src="https://t4.ftcdn.net/jpg/02/15/84/43/360_F_215844325_ttX9YiIIyeaR7Ne6EaLLjMAmy4GvPC69.jpg">
                             </q-avatar>
                             <p class="mt-5 profile-image-username ">{{user.nickname}}</p>
