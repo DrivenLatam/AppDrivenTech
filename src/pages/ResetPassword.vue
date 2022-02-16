@@ -34,16 +34,10 @@
             <div v-if="!emailSended" class="mt-8 text-grey-8 mb-32">Ingresa tu dirección de correo electrónico, te enviaremos un código de verificación para que puedas continuar con la recuperación de tu contraseña.</div>
             <q-input :disable="emailSended" autofocus v-model="email" label="Email" 
                 :error="!! emailError"  :error-message="emailError"/>
-            <q-btn v-if="!emailSended" no-caps class="mt-16" :color="email ? 'primary' : 'grey-8'" @click="sendEmail">
-                <div v-if="!sending" class="row">
-                    <div class="mr-10">Enviar código a recuperación</div>
-                    <q-icon name="send" />
-                </div>
-                <div v-else class="row">
-                    <div class="mr-10">Enviando</div>
-                    <q-spinner color="white" size="1em" />
-                </div>
-            </q-btn>
+            <q-btn v-if="!emailSended"  no-caps  unelevated  rounded 
+                   text-color="grey-1" class="mt-16 fs-16" :color="email ? 'secondary' : 'grey-8'" @click="sendEmail"
+                   :loading="sending" label="Enviar código a recuperación"
+                   />
         </div>
         <!-- PHASE 2 -->
         <div v-if="emailSended && !codeVerificated" class="full-width column" :class="codeVerificated ? 'bg-grey-2' : 'grow-1'">
@@ -53,19 +47,13 @@
                 <q-input :disable="codeVerificated" autofocus v-model="verificationCode" label="Código de verificación" 
                     :error="!!verificationCodeError" :error-message="verificationCodeError"
                 />
-                <q-btn v-if="!codeVerificated" no-caps class="mt-16" :color="verificationCode.length === 4 ? 'primary' : 'grey-8'" @click="sendVerficationCode">
-                    <div v-if="!sending" class="row">
-                        <div class="mr-10">Enviar verificación</div>
-                        <q-icon name="send" />
-                    </div>
-                    <div v-else class="row">
-                        <div class="mr-10">Enviando</div>
-                        <q-spinner color="white" size="1em" />
-                    </div>
-                </q-btn>
-                <q-btn @click="changeResetEmail" flat dense no-caps class="mt-20 underline" color="grey-8">
+                
+                <q-btn v-if="!codeVerificated"  no-caps  unelevated  rounded 
+                   text-color="grey-1" class="mt-16 fs-16" :color="verificationCode.length === 4 ? 'secondary' : 'grey-8'" 
+                   :loading="sending" label="Enviar codigo" @click="sendVerficationCode"
+                />
+                <q-btn @click="changeResetEmail" flat dense no-caps class="mt-20 underline" color="primary">
                     Cambiar correo electrónico
-                    
                 </q-btn>
             </div>
         </div>
@@ -109,16 +97,10 @@
                         />
                     </template>
                 </q-input>
-                <q-btn no-caps class="mt-16" :color="isValidNewPassword ? 'primary' : 'grey-8'" @click="sendResetPassword">
-                    <div v-if="!sending" class="row">
-                        <div class="mr-10">Guardar nueva contraseña</div>
-                        <q-icon name="send" />
-                    </div>
-                    <div v-else class="row">
-                        <div class="mr-10">Enviando</div>
-                        <q-spinner color="white" size="1em" />
-                    </div>
-                </q-btn>
+                 <q-btn   no-caps  unelevated  rounded 
+                   text-color="grey-1" class="mt-16 fs-16" :color="isValidNewPassword ? 'secondary' : 'grey-8'" 
+                   :loading="sending" label="Guardar nueva contraseña" @click="sendResetPassword"
+                />
             </div>
         </div>
         <!-- CONFIRMATION Message-->
@@ -151,6 +133,7 @@ import { defineComponent, ref,watch,computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {useActions,useGetters,useMutations} from 'src/store'
 import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
+import Btn from 'src/components/Btn.vue'
 const _awaiter = async (time = 1500) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -160,7 +143,7 @@ const _awaiter = async (time = 1500) => {
 };
 
 export default defineComponent({
-    components:{ErrorDialog},
+    components:{ErrorDialog,Btn},
     name: 'ResetPassword',
     setup() {
         const route = useRoute();

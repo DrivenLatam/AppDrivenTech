@@ -59,7 +59,7 @@
                             
                             <!-- BIRTHDAY INPUT -->
                            
-                            <q-input outlined v-model="birthday" @click="showBirthdayDate=true" label="Fecha Nacimiento"  class="input ">
+                            <q-input outlined v-model="birthday" @click="showBirthdayDate=true" label="Fecha Nacimiento"  class="input" :disable="sendingUpdate">
                                 <template v-slot:prepend>
                                     <q-icon name="event" class="date_range">
                                         <q-popup-proxy v-model="showBirthdayDate" ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
