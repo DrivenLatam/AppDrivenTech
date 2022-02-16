@@ -87,13 +87,12 @@ export default defineComponent({
            
         }
         const loadTicketsOnStart= async ()=>{
-            if(loadingTicket.value){
-                console.log("Is true")
+            if(tickets.value.length==0){
+                setLoadingTicket(true)
                 await loadTickets()
-                setLoadingTicket(false)
             }
         }
-        //loadTicketsOnStart()
+        loadTicketsOnStart()
         
         const onrefresh= async(done)=>{
             await loadTickets()

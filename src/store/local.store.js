@@ -10,6 +10,9 @@ export const store = {
         if (value === undefined || value === null) localStorage.removeItem(key);
         else localStorage.setItem(key, jsonParse ? JSON.stringify(value) : value);
     },
+    clear(){
+        localStorage.clear()
+    }
 };
 export const session = {
     get(key, defaultValue = null, jsonParse = true) {

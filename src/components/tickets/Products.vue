@@ -9,7 +9,7 @@
         />
       <q-card  v-else> 
         <q-card-section>
-          <div class="text-h6">Lista de clientes</div>
+          <div class="text-h6">Lista de productos</div>
             <q-input v-model="search"  type="search" hint="Buscar por nombre o codigo de producto">
                 <template v-slot:append>
                     <q-icon name="search" />

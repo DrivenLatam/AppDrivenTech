@@ -56,21 +56,21 @@ export default defineComponent({
     const addTicket=()=>{
         router.push({path:'/add'})
     }
-
+    
     //
-    // Ubicacion
+    // LOCATION
     //
     const cordinates=ref('')
     const watchID=ref('')
 
-    /*Optener ubicacion  */
+    /*get location  */
     const getCurrentPosition = async () => {
         const position = await Geolocation.getCurrentPosition();
         return position
     };
   
     //
-    //Crear watch 
+    //WATCH 
     //
     const {sendCordinate} =useActions()
     //console.log('UseActions',JSON.stringify(useActions()))
