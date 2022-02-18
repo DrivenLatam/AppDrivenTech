@@ -30,7 +30,7 @@ export default {
             try {
                 console.log('Token Notification',tokenNotification)
                 const { data } = await axios.post(BASE_URL + "users/login/",
-                    { email:nickname, password,tokenFB:tokenNotification });
+                    { nickname:nickname, password,tokenFB:tokenNotification });
                 const user = { ...data.user, token: data.access_token,tokenFB:tokenNotification };
                 commit('setUser', user);
                 return { data: user };

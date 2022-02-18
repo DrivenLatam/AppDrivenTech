@@ -90,14 +90,21 @@
                                     <q-icon  name="flag"  />
                                 </template>
                             </q-select>
-                            <!-- FULL NAME  INPUT -->
-                            <q-input v-model="fullName"     outlined :disable="sendingUpdate"  
-                                    label="Nombre y Apellido" class="input " >
+                            <!-- FIRTS AND LAST NAME-->
+                            <div class="row no-wrap input justify-between" >
+                                <q-input v-model="firstName" autogrow style="margin-right:4px;" outlined :disable="sendingUpdate"  
+                                    label="Nombre "  >
                                     <template v-slot:prepend>
                                         <q-icon  name="contact_page"  />
                                     </template>
-                            </q-input>
-
+                                </q-input>
+                                <q-input v-model="lastName"   autogrow  outlined :disable="sendingUpdate"  
+                                        label="Apellido"  >
+                                    <template v-slot:prepend>
+                                        <q-icon  name="contact_page"  />
+                                    </template>
+                                </q-input>
+                            </div>
                             <!-- DNI INPUT -->
                             <q-input v-model="dni"     outlined :disable="sendingUpdate"  
                                     label="Cedula" class="input " >
@@ -131,7 +138,7 @@
 </template>
 
 <script>
-import { defineComponent,ref,computed } from 'vue'
+import { defineComponent,ref,computed,watch } from 'vue'
 import {useRouter} from 'vue-router'
 import {useActions, useGetters} from 'src/store'
 
@@ -150,7 +157,7 @@ export default defineComponent({
         //
         //----------GLOBAL-------------
         //
-        
+        const focusedInput=ref(null)
         //dialog
         const dialog=ref(true)
         const succesDialog=ref(false)
@@ -167,9 +174,14 @@ export default defineComponent({
         //Update technician profile data in the server
         const saveProfile= async()=>{
             sendingUpdate.value=true
+            const technician={
+                    nickname:nickName.value, email:email.value, phone_number:phoneNumber.value,
+                    first_name:firstName.value, last_name:lastName.value, country:country.value.value, nro_ci:dni.value
+            }
+            //console.log("technician....",technician)
             if(!isValidated) return
             
-            const {data,error}=await updateTechnicianToServer()
+            const {data,error}=await updateTechnicianToServer(technician)
             sendingUpdate.value=false
             if(data){
                 console.log("Actualizado")
@@ -214,17 +226,29 @@ export default defineComponent({
         //  EMAIL
         //
         const email=ref(user.value.email)
-
+        const ticketName=ref('')
+        const emailInput=ref(null)
+        const focusEmail=(state=true)=>{
+            if(state) focusedInput.value=emailInput.value
+            else if(focusedInput.value==emailInput.value)focusedInput.value=null
+        }
+        const emailIconColor=computed(()=> emailError.value? 'negative': focusedInput.value==emailInput.value ? 'primary' : 'grey-8')
+        const emailError=ref('')
+        watch(email,()=>emailError.value="")
         //
         //  PHONE
         //
         const phoneNumber=ref(user.value.phone_number)
 
         //
-        //  FULL NAME
+        //  FIRST NAME
         //
-        const fullName=ref(user.value.first_name + user.value.last_name)
+        const firstName=ref(user.value.first_name )
 
+        //
+        //  LAST NAME
+        //
+        const lastName=ref( user.value.last_name)
         
         //
         //  DNI
@@ -235,7 +259,7 @@ export default defineComponent({
         //
         //  COUNTRY     
         //
-        const getCountry=computed( _=>user.value.country=="PY" ? "Paraguay" : "Uruguay" )
+        const getCountry=computed( _=>user.value.country=="PY" ?  {label:"Paraguay",value:"PY"} : {label:"Uruguay",value:"UY"} )
         const country=ref(getCountry.value)
        
         //
@@ -262,7 +286,8 @@ export default defineComponent({
             email,
             phoneNumber,
             dni,
-            fullName,
+            firstName,
+            lastName,
             country,
             address,
             birthday,

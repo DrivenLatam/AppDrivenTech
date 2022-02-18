@@ -6,7 +6,7 @@ import technicianStore from './technician.store';
 import geolocationStore from './geolocation.store';
 import { computed } from 'vue';
 
-//export const BASE_URL = "https://3aab-181-121-195-72.ngrok.io/"
+//export const BASE_URL = "https://1122-181-121-195-72.ngrok.io/"
 //export const BASE_URL = "http://localhost:8000/";
 export const BASE_URL = "https://jesusroman.live/";
 

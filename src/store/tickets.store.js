@@ -43,7 +43,7 @@ export default {
                 try {
                     const {data} = await axios.get(BASE_URL+"tickets/",{params:{username,country}})
                     commit('setTickets',data)
-                    console.log("tickets",data)
+                    //console.log("tickets",data)
                     return {data}
                 } catch (error) {
                     handleMessageError(error)

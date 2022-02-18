@@ -20,7 +20,7 @@ export default defineComponent({
       else {
         setLoadingTicket(true)
         const { data, error } = await getTicketsFromServer()
-        console.log("Obteniendo tickets del servidor en el App.vue",data)
+        //console.log("Obteniendo tickets del servidor en el App.vue",data)
         // TODO: SI HAY ERROR, MOSTRAR MENSAJE, SINO, setLoadingTicket(false)
         //setLoadingTicket(false)
       }

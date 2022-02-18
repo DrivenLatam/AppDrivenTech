@@ -16,16 +16,16 @@ export default {
     },
     actions:{
         //send an  PATCH request to server for update technician data
-        async updateTechnicianToServer({commit,getters}){
-                const {username,country}=store.get("user")
-                const params={username,country}
+        async updateTechnicianToServer({commit,getters},technician){
+                const {pk}=store.get("user")
+                const params={pk}
+                console.log("technician",technician,"pk",pk)
                 try {
-                    //const {data} = await axios.patch(BASE_URL+"techncian/",{params:{username,country}})
-                    //commit('setTechnician',data)
-                    //return {data}
-                    return new Promise((resolve,reject)=>{
-                        setTimeout(()=>resolve({data:true}),1000)
-                    })
+                    const {data} = await axios.patch(BASE_URL+"users/edit/",technician,{params:{pk}})
+                    commit('setTechnician',data)
+                    commit('setUser',data)
+                    return {data}
+                    
                     
                     
                 } catch (error) {
