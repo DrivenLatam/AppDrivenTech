@@ -44,10 +44,10 @@ export default {
         async logout({ commit }) { 
             const {tokenFB}=store.get("user")
             //commit('setUser', null)
-            
+            store.clear()
             try {
                 const {data}= await axios.delete(BASE_URL+'users/logout/',{params:{tokenFB}})
-                store.clear()
+                
                 return {data:'Ok'}
             } catch (error) {
                 console.log('Eror del logout')
