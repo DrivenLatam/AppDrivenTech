@@ -35,33 +35,64 @@
                         <!-- INPUTS -->
 
                                 <!-- NICKNAME INPUT -->
-                            <q-input v-model="nickName" outlined :disable="sendingUpdate" 
-                                    label="Nombre usuario" class="input " >
+                            <q-input autofocus v-model="nickName" outlined :disable="sendingUpdate" 
+                                    label="Nombre usuario" 
+                                    :class=" ['input', nickNameError &&  'message-input-error'] "
+                                    :ref="el=>nickNameInput=el"
+                                    @focus="focusNickName"
+                                    @blur="focusNickName(false)"
+                                    :error="!!nickNameError"
+                                    :error-message="nickNameError"
+                                    maxlength="70"
+                                     >
                                 <template v-slot:prepend>
-                                    <q-icon  name="person"  />
+                                    <q-icon  name="person" :color="nickNameIconColor"  />
                                 </template>
                             </q-input>
                             <!-- EMAIL INPUT -->
                             <q-input v-model="email"  outlined :disable="sendingUpdate"  
-                                    label="Correo electronico" class="input " >
+                                    label="Correo electronico"
+                                    :class=" ['input', emailError &&  'message-input-error'] "
+                                    :ref="el=>emailInput=el"
+                                    @focus="focusEmail"
+                                    @blur="focusEmail(false)"
+                                    :error="!!emailError"
+                                    :error-message="emailError"
+                                     >
                                 <template v-slot:prepend>
-                                    <q-icon  name="email"  />
+                                    <q-icon  name="email" :color="emailIconColor" />
                                 </template>
                             </q-input>
 
                             <!-- ADDRESS INPUT -->
                             <q-input v-model="address"  autogrow outlined :disable="sendingUpdate"  
-                                    label="Direccion" class="input " >
+                                    label="Direccion" 
+                                    :class=" ['input', addressError &&  'message-input-error'] "
+                                    :ref="el=>addressInput=el"
+                                    @focus="focusAddress"
+                                    @blur="focusAddress(false)"
+                                    :error="!!addressError"
+                                    :error-message="addressError"
+                                     >
                                 <template v-slot:prepend>
-                                    <q-icon  name="home"  />
+                                    <q-icon  name="home" :color="addressIconColor" />
                                 </template>
                             </q-input>
                             
                             <!-- BIRTHDAY INPUT -->
                            
-                            <q-input outlined v-model="birthday" @click="showBirthdayDate=true" label="Fecha Nacimiento"  class="input" :disable="sendingUpdate">
+                            <q-input outlined v-model="birthday" @click="showBirthdayDate=true"
+                                     label="Fecha Nacimiento"  
+                                     :class=" ['input', birthdayError &&  'message-input-error'] "
+                                     :disable="sendingUpdate"
+                                     :ref="el=>birthdayInput=el"
+                                     @focus="focusBirthday"
+                                     @blur="focusBirthday(false)"
+                                     :error="!!birthdayError"
+                                     :error-message="birthdayError"
+                                     >
                                 <template v-slot:prepend>
-                                    <q-icon name="event" class="date_range">
+                                    <q-icon name="event" class="date_range" :color="birthdayIconColor" >
                                         <q-popup-proxy v-model="showBirthdayDate" ref="qDateProxy" cover transition-show="scale" transition-hide="scale">
                                             <q-date v-model="birthday" minimal mask="DD/MM/YYYY" >
                                                 <div class="row items-center justify-end">
@@ -75,13 +106,22 @@
 
                             <!-- TELEPHONE  INPUT -->
                             <q-input v-model="phoneNumber"     outlined :disable="sendingUpdate"  
-                                    label="Telefono" class="input " >
+                                    :ref="el=>phoneInput=el"
+                                    @focus="focusPhone"
+                                    @blur="focusPhone(false)"
+                                    :error="!!phoneError"
+                                    :error-message="phoneError"
+                                    label="Telefono" 
+                                    :class=" ['input', phoneError &&  'message-input-error'] "
+                                    maxlength="17"
+                                    type="number"
+                                     >
                                 <template v-slot:prepend>
-                                    <q-icon  name="phone"  />
+                                    <q-icon  name="phone" :color="phoneIconColor"  />
                                 </template>
                             </q-input>
-
-                            <!-- COUNTRY INPUT -->
+                            <!--
+                             COUNTRY INPUT 
                             <q-select  outlined :disable="sendingUpdate" 
                                     v-model="country"  label="Pais" class="input " 
                                     :options= "[{ label: 'Paraguay', value: 'PY' }, { label: 'Uruguay', value: 'UY' }] "
@@ -90,26 +130,50 @@
                                     <q-icon  name="flag"  />
                                 </template>
                             </q-select>
+                            -->
                             <!-- FIRTS AND LAST NAME-->
                             <div class="row no-wrap input justify-between" >
                                 <q-input v-model="firstName" autogrow style="margin-right:4px;" outlined :disable="sendingUpdate"  
-                                    label="Nombre "  >
+                                    label="Nombre "
+                                    :ref="el=>firstNameInput=el"
+                                    @focus="focusFirstName"
+                                    @blur="focusFirstName(false)"
+                                    :error="!!firstNameError"
+                                    :error-message="firstNameError"
+                                    :class=" [firstNameError &&  'message-input-error'] "
+                                      >
                                     <template v-slot:prepend>
-                                        <q-icon  name="contact_page"  />
+                                        <q-icon  name="contact_page" :color="firstNameIconColor"  />
                                     </template>
                                 </q-input>
                                 <q-input v-model="lastName"   autogrow  outlined :disable="sendingUpdate"  
-                                        label="Apellido"  >
+                                        label="Apellido" 
+                                        :ref="el=>lastNameInput=el"
+                                        @focus="focusLastName"
+                                        @blur="focusLastName(false)"
+                                        :error="!!lastNameError"
+                                        :error-message="lastNameError"
+                                        :class=" [lastNameError &&  'message-input-error'] "
+                                         >
                                     <template v-slot:prepend>
-                                        <q-icon  name="contact_page"  />
+                                        <q-icon  name="contact_page" :color="lastNameIconColor"  />
                                     </template>
                                 </q-input>
                             </div>
                             <!-- DNI INPUT -->
                             <q-input v-model="dni"     outlined :disable="sendingUpdate"  
-                                    label="Cedula" class="input " >
+                                    label="Cedula" 
+                                    :class=" ['input', dniError &&  'message-input-error'] "
+                                    :ref="el=>dniInput=el"
+                                    @focus="focusDni"
+                                    @blur="focusDni(false)"
+                                    :error="!!dniError"
+                                    :error-message="dniError"
+                                    maxlength="40"
+                                    type="number"
+                                     >
                                     <template v-slot:prepend>
-                                        <q-icon  name="perm_identity"  />
+                                        <q-icon  name="perm_identity"  :color="dniIconColor" />
                                     </template>
                             </q-input>
                         </q-scroll-area>
@@ -176,10 +240,13 @@ export default defineComponent({
             sendingUpdate.value=true
             const technician={
                     nickname:nickName.value, email:email.value, phone_number:phoneNumber.value,
-                    first_name:firstName.value, last_name:lastName.value, country:country.value.value, nro_ci:dni.value
+                    first_name:firstName.value, last_name:lastName.value,  nro_ci:dni.value
             }
             //console.log("technician....",technician)
-            if(!isValidated) return
+            if(!isValidated()){
+                sendingUpdate.value=false
+                return
+            }
             
             const {data,error}=await updateTechnicianToServer(technician)
             sendingUpdate.value=false
@@ -192,15 +259,46 @@ export default defineComponent({
         }
         //Validate if technician's data is ok before send an request in the server
         const isValidated=()=>{
+            console.log("email",email.value)
+            if(!email.value) {
+                emailError.value = "Este campo no puede quedar vacio" //TO-DO: validar que el email no sea repetido en el servidor
+                return false
+            }
+            if(!emailPattern.test(email.value)) {
+                emailError.value = "Ingrese un correo electronico valido" //TO-DO: validar que el email no sea repetido en el servidor
+                return false
+            }
+            if(!nickName.value) {
+                nickNameError.value = "Este campo no puede quedar vacio" //TO-DO: validar que el email no sea repetido en el servidor
+                return false
+            }  
+            if(!firstName.value) {
+                firstNameError.value = "Este campo no puede quedar vacio" //TO-DO: validar que el email no sea repetido en el servidor
+                return false
+            }
+            if(!lastName.value) {
+                lastNameError.value = "Este campo no puede quedar vacio" //TO-DO: validar que el email no sea repetido en el servidor
+                return false
+            }
+            if(!dni.value) {
+                dniError.value = "Este campo no puede quedar vacio" //TO-DO: validar que el email no sea repetido en el servidor
+                return false
+            }
+            if(!phoneNumber.value) {
+                phoneError.value = "Este campo no puede quedar vacio" //TO-DO: validar que el email no sea repetido en el servidor
+                return false
+            }       
             return true
         }
         //
         //------------INPUTS--------------
         //
+
         //
         //PROFILE IMAGE
         //
-         //take a picture from the phone
+
+        //take a picture from the phone
         const profileImage=ref("")
         const profileImageSrc=ref("")
         const takePicture = async () => {
@@ -217,16 +315,25 @@ export default defineComponent({
             profileImageSrc.value = image.webPath
             profileImage.value=image
         };
+
         // 
         //  NICKNAME
         //
         const nickName=ref(user.value.nickname)
+        const nickNameInput=ref(null)
+        const focusNickName=(state=true)=>{
+            if(state) focusedInput.value=nickNameInput.value
+            else if(focusedInput.value==nickNameInput.value)focusedInput.value=null
+        }
+        const nickNameIconColor=computed(()=> nickNameError.value? 'negative': focusedInput.value==nickNameInput.value ? 'primary' : 'grey-8')
+        const nickNameError=ref('')
+        watch(nickName,()=>nickNameError.value="")
 
         //
         //  EMAIL
         //
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
         const email=ref(user.value.email)
-        const ticketName=ref('')
         const emailInput=ref(null)
         const focusEmail=(state=true)=>{
             if(state) focusedInput.value=emailInput.value
@@ -239,39 +346,82 @@ export default defineComponent({
         //  PHONE
         //
         const phoneNumber=ref(user.value.phone_number)
-
+        const phoneInput=ref(null)
+        const focusPhone=(state=true)=>{
+            if(state) focusedInput.value=phoneInput.value
+            else if(focusedInput.value==phoneInput.value)focusedInput.value=null
+        }
+        const phoneIconColor=computed(()=> phoneError.value? 'negative': focusedInput.value==phoneInput.value ? 'primary' : 'grey-8')
+        const phoneError=ref('')
+        watch(phoneNumber,()=>phoneError.value="")
         //
         //  FIRST NAME
         //
         const firstName=ref(user.value.first_name )
-
+        const firstNameInput=ref(null)
+        const focusFirstName=(state=true)=>{
+            if(state) focusedInput.value=firstNameInput.value
+            else if(focusedInput.value==firstNameInput.value)focusedInput.value=null
+        }
+        const firstNameIconColor=computed(()=> firstNameError.value? 'negative': focusedInput.value==firstNameInput.value ? 'primary' : 'grey-8')
+        const firstNameError=ref('')
+        watch(firstName,()=>firstNameError.value="")
         //
         //  LAST NAME
         //
         const lastName=ref( user.value.last_name)
-        
+        const lastNameInput=ref(null)
+        const focusLastName=(state=true)=>{
+            if(state) focusedInput.value=lastNameInput.value
+            else if(focusedInput.value==lastNameInput.value)focusedInput.value=null
+        }
+        const lastNameIconColor=computed(()=> lastNameError.value? 'negative': focusedInput.value==lastNameInput.value ? 'primary' : 'grey-8')
+        const lastNameError=ref('')
+        watch(lastName,()=>lastNameError.value="")
         //
         //  DNI
         //
         const dni=ref(user.value.nro_ci)
-
+        const dniInput=ref(null)
+        const focusDni=(state=true)=>{
+            if(state) focusedInput.value=dniInput.value
+            else if(focusedInput.value==dniInput.value)focusedInput.value=null
+        }
+        const dniIconColor=computed(()=> dniError.value? 'negative': focusedInput.value==dniInput.value ? 'primary' : 'grey-8')
+        const dniError=ref('')
+        watch(dni,()=>dniError.value="")
         
+        /*
         //
         //  COUNTRY     
         //
         const getCountry=computed( _=>user.value.country=="PY" ?  {label:"Paraguay",value:"PY"} : {label:"Uruguay",value:"UY"} )
         const country=ref(getCountry.value)
-       
+       */
         //
         //  ADDRESS     
         //
         const address=ref("")
-
+        const addressInput=ref(null)
+        const focusAddress=(state=true)=>{
+            if(state) focusedInput.value=addressInput.value
+            else if(focusedInput.value==addressInput.value)focusedInput.value=null
+        }
+        const addressIconColor=computed(()=> addressError.value? 'negative': focusedInput.value==addressInput.value ? 'primary' : 'grey-8')
+        const addressError=ref('')
+        watch(address,()=>addressError.value="")
         //
         //  BIRTHDAY     
         //
         const birthday=ref("")
-
+        const birthdayInput=ref(null)
+        const focusBirthday=(state=true)=>{
+            if(state) focusedInput.value=birthdayInput.value
+            else if(focusedInput.value==birthdayInput.value)focusedInput.value=null
+        }
+        const birthdayIconColor=computed(()=> birthdayError.value? 'negative': focusedInput.value==birthdayInput.value ? 'primary' : 'grey-8')
+        const birthdayError=ref('')
+        watch(birthday,()=>birthdayError.value="")
         
         //go back to previus page
         const goBack = ()=>{
@@ -282,15 +432,55 @@ export default defineComponent({
         return {
             goBack,
             dialog,
+
             nickName,
+            nickNameInput,
+            focusNickName,
+            nickNameIconColor,
+            nickNameError,
+
             email,
+            emailInput,
+            focusEmail,
+            emailIconColor,
+            emailError,
+
             phoneNumber,
+            phoneInput,
+            focusPhone,
+            phoneIconColor,
+            phoneError,
+
             dni,
+            dniInput,
+            focusDni,
+            dniIconColor,
+            dniError,
+
             firstName,
+            firstNameInput,
+            focusFirstName,
+            firstNameIconColor,
+            firstNameError,
+            
             lastName,
-            country,
+            lastNameInput,
+            focusLastName,
+            lastNameIconColor,
+            lastNameError,
+            
             address,
+            addressInput,
+            focusAddress,
+            addressIconColor,
+            addressError,
+
             birthday,
+            birthdayInput,
+            focusBirthday,
+            birthdayIconColor,
+            birthdayError,
+
             saveProfile,
             sendingUpdate,
             succesDialog,
@@ -340,5 +530,8 @@ export default defineComponent({
     margin: 10px 1.3rem;
 }
 
+.message-input-error{
+    margin-bottom: 35px;
+}
 
 </style>
