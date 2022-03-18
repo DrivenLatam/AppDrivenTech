@@ -134,7 +134,7 @@
                             >
                                 <template v-slot:prepend>
                                         <q-icon :color="ticketProductNameIconColor" size="xs" name="inventory_2"/>
-                                </template>
+                                </template>     
                             </q-input>
 
                             <!--Prioridar del ticket-->
@@ -151,16 +151,7 @@
                                         <q-icon :color="ticketPriorityIconColor" size="xs" name="priority_high" />
                                 </template>
                             </q-select>
-                           
-                             <!--CREATE TICKET BUTTOM  
-                            <div class="flex justify-center mt-20">
-
-                                <q-btn no-caps @click="createTicket" class="py-5 px-50" color="primary" label="Crear Ticket" />
-                            </div>
-                              -->
-                        </div>
-                            
-                      
+                        </div>     
                         <btn mx="1rem" @click="createTicket" label="Crear ticket" :loading="loading"  />  
                         
                        <!--Modales de mensajes de error y confirmacion -->
@@ -180,7 +171,7 @@
                         />
                     </div>
                     <!-- Componente para seleccionar el cliente -->
-                    <contatcs 
+                    <contacts 
                         v-if="showListClient" 
                         @hide-dialog="showListClient=false"
                         @client-selected="(e)=>ticketClient=e"
@@ -205,13 +196,13 @@ import {useRoute,useRouter} from 'vue-router'
 import {useGetters,useActions} from 'src/store'
 import SuccesDialog from 'src/components/Dialog/SuccesDialog.vue'
 import ErrorDialog from 'src/components/Dialog/ErrorDialog.vue'
-import Contatcs from 'src/components/tickets/Contacts.vue'
+import Contacts from 'src/components/tickets/Contacts.vue'
 import Products from 'src/components/tickets/Products.vue'
 import Btn from "src/components/Btn.vue"
 
 
 export default defineComponent({
-    components:{ SuccesDialog,ErrorDialog,Contatcs,Products,Btn },
+    components:{ SuccesDialog,ErrorDialog,Contacts,Products,Btn },
     setup() {
         const route=useRoute()
         const router=useRouter()

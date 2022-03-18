@@ -39,17 +39,16 @@ export default {
         async getTicketsFromServer({commit,getters}){
                 const {username,country}=store.get("user")
                 const params={username,country}
-                
+                console.log("Getting tickets")
                 try {
                     const {data} = await axios.get(BASE_URL+"tickets/",{params:{username,country}})
                     commit('setTickets',data)
-                    //console.log("tickets",data)
+                    
                     return {data}
                 } catch (error) {
                     handleMessageError(error)
                     return {error}
                 }finally{
-                    console.log("finally block")
                     commit('setLoadingTicket',false)
                 }
         },

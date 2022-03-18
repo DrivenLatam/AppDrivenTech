@@ -1,4 +1,5 @@
 import { store } from 'quasar/wrappers';
+import {store as localStorage} from './local.store'
 import { createStore, useStore } from 'vuex';
 import sessionStore from './session.store';
 import ticketsStore from './tickets.store';
@@ -6,13 +7,19 @@ import technicianStore from './technician.store';
 import geolocationStore from './geolocation.store';
 import { computed } from 'vue';
 
-//export const BASE_URL = "https://1122-181-121-195-72.ngrok.io/"
+
+//export const BASE_URL = "https://0be6-181-121-195-72.ngrok.io/"
 //export const BASE_URL = "http://localhost:8000/";
 export const BASE_URL = "https://jesusroman.live/";
 
+
+
+
+// FUNCTION THAT SHOW ERROR MESSAGES FROM ALL REQUEST
 export const handleMessageError=(error)=>{
   if (error.response) {
     // Request made and server responded
+    console.log("Errrrror:",error.response)
     console.log(error.response.data);
     return { error:error.response.data.error, field:error.response.data.field }
     //console.log(error.response.status);
